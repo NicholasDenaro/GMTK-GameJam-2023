@@ -1,4 +1,4 @@
-import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController } from 'game-engine';
+import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View } from 'game-engine';
 import { Player } from './player';
 import { PauseMenu } from './pause-menu';
 import { Wall } from './wall';
@@ -7,6 +7,7 @@ import { SceneMap } from './scene-map';
 import { Npc } from './npc';
 import { Rock } from './rock';
 import { Grass } from './grass';
+import { Hole } from './hole';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -45,6 +46,30 @@ new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), 
 new Sprite('base_jump_strip9', spriteAssetsPremade('./base_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('bowlhair_jump_strip9', spriteAssetsPremade('./bowlhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_jump_strip9', spriteAssetsPremade('./tools_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//dig
+new Sprite('base_dig_strip13', spriteAssetsPremade('./base_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_dig_strip13', spriteAssetsPremade('./bowlhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_dig_strip13', spriteAssetsPremade('./tools_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//attack
+new Sprite('base_attack_strip10', spriteAssetsPremade('./base_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_attack_strip10', spriteAssetsPremade('./bowlhair_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_attack_strip10', spriteAssetsPremade('./tools_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//roll - used for fall
+new Sprite('base_roll_strip10', spriteAssetsPremade('./base_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_roll_strip10', spriteAssetsPremade('./bowlhair_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_roll_strip10', spriteAssetsPremade('./tools_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//waiting - used for fishing?
+new Sprite('base_waiting_strip9', spriteAssetsPremade('./base_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_waiting_strip9', spriteAssetsPremade('./bowlhair_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_waiting_strip9', spriteAssetsPremade('./tools_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//doing - used for ?
+new Sprite('base_doing_strip8', spriteAssetsPremade('./base_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_doing_strip8', spriteAssetsPremade('./bowlhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_doing_strip8', spriteAssetsPremade('./tools_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//hurt
+new Sprite('base_hurt_strip8', spriteAssetsPremade('./base_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_hurt_strip8', spriteAssetsPremade('./bowlhair_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_hurt_strip8', spriteAssetsPremade('./tools_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
@@ -72,6 +97,8 @@ new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
 new Sound('slash', wavAssetsPremade('./Attack03.wav'));
 new Sound('dig', wavAssetsPremade('./Attack02.wav'));
 new Sound('jump', wavAssetsPremade('./Jump03.wav'));
+new Sound('fall', wavAssetsPremade('./Fall01.wav'));
+new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
 
 export const scenes = new SceneMap();
 
@@ -80,62 +107,10 @@ async function init() {
   await Sprite.waitForLoad();
 
   const view = new Canvas2DView(screenWidth, screenHeight, { scale: scale, bgColor: '#BBBBBB' });
-  const scene = new Scene(view);
-  const scene2 = new Scene(view);
-  const scenePause = new Scene(view);
-  scene.addController(new KeyboardController(keyMap));
-  scene2.addController(new KeyboardController(keyMap));
-  scenePause.addController(new KeyboardController(keyMap));
-  scene.addController(new MouseController(mouseMap));
-  scene.addController(new GamepadController(gamepadMap));
 
-  scenes.setScene('main', 0, 0);
-  scenes.setScene('main2', 1, 0);
+  buildMap(view);
 
-  engine.addScene('main', scene);
-  engine.addScene('main2', scene2);
-  engine.addScene('pause', scenePause);
-
-  scenePause.addEntity(new BackgroundEntity('inventory'));
-  scenePause.addEntity(new PauseMenu());
-
-  scene.addEntity(new BackgroundEntity('main1'));
-  // top
-  scene.addEntity(new Wall(0, 16, screenWidth, 16));
-  // left
-  scene.addEntity(new Wall(0, 16, 16, 3 * 16));
-  scene.addEntity(new Grass(0, 4 * 16));
-  scene.addEntity(new Grass(0, 5 * 16));
-  scene.addEntity(new Grass(0, 6 * 16));
-  scene.addEntity(new Wall(0, 7 * 16, 16, 3 * 16));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
-  scene.addEntity(new Player(scene, 48, 48));
-
-  scene2.addEntity(new BackgroundEntity('main2'));
-  //top
-  scene2.addEntity(new Wall(0, 16, 2 * 16, 16));
-  scene2.addEntity(new Rock(32, 16));
-  scene2.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
-  //right
-  scene2.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //bottom
-  scene2.addEntity(new Wall(0, screenHeight - 16, 16, 16));
-
-  // house
-  scene2.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));
-  scene2.addEntity(new Wall(4 * 16 - 8, 64, 5 * 16, 2 * 16));
-  scene2.addEntity(new Wall(6.5 * 16 - 8, 64, 2.5 * 16, 3 * 16));
-  // crate1
-  scene2.addEntity(new Wall(screenWidth - 32, 3 * 16, 5 * 16, 3 * 16));
-  // crate2
-  scene2.addEntity(new Wall(screenWidth - 32, 7 * 16, 16, 16));
-
-  scene2.addEntity(new Npc(scene2, 7 * 16, 7 * 16,
-    ['I need a shovel to dig my\ngarden. Could you give\nme yours?', {options: ['keep shovel', 'give shovel']}],
-    ['Thank you, now it\'s\ntime to get planting.'], 0));
-
-  engine.switchToScene('main');
+  engine.switchToScene('0,0');
 
   Sound.setVolume(0.1);
 
@@ -209,5 +184,84 @@ const gamepadMap = [
     ],
   }
 ];
+
+function buildMap(view: View) {
+  const keyController = new KeyboardController(keyMap);
+  const scenePause = new Scene(view);
+  scenePause.addController(keyController);
+  // scene.addController(new MouseController(mouseMap));
+  // scene.addController(new GamepadController(gamepadMap));
+
+  build00(view, keyController);
+  build10(view, keyController);
+
+  // build layout
+  scenes.setScene('0,0', 0, 0);
+  scenes.setScene('1,0', 1, 0);
+
+  engine.addScene('pause', scenePause);
+
+  scenePause.addEntity(new BackgroundEntity('inventory'));
+  scenePause.addEntity(new PauseMenu());
+
+  
+}
+
+function build00(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+
+  scene.addController(keyController);
+  scene.addEntity(new BackgroundEntity('main1'));
+  // top
+  scene.addEntity(new Wall(0, 16, screenWidth, 16));
+  // left
+  scene.addEntity(new Wall(0, 16, 16, 3 * 16));
+  scene.addEntity(new Grass(0, 4 * 16));
+  scene.addEntity(new Grass(0, 5 * 16));
+  scene.addEntity(new Grass(0, 6 * 16));
+  scene.addEntity(new Wall(0, 7 * 16, 16, 3 * 16));
+  // bottom
+  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
+  scene.addEntity(new Player(scene, 48, 48));
+
+
+  scene.addEntity(new Hole(4 * 16, 2 * 16));
+  scene.addEntity(new Hole(5 * 16, 2 * 16));
+  scene.addEntity(new Hole(6 * 16, 2 * 16));
+
+  scene.addEntity(new Hole(5 * 16, 7 * 16));
+
+  engine.addScene('0,0', scene);
+}
+
+function build10(view: View, keyController: KeyboardController) {
+  const scene2 = new Scene(view);
+  scene2.addController(keyController);
+
+  scene2.addEntity(new BackgroundEntity('main2'));
+  //top
+  scene2.addEntity(new Wall(0, 16, 2 * 16, 16));
+  scene2.addEntity(new Rock(32, 16));
+  scene2.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
+  //right
+  scene2.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //bottom
+  scene2.addEntity(new Wall(0, screenHeight - 16, 16, 16));
+
+  // house
+  scene2.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));
+  scene2.addEntity(new Wall(4 * 16 - 8, 64, 5 * 16, 2 * 16));
+  scene2.addEntity(new Wall(6.5 * 16 - 8, 64, 2.5 * 16, 3 * 16));
+  // crate1
+  scene2.addEntity(new Wall(screenWidth - 32, 3 * 16, 5 * 16, 3 * 16));
+  // crate2
+  scene2.addEntity(new Wall(screenWidth - 32, 7 * 16, 16, 16));
+
+  scene2.addEntity(new Npc(scene2, 7 * 16, 7 * 16,
+    ['I need a shovel to dig my\ngarden. Could you give\nme yours?', { options: ['keep shovel', 'give shovel'] }],
+    ['Thank you, now it\'s\ntime to get planting.'], 0));
+
+  engine.addScene('1,0', scene2);
+}
 
 init();

@@ -10,11 +10,11 @@
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "inventory.tmx": {
-            "scale": 4.845,
+            "scale": 4.84,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 80.1857585139319,
-                "y": 79.77296181630548
+                "x": 80.26859504132233,
+                "y": 79.85537190082646
             }
         },
         "main1.tmx": {
@@ -29,13 +29,13 @@
             "scale": 4.476875,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 87.00265251989391,
-                "y": 80.07817953371493
+                "x": 70.24989529526736,
+                "y": 116.04076504257995
             }
         },
         "overworld.tsx": {
             "scaleInDock": 2,
-            "scaleInEditor": 1
+            "scaleInEditor": 8
         }
     },
     "last.externalTilesetPath": "C:/Source/GMTK-GameJam-2023/tiled-project",
@@ -54,9 +54,10 @@
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
         "overworld.tsx",
-        "main2.tmx",
+        "inventory.tmx",
         "main1.tmx",
-        "inventory.tmx"
+        "main2.tmx",
+        "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

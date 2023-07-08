@@ -8,6 +8,7 @@ import { StatusBar } from "./status-bar";
 import { Rock } from "./rock";
 import { Inventory } from "./inventory";
 import { Grass } from "./grass";
+import { Hole } from "./hole";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -47,6 +48,8 @@ export class Player extends SpriteEntity {
   private pause: boolean;
   private worldCoordsX = 0;
   private worldCoordsY = 0;
+  private spawnX = 0;
+  private spawnY = 0;
 
   private baseImage: PlayerImage;
   private hairImage: PlayerImage;
@@ -61,6 +64,9 @@ export class Player extends SpriteEntity {
   private item1: number = -1;
   private item2: number = -1;
   private jumping = false;
+  private falling = false;
+  private action = false;
+  private actionFunc: () => void;
   constructor(scene: Scene, x: number, y: number) {
     super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: Player.xOffset, spriteOffsetY: Player.yOffset }), x, y);
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
@@ -71,6 +77,8 @@ export class Player extends SpriteEntity {
     this.inventory = new Inventory(this);
     this.item1 = 0;
     this.item2 = 1;
+    this.spawnX = x;
+    this.spawnY = y;
   }
 
   getItem1() {
@@ -110,14 +118,31 @@ export class Player extends SpriteEntity {
 
     const canMove = scene.entitiesByType(TextboxEntity).length == 0;
 
+    if (!canMove) {
+      this.baseImage.setAnimation('idle_strip9');
+      this.hairImage.setAnimation('idle_strip9');
+      this.toolImage.setAnimation('idle_strip9');
+    }
+
     let moving = false;
     this.imageTimer++;
-    if (this.jumping) {
+    if (this.falling) {
+      this.imageTimer += 4;
+    }
+    if (this.jumping || this.action) {
       if (this.imageIndex < 3 || this.imageIndex > 7) {
         this.imageTimer += 4;
       } else {
         this.imageTimer += 2;
       }
+
+      if (this.action && this.imageIndex == 5) {
+        if (this.actionFunc) {
+          this.actionFunc();
+        }
+        this.actionFunc = undefined;
+      }
+
     }
     if (this.imageTimer > 10) {
       this.imageIndex++;
@@ -125,7 +150,7 @@ export class Player extends SpriteEntity {
     }
     if (canMove) {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
-      if (scene.isControl('left', ControllerState.Held)) {
+      if (scene.isControl('left', ControllerState.Held) && !this.action && !this.falling) {
         this.x--;
         this.flipHorizontal = true;
         moving = true;
@@ -134,7 +159,7 @@ export class Player extends SpriteEntity {
         }
         this.lookDirection = Math.PI;
       }
-      if (scene.isControl('right', ControllerState.Held)) {
+      if (scene.isControl('right', ControllerState.Held) && !this.action && !this.falling) {
         this.x++;
         this.flipHorizontal = false;
         moving = true;
@@ -143,7 +168,7 @@ export class Player extends SpriteEntity {
         }
         this.lookDirection = 0;
       }
-      if (scene.isControl('up', ControllerState.Held)) {
+      if (scene.isControl('up', ControllerState.Held) && !this.action && !this.falling) {
         this.y--;
         moving = true;
         if (collisionEntities.some(wall => wall.collision(this))) {
@@ -151,7 +176,7 @@ export class Player extends SpriteEntity {
         }
         this.lookDirection = 3 * Math.PI / 2;
       }
-      if (scene.isControl('down', ControllerState.Held)) {
+      if (scene.isControl('down', ControllerState.Held) && !this.action && !this.falling) {
         this.y++;
         moving = true;
         if (collisionEntities.some(wall => wall.collision(this))) {
@@ -160,55 +185,107 @@ export class Player extends SpriteEntity {
         this.lookDirection = Math.PI / 2;
       }
 
+      // Do actions
+      let dialog = false;
       const actionNpc = scene.entitiesByType(Npc).filter(npc => npc.collision(this.crosshair))[0];
       if (scene.isControl('action1', ControllerState.Press) && actionNpc) {
         actionNpc.showDialog(scene);
+        dialog = true;
       }
 
-      const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
-      let useItem = -1;
-      if (scene.isControl('action1', ControllerState.Press)) {
-        useItem = this.getItem1();
-      }
-      if (scene.isControl('action2', ControllerState.Press)) {
-        useItem = this.getItem2();
-      }
+      if (!dialog) {
+        const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
+        let useItem = -1;
+        if (scene.isControl('action1', ControllerState.Press)) {
+          useItem = this.getItem1();
+        }
+        if (scene.isControl('action2', ControllerState.Press)) {
+          useItem = this.getItem2();
+        }
 
-      if (actionInterractable instanceof Rock && useItem == 0) {
-        scene.removeEntity(actionInterractable);
-        Sound.Sounds['dig'].play();
-      }
-      if (actionInterractable instanceof Grass && useItem == 1) {
-        scene.removeEntity(actionInterractable);
-        Sound.Sounds['slash'].play();
-      }
+        if (useItem == 0) {
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
 
+            Sound.Sounds['dig'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('dig_strip13');
+          this.hairImage.setAnimation('dig_strip13');
+          this.toolImage.setAnimation('dig_strip13');
+        }
+
+        if (useItem == 1) {
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (useItem == 4 && !this.jumping) {
+          Sound.Sounds['jump'].play();
+          this.jumping = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('jump_strip9');
+          this.hairImage.setAnimation('jump_strip9');
+          this.toolImage.setAnimation('jump_strip9');
+        }
+      }
+      
+
+      // Stop animations
       if (this.jumping && this.imageIndex == this.baseImage.spriteFrames()) {
         this.jumping = false;
       }
 
-      if (useItem == 4 && !this.jumping) {
-        Sound.Sounds['jump'].play();
-        this.baseImage.setAnimation('jump_strip9');
-        this.hairImage.setAnimation('jump_strip9');
-        this.toolImage.setAnimation('jump_strip9');
-        this.jumping = true;
-        this.imageIndex = 0;
-        this.imageTimer = 0;
+      if (this.action && this.imageIndex == this.baseImage.spriteFrames()) {
+        this.action = false;
+      }
+
+      if (this.falling) {
+        this.scaleX -= 0.1;
+        this.scaleY -= 0.1;
+      }
+      if (this.falling && this.imageIndex == this.baseImage.spriteFrames()) {
+        this.falling = false;
+        this.x = this.spawnX;
+        this.y = this.spawnY;
+        this.scaleX = 1;
+        this.scaleY = 1;
+        Sound.Sounds['hurt'].play();
+        this.action = true;
+        this.baseImage.setAnimation('hurt_strip8');
+        this.hairImage.setAnimation('hurt_strip8');
+        this.toolImage.setAnimation('hurt_strip8');
       }
     }
 
-    if (!moving && !this.jumping) {
+    if (!moving && !this.jumping && !this.action && !this.falling) {
       this.transitionTimer = 0;
       this.baseImage.setAnimation('idle_strip9');
       this.hairImage.setAnimation('idle_strip9');
       this.toolImage.setAnimation('idle_strip9');
-    } else if (!this.jumping) {
+    }
+    if (moving && !this.jumping && !this.action && !this.falling) {
       this.baseImage.setAnimation('walk_strip8');
       this.hairImage.setAnimation('walk_strip8');
       this.toolImage.setAnimation('walk_strip8');
     }
 
+    // scene transition
     let transition = false;
     if (this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
       this.transitionTimer++;
@@ -272,6 +349,35 @@ export class Player extends SpriteEntity {
       engine.switchToScene('pause');
       Sound.Sounds['pause'].play();
     }
+
+    if (!this.jumping && ! this.falling) {
+      const holes = scene.entitiesByType(Hole);
+      holes.forEach(hole => {
+        if (hole.collision(this)) {
+          const direction = this.direction(hole);
+          this.x += Math.cos(direction) * 2;
+          this.y += Math.sin(direction) * 2;
+
+          this.x = Math.round(this.x);
+          this.y = Math.round(this.y);
+          const difX = this.x - hole.getPos().x;
+          const difY = this.y - hole.getPos().y;
+
+          if (Math.sqrt(difX * difX + difY * difY) < 3) {
+            this.falling = true;
+            Sound.Sounds['fall'].play();
+            this.imageIndex = 0;
+            this.imageTimer = 0;
+            this.baseImage.setAnimation('roll_strip10');
+            this.hairImage.setAnimation('roll_strip10');
+            this.toolImage.setAnimation('roll_strip10');
+            this.x = hole.getPos().x;
+            this.y = hole.getPos().y;
+          }
+        }
+      });
+    }
+    
 
     this.imageIndex %= this.baseImage.spriteFrames();
   }

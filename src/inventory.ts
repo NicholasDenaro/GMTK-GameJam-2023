@@ -31,7 +31,6 @@ export class Inventory extends SpriteEntity {
     this.grid[0][2] = 4;
     this.grid[0][3] = 5;
 
-    this.grid[1][0] = 5;
     this.grid[2][1] = 6;
     this.grid[3][0] = 7;
 
