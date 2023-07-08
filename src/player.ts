@@ -67,6 +67,8 @@ export class Player extends SpriteEntity {
   private falling = false;
   private action = false;
   private actionFunc: () => void;
+  private carry = false;
+  private carryEntity: Interactable;
   constructor(scene: Scene, x: number, y: number) {
     super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: Player.xOffset, spriteOffsetY: Player.yOffset }), x, y);
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
@@ -203,9 +205,9 @@ export class Player extends SpriteEntity {
           useItem = this.getItem2();
         }
 
-        if (useItem == 0) {
+        if (!this.carry && useItem == 0) { // shovel
           this.actionFunc = () => {
-            if (actionInterractable) {
+            if (actionInterractable instanceof Rock) {
               scene.removeEntity(actionInterractable);
             }
 
@@ -219,7 +221,22 @@ export class Player extends SpriteEntity {
           this.toolImage.setAnimation('dig_strip13');
         }
 
-        if (useItem == 1) {
+        if (!this.carry && useItem == 1) { // sword
+          this.actionFunc = () => {
+            if (actionInterractable instanceof Grass) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (!this.carry && useItem == 2) { // lamp
           this.actionFunc = () => {
             if (actionInterractable) {
               scene.removeEntity(actionInterractable);
@@ -234,7 +251,22 @@ export class Player extends SpriteEntity {
           this.toolImage.setAnimation('attack_strip10');
         }
 
-        if (useItem == 4 && !this.jumping) {
+        if (!this.carry && useItem == 3) { // bow
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (!this.carry && useItem == 4 && !this.jumping) { // feather
           Sound.Sounds['jump'].play();
           this.jumping = true;
           this.imageIndex = 0;
@@ -242,6 +274,93 @@ export class Player extends SpriteEntity {
           this.baseImage.setAnimation('jump_strip9');
           this.hairImage.setAnimation('jump_strip9');
           this.toolImage.setAnimation('jump_strip9');
+        }
+
+        if (!this.carry && useItem == 5) { // compass
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (useItem == 6) { // glove
+          if (!this.carry) { // pickup
+            if (actionInterractable instanceof Grass) {
+              this.actionFunc = () => {
+                if (actionInterractable) {
+                  this.carry = true;
+                  this.carryEntity = actionInterractable;
+                  actionInterractable.setCarriedBy(this);
+                  scene.removeEntity(actionInterractable);
+                }
+                Sound.Sounds['slash'].play();
+              }
+              this.action = true;
+              this.imageIndex = 0;
+              this.imageTimer = 0;
+              this.baseImage.setAnimation('doing_strip8');
+              this.hairImage.setAnimation('doing_strip8');
+              this.toolImage.setAnimation('doing_strip8');
+            }
+          } else { // throw
+            this.carry = false;
+            this.carryEntity.throw(this.lookDirection);
+            this.carryEntity = undefined;
+          }
+          
+        }
+
+        if (!this.carry && useItem == 7) { // mirror
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (!this.carry && useItem == 8) { // harp
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
+        }
+
+        if (!this.carry && useItem == 9) { // bomb
+          this.actionFunc = () => {
+            if (actionInterractable) {
+              scene.removeEntity(actionInterractable);
+            }
+            Sound.Sounds['slash'].play();
+          }
+          this.action = true;
+          this.imageIndex = 0;
+          this.imageTimer = 0;
+          this.baseImage.setAnimation('attack_strip10');
+          this.hairImage.setAnimation('attack_strip10');
+          this.toolImage.setAnimation('attack_strip10');
         }
       }
       
@@ -273,16 +392,26 @@ export class Player extends SpriteEntity {
       }
     }
 
-    if (!moving && !this.jumping && !this.action && !this.falling) {
+    if (!moving && !this.jumping && !this.action && !this.falling && !this.carry) {
       this.transitionTimer = 0;
       this.baseImage.setAnimation('idle_strip9');
       this.hairImage.setAnimation('idle_strip9');
       this.toolImage.setAnimation('idle_strip9');
     }
-    if (moving && !this.jumping && !this.action && !this.falling) {
+
+    if (moving && !this.jumping && !this.action && !this.falling && !this.carry) {
       this.baseImage.setAnimation('walk_strip8');
       this.hairImage.setAnimation('walk_strip8');
       this.toolImage.setAnimation('walk_strip8');
+    }
+
+    if (this.carry) {
+      this.baseImage.setAnimation('carry_strip8');
+      this.hairImage.setAnimation('carry_strip8');
+      this.toolImage.setAnimation('carry_strip8');
+      if (this.carryEntity) {
+        scene.addEntity(this.carryEntity);
+      }
     }
 
     // scene transition
@@ -377,7 +506,6 @@ export class Player extends SpriteEntity {
         }
       });
     }
-    
 
     this.imageIndex %= this.baseImage.spriteFrames();
   }

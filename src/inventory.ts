@@ -3,13 +3,13 @@ import { screenHeight, screenWidth } from "./game";
 import { Player } from "./player";
 
 export const itemMap = [
-  'shovel',
-  'sword',
+  'shovel', // done
+  'sword', // done
   'lamp',
   'bow',
-  'feather',
+  'feather', // done
   'compass',
-  'glove',
+  'glove', // in progress
   'mirror',
   'harp',
   'bomb',
