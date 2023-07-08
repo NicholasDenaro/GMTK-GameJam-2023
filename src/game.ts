@@ -8,6 +8,7 @@ import { Npc } from './npc';
 import { Rock } from './rock';
 import { Grass } from './grass';
 import { Hole } from './hole';
+import { Sign } from './sign';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -115,9 +116,16 @@ new Sound('jump', wavAssetsPremade('./Jump03.wav'));
 new Sound('fall', wavAssetsPremade('./Fall01.wav'));
 new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
 new Sound('explosion', wavAssetsPremade('./Attack02.wav'));
+new Sound('harp', wavAssetsPremade('./GuitarStinger4.wav'));
 new Sound('bow', wavAssets('./bow3.wav'));
 
 export const scenes = new SceneMap();
+
+export const loopTrack = {
+  track: {
+    stop: () => {}
+  }
+}
 
 async function init() {
 
@@ -132,7 +140,7 @@ async function init() {
   Sound.setVolume(0.1);
 
   // Sound.Sounds['start'].play();
-  Sound.Sounds['dayloop'].play();
+  loopTrack.track = Sound.Sounds['dayloop'].play();
 
   await engine.start();
 }
@@ -153,6 +161,10 @@ const keyMap = [
   {
     binding: new ControllerBinding<undefined>('down'),
     keys: ['ArrowDown'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('sprint'),
+    keys: ['Shift'],
   },
   {
     binding: new ControllerBinding<undefined>('action1'),
@@ -239,7 +251,13 @@ function build00(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(0, 7 * 16, 16, 3 * 16));
   // bottom
   scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
-  scene.addEntity(new Player(scene, 48, 48));
+  scene.addEntity(new Sign(32, 32, [
+    'Congratulations on defeating\nthe evil Frogman. The\nKingdom is safe.',
+    'But more people are in\nneed of help. Luckily you\nhave gathered many',
+    'items across your journey.',
+    'Find the right order\nto save everyone\'s day.',
+  ]));
+  scene.addEntity(new Player(scene, 32, 48));
 
 
   scene.addEntity(new Hole(4 * 16, 2 * 16));

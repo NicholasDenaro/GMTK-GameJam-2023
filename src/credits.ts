@@ -8,6 +8,7 @@ export class Credits extends SpriteEntity {
     'General Items - CanariPack 8BIT TopDown',
     '---MUSIC---',
     'Daytime loop - T K I M U S E',
+    'Harp - T K I M U S E',
     '--SOUNDS--',
     'General Effects - CanariPack 8BIT TopDown',
     '---CODE---',

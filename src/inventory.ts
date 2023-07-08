@@ -8,10 +8,10 @@ export const itemMap = [
   'lamp', // done
   'bow', // done
   'feather', // done
-  'compass',
+  'compass', // specifies current coordinates
   'glove', // done - does need to maybe break/damage still
-  'mirror',
-  'harp',
+  'mirror', // warps you back to 0, 0
+  'harp', // makes music
   'bombs', // done
 ];
 

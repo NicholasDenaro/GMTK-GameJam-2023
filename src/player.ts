@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { engine, scenes, screenHeight, screenWidth } from "./game";
+import { engine, loopTrack, scenes, screenHeight, screenWidth } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -13,6 +13,7 @@ import { Fire } from "./fire";
 import { Bomb } from "./bomb";
 import { Explosion } from "./explosion";
 import { Arrow } from "./arrow";
+import { Sign } from "./sign";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -70,6 +71,7 @@ export class Player extends SpriteEntity {
   private jumping = false;
   private falling = false;
   private action = false;
+  private harp = false;
   private damage = false;
   private actionFunc: () => void;
   private carry = false;
@@ -137,10 +139,14 @@ export class Player extends SpriteEntity {
       this.imageTimer += 4;
     }
     if (this.jumping || this.action) {
-      if (this.imageIndex < 3 || this.imageIndex > 7) {
-        this.imageTimer += 4;
+      if (this.harp) {
+        this.imageTimer -= 0.5;
       } else {
-        this.imageTimer += 2;
+        if (this.imageIndex < 3 || this.imageIndex > 7) {
+          this.imageTimer += 4;
+        } else {
+          this.imageTimer += 2;
+        }
       }
 
       if (this.action && this.imageIndex == 5) {
@@ -157,14 +163,16 @@ export class Player extends SpriteEntity {
     }
     if (canMove) {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
+
+      //for (let i = 0; i < (scene.isControl('sprint', ControllerState.Held) ? 2 : 1); i++) {
       if (scene.isControl('left', ControllerState.Held) && !this.action && !this.falling) {
-        this.x--;
-        this.flipHorizontal = true;
-        moving = true;
-        if (collisionEntities.some(wall => wall.collision(this))) {
-          this.x++;
-        }
-        this.lookDirection = Math.PI;
+          this.x--;
+          this.flipHorizontal = true;
+          moving = true;
+          if (collisionEntities.some(wall => wall.collision(this))) {
+            this.x++;
+          }
+          this.lookDirection = Math.PI;
       }
       if (scene.isControl('right', ControllerState.Held) && !this.action && !this.falling) {
         this.x++;
@@ -191,10 +199,11 @@ export class Player extends SpriteEntity {
         }
         this.lookDirection = Math.PI / 2;
       }
+      //}
 
       // Do actions
       let dialog = false;
-      const actionNpc = scene.entitiesByType(Npc).filter(npc => npc.collision(this.crosshair))[0];
+      const actionNpc = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign)].filter(npc => npc.collision(this.crosshair))[0];
       if (scene.isControl('action1', ControllerState.Press) && actionNpc) {
         actionNpc.showDialog(scene);
         dialog = true;
@@ -272,18 +281,7 @@ export class Player extends SpriteEntity {
         }
 
         if (!this.carry && useItem == 5) { // compass
-          this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
-          }
-          this.action = true;
-          this.imageIndex = 0;
-          this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
+          scene.addEntity(new TextboxEntity([`Current Coordinates\n${Math.abs(this.worldCoordsX)}º ${this.worldCoordsX >= 0 ? 'East' : 'West'}, ${Math.abs(this.worldCoordsY)}º ${this.worldCoordsY >= 0 ? 'North': 'South'}`]));
         }
 
         if (useItem == 6) { // glove
@@ -314,33 +312,37 @@ export class Player extends SpriteEntity {
         }
 
         if (!this.carry && useItem == 7) { // mirror
-          this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
+          this.worldCoordsX = 0;
+          this.worldCoordsY = 0;
+          this.x = 32;
+          this.y = 48;
+          this.spawnX = this.x;
+          this.spawnY = this.y;
+          const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
+          if (nextScene) {
+            engine.switchToScene(nextScene.scene);
+            engine.addEntity(nextScene.scene, this);
+            engine.addEntity(nextScene.scene, this.baseImage);
+            engine.addEntity(nextScene.scene, this.hairImage);
+            engine.addEntity(nextScene.scene, this.toolImage);
+            engine.addEntity(nextScene.scene, this.crosshair);
+            engine.addEntity(nextScene.scene, this.statusBar);
           }
-          this.action = true;
-          this.imageIndex = 0;
-          this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
         }
 
         if (!this.carry && useItem == 8) { // harp
-          this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
-          }
+          Sound.setVolume(0.2);
+          Sound.Sounds['harp'].play();
+          Sound.setVolume(0.1);
+          loopTrack.track.stop();
+          loopTrack.track = {stop: () => {}};
           this.action = true;
+          this.harp = true;
           this.imageIndex = 0;
           this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
+          this.baseImage.setAnimation('doing_strip8');
+          this.hairImage.setAnimation('doing_strip8');
+          this.toolImage.setAnimation('doing_strip8');
         }
 
         if (!this.carry && useItem == 9 && scene.entitiesByType(Bomb).length == 0) { // bomb
@@ -349,7 +351,6 @@ export class Player extends SpriteEntity {
         }
       }
       
-
       // Stop animations
       if (this.jumping && this.imageIndex == this.baseImage.spriteFrames()) {
         this.jumping = false;
@@ -357,6 +358,11 @@ export class Player extends SpriteEntity {
 
       if (this.action && this.imageIndex == this.baseImage.spriteFrames()) {
         this.action = false;
+        if (this.harp) {
+          // restart the loop
+          loopTrack.track = Sound.Sounds['dayloop'].play();
+        }
+        this.harp = false;
       }
 
       if (this.damage && this.imageIndex == this.baseImage.spriteFrames()) {
