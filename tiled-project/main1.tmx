@@ -3,8 +3,8 @@
  <tileset firstgid="1" source="../../../Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"/>
  <layer id="1" name="Tile Layer 1" width="10" height="10">
   <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
 67,67,67,67,67,67,67,67,67,67,
-67,67,67,130,67,67,67,67,67,67,
 67,67,67,67,135,67,132,67,67,67,
 67,67,67,132,259,67,67,67,67,67,
 67,130,67,67,67,67,67,134,67,67,
@@ -17,8 +17,8 @@
  </layer>
  <layer id="2" name="Tile Layer 2" width="10" height="10">
   <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
 308,308,308,308,308,308,308,308,308,308,
-308,0,0,0,0,0,0,0,0,0,
 308,228,0,222,0,0,0,226,0,0,
 308,0,0,0,0,0,0,0,0,0,
 308,0,0,0,0,0,0,0,0,0,

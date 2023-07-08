@@ -1,7 +1,9 @@
-import { ControllerState, Painter2D, Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
+import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { engine, scenes, screenHeight, screenWidth } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
+import { Npc } from "./npc";
+import { Interactable } from "./interactable";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -10,7 +12,7 @@ export class PlayerImage extends SpriteEntity {
 
   tick(scene: Scene): void | Promise<void> {
     this.x = this.player.getPos().x;
-    this.y = this.player.getPos().y;
+    this.y = this.player.getPos().y - 1;
     this.imageIndex = this.player.imageIndex;
     this.flipHorizontal = this.player.flipHorizontal;
   }
@@ -25,6 +27,17 @@ export class PlayerImage extends SpriteEntity {
   }
 }
 
+export class Cursor extends SpriteEntity {
+  constructor(private player: Player) {
+    super(new SpritePainter(Sprite.Sprites['crosshair'], {spriteWidth: 8, spriteHeight: 8, spriteOffsetX: 4, spriteOffsetY: 4}));
+  }
+
+  tick(scene: Scene): void | Promise<void> {
+    this.x = this.player.getPos().x + 3 + 16 * Math.cos(this.player.lookDirection);
+    this.y = this.player.getPos().y + 3 + 16 * Math.sin(this.player.lookDirection);
+  }
+}
+
 export class Player extends SpriteEntity {
   private pause: boolean;
   private worldCoordsX = 0;
@@ -32,11 +45,14 @@ export class Player extends SpriteEntity {
   private baseImage: PlayerImage;
   private hairImage: PlayerImage;
   private toolImage: PlayerImage;
+  private crosshair: Cursor;
+  public lookDirection: number = 0;
   constructor(scene: Scene, x: number, y: number) {
-    super(new SpritePainter(() => { }, { spriteWidth: 16, spriteHeight: 16 }), x, y);
+    super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: -4, spriteOffsetY: -7 }), x, y);
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new PlayerImage(this, 'bowlhair', 'idle_strip9'));
     scene.addEntity(this.toolImage = new PlayerImage(this, 'tools', 'idle_strip9'));
+    scene.addEntity(this.crosshair = new Cursor(this));
   }
 
   getWorldCoords(): {x: number, y: number} {
@@ -63,39 +79,51 @@ export class Player extends SpriteEntity {
       this.imageTimer = 0;
     }
     if (canMove) {
+      const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
       if (scene.isControl('left', ControllerState.Held)) {
         this.x--;
         this.flipHorizontal = true;
         moving = true;
-        if (scene.entitiesByType(Wall).some(wall => wall.collision(this))) {
+        if (collisionEntities.some(wall => wall.collision(this))) {
           this.x++;
         }
+        this.lookDirection = Math.PI;
       }
       if (scene.isControl('right', ControllerState.Held)) {
         this.x++;
         this.flipHorizontal = false;
         moving = true;
-        if (scene.entitiesByType(Wall).some(wall => wall.collision(this))) {
+        if (collisionEntities.some(wall => wall.collision(this))) {
           this.x--;
         }
+        this.lookDirection = 0;
       }
       if (scene.isControl('up', ControllerState.Held)) {
         this.y--;
         moving = true;
-        if (scene.entitiesByType(Wall).some(wall => wall.collision(this))) {
+        if (collisionEntities.some(wall => wall.collision(this))) {
           this.y++;
         }
+        this.lookDirection = 3 * Math.PI / 2;
       }
       if (scene.isControl('down', ControllerState.Held)) {
         this.y++;
         moving = true;
-        if (scene.entitiesByType(Wall).some(wall => wall.collision(this))) {
+        if (collisionEntities.some(wall => wall.collision(this))) {
           this.y--;
         }
+        this.lookDirection = Math.PI / 2;
       }
 
-      if (scene.isControl('action1', ControllerState.Press)) {
-        scene.addEntity(new TextboxEntity());
+      const actionNpc = scene.entitiesByType(Npc).filter(npc => npc.collision(this.crosshair))[0];
+      if (scene.isControl('action1', ControllerState.Press) && actionNpc) {
+        actionNpc.showDialog(scene);
+      }
+
+
+      const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
+      if (scene.isControl('action1', ControllerState.Press) && actionInterractable) {
+        scene.removeEntity(actionInterractable);
       }
     }
 
@@ -139,14 +167,14 @@ export class Player extends SpriteEntity {
       if (this.transitionTimer >= 10) {
         this.worldCoordsY++;
         transition = true;
-        this.y = 0;
+        this.y = 16;
         this.transitionTimer = 0;
       }
     }
 
-    if (this.y < 0) {
+    if (this.y < 16) {
       this.transitionTimer++;
-      this.y = 0;
+      this.y = 16;
       if (this.transitionTimer >= 10) {
         this.worldCoordsY--;
         transition = true;
@@ -162,11 +190,13 @@ export class Player extends SpriteEntity {
       engine.addEntity(nextScene.scene, this.baseImage);
       engine.addEntity(nextScene.scene, this.hairImage);
       engine.addEntity(nextScene.scene, this.toolImage);
+      engine.addEntity(nextScene.scene, this.crosshair);
     }
 
     if (engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
       engine.addEntity('pause', this);
       engine.switchToScene('pause');
+      Sound.Sounds['pause'].play();
     }
 
     this.imageIndex %= this.baseImage.spriteFrames();
