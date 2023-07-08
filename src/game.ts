@@ -7,6 +7,21 @@ import { SceneMap } from './scene-map';
 import { Npc } from './npc';
 import { Rock } from './rock';
 
+
+const rfont = require.context('../assets/premade', false, /\.ttf$/);
+const sfont = rfont('./BetterPixels.ttf');
+console.log(sfont);
+const font = new FontFace('game', `url(${sfont})`);
+font.load().then(() => {
+  console.log('loaded font');
+  document.fonts.add(font);
+  },
+  (err) => {
+    console.error(err);
+  }
+);
+
+
 export const screenWidth = 160;
 export const screenHeight = 160;
 const scale = 3;
@@ -25,8 +40,20 @@ new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.p
 new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
+new Sprite('coin', spriteAssetsPremade('./item8BIT_coin.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('shovel', spriteAssetsPremade('./item8BIT_shovel.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('sword', spriteAssetsPremade('./item8BIT_sword.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('bomb', spriteAssetsPremade('./item8BIT_bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('bow', spriteAssetsPremade('./item8BIT_bow.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('feather', spriteAssetsPremade('./item8BIT_feather.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('glove', spriteAssetsPremade('./item8BIT_glove.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('compass', spriteAssetsPremade('./item8BIT_compass.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('lamp', spriteAssetsPremade('./item8BIT_lamp.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('mirror', spriteAssetsPremade('./item8BIT_mirror.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('harp', spriteAssetsPremade('./item8BIT_harp.png'), { spriteWidth: 16, spriteHeight: 16 });
 const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
 new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
@@ -57,6 +84,7 @@ async function init() {
   engine.addScene('main2', scene2);
   engine.addScene('pause', scenePause);
 
+  scenePause.addEntity(new BackgroundEntity('inventory'));
   scenePause.addEntity(new PauseMenu());
 
   scene.addEntity(new BackgroundEntity('main1'));
@@ -85,7 +113,7 @@ async function init() {
 
   scene2.addEntity(new Npc(scene2, 7 * 16, 7 * 16,
     ['I need a shovel to dig my\ngarden. Could you give\nme yours?', {options: ['keep shovel', 'give shovel']}],
-    ['Thank you, now it\'s\ntime to get planting.']));
+    ['Thank you, now it\'s\ntime to get planting.'], 0));
 
   engine.switchToScene('main');
 

@@ -132,3 +132,5 @@ dist
 
 assets/premade
 tiled-project/*.png
+
+dist.zip

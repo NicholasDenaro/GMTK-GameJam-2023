@@ -5,8 +5,11 @@ export class Credits extends SpriteEntity {
   private text: string[] = [
     '----ART----',
     'Sunnyside World - @DanielDiggle',
+    'General Items - CanariPack 8BIT TopDown',
     '---MUSIC---',
     'Daytime loop - T K I M U S E',
+    '--SOUNDS--',
+    'General Effects - CanariPack 8BIT TopDown',
     '---CODE---',
     'Nicholas (nDev) Denaro'
   ];

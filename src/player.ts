@@ -4,6 +4,9 @@ import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
 import { Interactable } from "./interactable";
+import { StatusBar } from "./status-bar";
+import { Rock } from "./rock";
+import { Inventory } from "./inventory";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -42,17 +45,43 @@ export class Player extends SpriteEntity {
   private pause: boolean;
   private worldCoordsX = 0;
   private worldCoordsY = 0;
+
   private baseImage: PlayerImage;
   private hairImage: PlayerImage;
   private toolImage: PlayerImage;
   private crosshair: Cursor;
+  private statusBar: StatusBar;
+  private inventory: Inventory;
+
   public lookDirection: number = 0;
+  private item1: number = -1;
+  private item2: number = -1;
   constructor(scene: Scene, x: number, y: number) {
     super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: -4, spriteOffsetY: -7 }), x, y);
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new PlayerImage(this, 'bowlhair', 'idle_strip9'));
     scene.addEntity(this.toolImage = new PlayerImage(this, 'tools', 'idle_strip9'));
     scene.addEntity(this.crosshair = new Cursor(this));
+    scene.addEntity(this.statusBar = new StatusBar(this));
+    this.inventory = new Inventory(this);
+    this.item1 = 0;
+    this.item2 = 1;
+  }
+
+  getItem1() {
+    return this.item1;
+  }
+
+  getItem2() {
+    return this.item2;
+  }
+
+  setItem1(item: number) {
+    this.item1 = item;
+  }
+
+  setItem2(item: number) {
+    this.item2 = item;
   }
 
   getWorldCoords(): {x: number, y: number} {
@@ -120,10 +149,17 @@ export class Player extends SpriteEntity {
         actionNpc.showDialog(scene);
       }
 
-
       const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
       if (scene.isControl('action1', ControllerState.Press) && actionInterractable) {
-        scene.removeEntity(actionInterractable);
+        if (actionInterractable instanceof Rock && this.getItem1() == 0) {
+          scene.removeEntity(actionInterractable);
+        }
+      }
+
+      if (scene.isControl('action2', ControllerState.Press) && actionInterractable) {
+        if (actionInterractable instanceof Rock && this.getItem2() == 0) {
+          scene.removeEntity(actionInterractable);
+        }
       }
     }
 
@@ -191,14 +227,27 @@ export class Player extends SpriteEntity {
       engine.addEntity(nextScene.scene, this.hairImage);
       engine.addEntity(nextScene.scene, this.toolImage);
       engine.addEntity(nextScene.scene, this.crosshair);
+      engine.addEntity(nextScene.scene, this.statusBar);
     }
 
     if (engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
       engine.addEntity('pause', this);
+      engine.addEntity('pause', this.statusBar);
+      engine.addEntity('pause', this.inventory);
       engine.switchToScene('pause');
       Sound.Sounds['pause'].play();
     }
 
     this.imageIndex %= this.baseImage.spriteFrames();
+  }
+
+  removeItem(item: number) {
+    if (this.item1 == item) {
+      this.item1 = -1;
+    }
+    if (this.item2 == item) {
+      this.item2 = -1;
+    }
+    this.inventory.removeItem(item);
   }
 }

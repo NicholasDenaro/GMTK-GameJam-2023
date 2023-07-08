@@ -3,18 +3,6 @@ import { screenWidth } from "./game";
 import { Npc } from "./npc";
 import { Player } from "./player";
 
-const rfont = require.context('../assets/premade', false, /\.ttf$/);
-const sfont = rfont('./BetterPixels.ttf');
-console.log(sfont);
-const font = new FontFace('game', `url(${sfont})`);
-font.load().then(() => {
-  console.log('loaded font');
-  document.fonts.add(font);
-},
-(err) => {
-  console.error(err);
-});
-
 export class TextboxEntity extends SpriteEntity {
   constructor(private dialog: (string | { options: string[] })[], private target: Npc) {
     super(new SpritePainter(ctx => this.draw(ctx), {spriteWidth: screenWidth, spriteHeight: 48}));

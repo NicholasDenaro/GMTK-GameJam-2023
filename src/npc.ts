@@ -29,7 +29,7 @@ export class Npc extends SpriteEntity {
   private hairImage: NpcImage;
   private toolImage: NpcImage;
   private obtainedItem: boolean = false;
-  constructor(scene: Scene, x: number, y: number, private dialog: (string|{options:string[]})[], private postDialog: string[]) {
+  constructor(scene: Scene, x: number, y: number, private dialog: (string|{options:string[]})[], private postDialog: string[], private requestedItem: number) {
     super(new SpritePainter(() => { }, {spriteWidth: 16, spriteHeight: 16}), x, y);
     scene.addEntity(this.baseImage = new NpcImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new NpcImage(this, 'longhair', 'idle_strip9'));
@@ -60,5 +60,6 @@ export class Npc extends SpriteEntity {
 
   giveItem(player: Player) {
     this.obtainedItem = true;
+    player.removeItem(this.requestedItem);
   }
 }
