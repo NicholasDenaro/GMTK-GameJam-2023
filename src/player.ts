@@ -42,12 +42,15 @@ export class PlayerImage extends SpriteEntity {
 
 export class Cursor extends SpriteEntity {
   constructor(private player: Player) {
-    super(new SpritePainter(Sprite.Sprites['crosshair'], {spriteWidth: 8, spriteHeight: 8, spriteOffsetX: 4, spriteOffsetY: 4}));
+    super(new SpritePainter(Sprite.Sprites['crosshair'], {spriteWidth: 8, spriteHeight: 8, spriteOffsetX: -4, spriteOffsetY: -4}));
   }
 
   tick(scene: Scene): void | Promise<void> {
-    this.x = this.player.getPos().x + 3 + 16 * Math.cos(this.player.lookDirection);
-    this.y = this.player.getPos().y + 3 + 16 * Math.sin(this.player.lookDirection);
+    this.x = this.player.getPos().x + 4 + 16 * Math.cos(this.player.lookDirection);
+    this.y = this.player.getPos().y + 4 + 12 * Math.sin(this.player.lookDirection);
+    if (this.player.lookDirection == 0 || this.player.lookDirection == Math.PI) {
+      this.y += 2;
+    }
   }
 }
 
@@ -214,7 +217,8 @@ export class Player extends SpriteEntity {
       }
 
       if (!dialog) {
-        const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
+        const actionInterractables = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair));
+        const actionInterractable = actionInterractables[0];
         let useItem = -1;
         if (scene.isControl('action1', ControllerState.Press)) {
           useItem = this.getItem1();
@@ -241,9 +245,12 @@ export class Player extends SpriteEntity {
 
         if (!this.carry && useItem == 1) { // sword
           this.actionFunc = () => {
-            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot) {
-              scene.removeEntity(actionInterractable);
-            }
+            actionInterractables.forEach(interactable => {
+              if (interactable instanceof Grass || interactable instanceof Pot) {
+                scene.removeEntity(interactable);
+              }
+            })
+            
             Sound.Sounds['slash'].play();
           }
           this.action = true;
@@ -493,7 +500,7 @@ export class Player extends SpriteEntity {
     // falling
     if (!this.jumping && !this.falling && !usedMirror) {
       const holes = scene.entitiesByType(Hole);
-      holes.forEach(hole => {
+      for (let hole of holes) {
         if (hole.collision(this)) {
           const direction = this.direction(hole);
           this.x += Math.cos(direction) * 2;
@@ -515,8 +522,9 @@ export class Player extends SpriteEntity {
             this.x = hole.getPos().x;
             this.y = hole.getPos().y;
           }
+          break;
         }
-      });
+      }
 
       if (!this.jumping) {
         const doors = scene.entitiesByType(Door);

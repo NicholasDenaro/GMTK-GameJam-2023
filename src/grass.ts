@@ -6,5 +6,4 @@ export class Grass extends Interactable {
     super(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), x, y);
     this.imageIndex = 701;
   }
-
 }

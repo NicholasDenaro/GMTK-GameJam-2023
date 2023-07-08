@@ -7,7 +7,7 @@ import { Pot } from "./pot";
 
 export class Arrow extends SpriteEntity {
   constructor(x: number, y: number, private flyDirection: number) {
-    super(new SpritePainter(Sprite.Sprites['arrow'], {spriteWidth: 16, spriteHeight: 2, spriteOffsetX: -8, spriteOffsetY: -8}), x, y);
+    super(new SpritePainter(Sprite.Sprites['arrow'], {spriteWidth: 4, spriteHeight: 4, spriteOffsetX: -8, spriteOffsetY: -8}), x, y);
     if (flyDirection == 0 ) {
       this.imageIndex = 0;
     } else if (flyDirection == Math.PI) {

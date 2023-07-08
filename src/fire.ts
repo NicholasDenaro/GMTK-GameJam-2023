@@ -2,6 +2,7 @@ import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { FPS } from "./game";
 import { Interactable } from "./interactable";
 import { Grass } from "./grass";
+import { Tree } from "./tree";
 
 export class Fire extends SpriteEntity {
   private timer = FPS;
@@ -21,7 +22,7 @@ export class Fire extends SpriteEntity {
     this.imageIndex %= Sprite.Sprites['fire2'].getGrid().columns;
     if (this.first) {
       for (let interactable of scene.entitiesByType(Interactable)) {
-        if (interactable instanceof Grass && interactable.collision(this)) {
+        if ((interactable instanceof Grass || interactable instanceof Tree) && interactable.collision(this)) {
           this.burningEntity = interactable;
           this.x = interactable.getPos().x + 4;
           this.y = interactable.getPos().y;

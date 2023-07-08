@@ -2,6 +2,7 @@ import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 import { Grass } from "./grass";
 import { Pot } from "./pot";
+import { Barrel } from "./barrel";
 
 export class Explosion extends SpriteEntity {
   private first = true;
@@ -13,7 +14,7 @@ export class Explosion extends SpriteEntity {
   tick(scene: Scene): void | Promise<void> {
     if (this.first) {
       scene.entitiesByType(Interactable).forEach(interactable => {
-        if (interactable instanceof Grass || interactable instanceof Pot) {
+        if (interactable instanceof Grass || interactable instanceof Pot || interactable instanceof Barrel) {
           if (interactable.collision(this)) {
             scene.removeEntity(interactable);
           }

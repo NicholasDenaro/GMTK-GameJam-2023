@@ -13,7 +13,7 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 78.25327510917032,
+                "x": 78.10618248678466,
                 "y": 87.59365663065962
             }
         },
@@ -29,15 +29,15 @@
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 92.75,
-                "y": 96.125
+                "x": 92.5,
+                "y": 95.875
             }
         },
         "main2.tmx": {
             "scale": 4.476875,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 69.91484015077482,
+                "x": 69.24472986178976,
                 "y": 116.04076504257995
             }
         },
@@ -45,8 +45,32 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 80.31257182256954,
+                "x": 80.01838657779822,
                 "y": 86.56400827396003
+            }
+        },
+        "main4.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 79.62480458572172,
+                "y": 104.2904290429043
+            }
+        },
+        "main5.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 69.8975160673962,
+                "y": 101.65016501650165
+            }
+        },
+        "main6.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 85.60013896126455,
+                "y": 81.77870418620809
             }
         },
         "overworld.tsx": {
@@ -58,7 +82,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 86.93173982992417,
-                "y": 94.21282463801425
+                "y": 94.0657320156286
             }
         }
     },
@@ -77,10 +101,14 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
-        "main2.tmx",
         "main1.tmx",
+        "main2.tmx",
+        "main6.tmx",
         "main3.tmx",
+        "main4.tmx",
+        "main5.tmx",
         "underground1.tmx",
+        "house1.tmx",
         "overworld.tsx",
         "inventory.tmx",
         "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"

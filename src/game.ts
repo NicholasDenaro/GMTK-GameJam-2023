@@ -11,6 +11,8 @@ import { Hole } from './hole';
 import { Sign } from './sign';
 import { Pot } from './pot';
 import { Door } from './door';
+import { Tree } from './tree';
+import { Barrel } from './barrel';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -45,7 +47,7 @@ new Sprite('longhair_idle_strip9', spriteAssetsPremade('./longhair_idle_strip9.p
 new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('spikeyhair_idle_strip9', spriteAssetsPremade('./spikeyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('mophair_idle_strip9', spriteAssetsPremade('./mophair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('shorthair_idle_strip9', spriteAssetsPremade('./shorthair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 //walk
 new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -88,6 +90,10 @@ new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png')
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main4', spriteAssetsPremade('./main4.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main5', spriteAssetsPremade('./main5.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main6', spriteAssetsPremade('./main6.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main7', spriteAssetsPremade('./main7.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
@@ -236,12 +242,20 @@ function buildMap(view: View) {
   builde10(view, keyController);
   buildHousee10(view, keyController);
   buildw10(view, keyController);
+  buildw20(view, keyController);
+  builde1n1(view, keyController);
+  builde1n2(view, keyController);
+  builde1s1(view, keyController);
   buildUndergroundw10(view, keyController);
 
   // build layout
   scenes.setScene('0,0', 0, 0);
   scenes.setScene('1,0', 1, 0);
   scenes.setScene('-1,0', -1, 0);
+  scenes.setScene('-2,0', -2, 0);
+  scenes.setScene('1,-1', 1, -1);
+  scenes.setScene('1,-2', 1, -2);
+  scenes.setScene('1,1', 1, 1);
 
   engine.addScene('pause', scenePause);
 
@@ -468,10 +482,144 @@ function buildHousee10(view: View, keyController: KeyboardController) {
   scene.addEntity(new Pot(8 * 16, 6 * 16));
 
   scene.addEntity(new Npc(scene, 7 * 16, 3 * 16,
-    ['You destroyed my pot collection.'], [], 0, 'mophair'));
+    ['You destroyed my\npot collection.', 'Give me your compass, so\nI can go searching for more.', {options: ['Keep compass', 'Give compass']}], ['Alright, now scram!'], 5, 'mophair'));
 
   engine.addScene('h_1,0', scene);
 }
 
+
+function builde1n1(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('main4'));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 16, 2 * 16, 16));
+  scene.addEntity(new Wall(3 * 16, screenHeight - 16, screenWidth, 16));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //left
+  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  //top
+  scene.addEntity(new Wall(0, 16, screenWidth - 32, 16));
+
+  //fence
+  scene.addEntity(new Wall(16, 32, 7 * 16, 16));
+  scene.addEntity(new Wall(16, 32, 16, 5 * 16));
+  scene.addEntity(new Wall(2 * 16, 6 * 16, 32, 16));
+  scene.addEntity(new Wall(5 * 16, 6 * 16, screenWidth - 32, 16));
+
+  //graves
+  scene.addEntity(new Wall(3 * 16, 3 * 16, 16, 16));
+  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 16));
+  scene.addEntity(new Wall(7 * 16, 3 * 16, 16, 16));
+
+  scene.addEntity(new Tree(8 * 16, 1 * 16));
+
+  // well
+  scene.addEntity(new Wall(7 * 16, 7 * 16, 32, 32));
+
+  engine.addScene('1,-1', scene);
+}
+
+function builde1n2(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('main5'));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 32, 8 * 16, 32));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //left
+  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  //top
+  scene.addEntity(new Wall(0, 5 * 16, screenWidth, 16));
+
+  scene.addEntity(new Npc(scene, 1 * 16, 6 * 16, [
+    'The drawbridge is up,\nsomeone must be playing\na prank on me.',
+    'If you give me your bow,\nI might be able to\nshoot the switch.',
+    {options: ['Keep bow', 'Give bow']}
+  ],
+  [
+    'Thanks, you really saved me there.'
+  ], 3, 'curlyhair'))
+
+  // crate
+  scene.addEntity(new Wall(1 * 16, 7 * 16, 16, 16));
+
+  engine.addScene('1,-2', scene);
+}
+
+function builde1s1(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('main6'));
+  //left
+  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
+
+  // holes
+  scene.addEntity(new Hole(1 * 16, 4 * 16));
+  scene.addEntity(new Hole(2 * 16, 4 * 16));
+  scene.addEntity(new Hole(3 * 16, 4 * 16));
+
+  //mountain
+  scene.addEntity(new Wall(4 * 16, 2 * 16, 6 * 16, 6 * 16));
+
+  scene.addEntity(new Npc(scene, 3 * 16, 7 * 16,
+    ['A rock slide is blocking\nthe way to my flower.', 'Could I have your bombs?', { options: ['keep bombs', 'give bombs'] }],
+    ['Let me gather my nerves.'], 9));
+
+  engine.addScene('1,1', scene);
+}
+
+
+function buildw20(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+
+  scene.addController(keyController);
+  scene.addEntity(new BackgroundEntity('main7'));
+  // top
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  // right/bottom
+  scene.addEntity(new Wall(screenWidth - 32, screenHeight - 32, 32, 32));
+
+  // house
+  scene.addEntity(new Wall(4 * 16, 3 * 16, 3 * 16, 3 * 16));
+
+  // fence
+  scene.addEntity(new Wall(2 * 16 + 8, 3 * 16, 3 * 16, 1 * 16));
+  scene.addEntity(new Wall(2 * 16 + 8, 4 * 16, 1 * 16, 1 * 16));
+  scene.addEntity(new Wall(2 * 16 + 8, 5 * 16, 3 * 16, 1 * 16));
+
+  //campfire
+  scene.addEntity(new Wall(3 * 16, 6 * 16, 2 * 16, 2 * 16));
+
+  scene.addEntity(new Barrel(1 * 16 + 8, 3 * 16));
+  scene.addEntity(new Barrel(1 * 16 + 8, 4 * 16));
+  scene.addEntity(new Barrel(1 * 16 + 8, 5 * 16));
+
+  scene.addEntity(new Npc(scene, 5 * 16, 6 * 16,
+    [
+      'I put the barrels and\nfence there while he was\nnapping.',
+      'Serves him right for\nsleeping on the job.'
+    ],[], -1, 'spikeyhair'));
+
+  scene.addEntity(new Npc(scene, 3 * 16, 4 * 16,
+    [
+      'I don\'t know how I got\nstuck. Could you spare\nyour mirror?',
+      {options: ['Keep mirror', 'Give mirror']}
+    ],
+    [
+      'Thank you!'
+    ], 7, 'shorthair'));
+
+  engine.addScene('-2,0', scene);
+}
 
 init();
