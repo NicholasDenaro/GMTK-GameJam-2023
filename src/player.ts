@@ -10,6 +10,8 @@ import { Inventory } from "./inventory";
 import { Grass } from "./grass";
 import { Hole } from "./hole";
 import { Fire } from "./fire";
+import { Bomb } from "./bomb";
+import { Explosion } from "./explosion";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -67,6 +69,7 @@ export class Player extends SpriteEntity {
   private jumping = false;
   private falling = false;
   private action = false;
+  private damage = false;
   private actionFunc: () => void;
   private carry = false;
   private carryEntity: Interactable;
@@ -347,19 +350,9 @@ export class Player extends SpriteEntity {
           this.toolImage.setAnimation('attack_strip10');
         }
 
-        if (!this.carry && useItem == 9) { // bomb
-          this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
-          }
-          this.action = true;
-          this.imageIndex = 0;
-          this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
+        if (!this.carry && useItem == 9 && scene.entitiesByType(Bomb).length == 0) { // bomb
+          Sound.Sounds['dig'].play();
+          scene.addEntity(new Bomb(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4));
         }
       }
       
@@ -371,6 +364,10 @@ export class Player extends SpriteEntity {
 
       if (this.action && this.imageIndex == this.baseImage.spriteFrames()) {
         this.action = false;
+      }
+
+      if (this.damage && this.imageIndex == this.baseImage.spriteFrames()) {
+        this.damage = false;
       }
 
       if (this.falling) {
@@ -514,6 +511,32 @@ export class Player extends SpriteEntity {
           }
         }
       });
+
+      if (!this.jumping && !this.damage) {
+        const explosions = scene.entitiesByType(Explosion);
+        explosions.forEach(explosion => {
+          if (explosion.collision(this)) {
+            Sound.Sounds['hurt'].play();
+            this.action = true;
+            this.damage = true;
+            this.baseImage.setAnimation('hurt_strip8');
+            this.hairImage.setAnimation('hurt_strip8');
+            this.toolImage.setAnimation('hurt_strip8');
+            const dir = explosion.direction(this);
+            const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
+            for (let i = 0; i < 8; i++) {
+              this.x += Math.cos(dir);
+              if (collisionEntities.some(entity => entity.collision(this))) {
+                this.x -= Math.cos(dir);
+              }
+              this.y += Math.sin(dir);
+              if (collisionEntities.some(entity => entity.collision(this))) {
+                this.y -= Math.sin(dir);
+              }
+            }
+          }
+        })
+      }
     }
 
     this.imageIndex %= this.baseImage.spriteFrames();

@@ -85,7 +85,7 @@ new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, sprit
 new Sprite('coin', spriteAssetsPremade('./item8BIT_coin.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('shovel', spriteAssetsPremade('./item8BIT_shovel.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('sword', spriteAssetsPremade('./item8BIT_sword.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('bomb', spriteAssetsPremade('./item8BIT_bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('bombs', spriteAssetsPremade('./item8BIT_bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('bow', spriteAssetsPremade('./item8BIT_bow.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('feather', spriteAssetsPremade('./item8BIT_feather.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('glove', spriteAssetsPremade('./item8BIT_glove.png'), { spriteWidth: 16, spriteHeight: 16 });
@@ -97,6 +97,9 @@ new Sprite('heart', spriteAssetsPremade('./item8BIT_heart.png'), { spriteWidth: 
 
 new Sprite('fire1', spriteAssetsPremade('./spr_deco_fire_01_strip4.png'), { spriteWidth: 5, spriteHeight: 10 });
 new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spriteWidth: 8, spriteHeight: 12 });
+
+new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
 const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
 new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
@@ -108,6 +111,7 @@ new Sound('dig', wavAssetsPremade('./Attack02.wav'));
 new Sound('jump', wavAssetsPremade('./Jump03.wav'));
 new Sound('fall', wavAssetsPremade('./Fall01.wav'));
 new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
+new Sound('explosion', wavAssetsPremade('./Attack02.wav'));
 
 export const scenes = new SceneMap();
 

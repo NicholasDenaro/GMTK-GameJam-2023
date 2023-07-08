@@ -12,7 +12,7 @@ export const itemMap = [
   'glove', // done - does need to maybe break/damage still
   'mirror',
   'harp',
-  'bomb',
+  'bombs', // done
 ];
 
 export class Inventory extends SpriteEntity {
@@ -44,25 +44,25 @@ export class Inventory extends SpriteEntity {
     if (scene.isControl('left', ControllerState.Press)) {
       this.cursorX--;
       if (this.cursorX < 0) {
-        this.cursorX = 0;
+        this.cursorX = 3;
       }
     }
     if (scene.isControl('right', ControllerState.Press)) {
       this.cursorX++;
       if (this.cursorX > 3) {
-        this.cursorX = 3;
+        this.cursorX = 0;
       }
     }
     if (scene.isControl('up', ControllerState.Press)) {
       this.cursorY--;
       if (this.cursorY < 0) {
-        this.cursorY = 0;
+        this.cursorY = 3;
       }
     }
     if (scene.isControl('down', ControllerState.Press)) {
       this.cursorY++;
       if (this.cursorY > 3) {
-        this.cursorY = 3;
+        this.cursorY = 0;
       }
     }
     if (scene.isControl('action1', ControllerState.Press)) {
