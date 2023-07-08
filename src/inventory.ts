@@ -6,7 +6,7 @@ export const itemMap = [
   'shovel', // done
   'sword', // done
   'lamp', // done
-  'bow',
+  'bow', // done
   'feather', // done
   'compass',
   'glove', // done - does need to maybe break/damage still

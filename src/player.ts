@@ -12,6 +12,7 @@ import { Hole } from "./hole";
 import { Fire } from "./fire";
 import { Bomb } from "./bomb";
 import { Explosion } from "./explosion";
+import { Arrow } from "./arrow";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -253,19 +254,11 @@ export class Player extends SpriteEntity {
           this.toolImage.setAnimation('doing_strip8');
         }
 
-        if (!this.carry && useItem == 3) { // bow
-          this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
-          }
-          this.action = true;
-          this.imageIndex = 0;
-          this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
+        if (!this.carry && useItem == 3 && scene.entitiesByType(Arrow).length == 0) { // bow
+          Sound.setVolume(0.4);
+          Sound.Sounds['bow'].play();
+          Sound.setVolume(0.1);
+          scene.addEntity(new Arrow(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4, this.lookDirection));
         }
 
         if (!this.carry && useItem == 4 && !this.jumping) { // feather

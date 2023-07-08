@@ -100,6 +100,9 @@ new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spri
 
 new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
+new Sprite('arrow', spriteAssets('./arrow.png'), { spriteWidth: 16, spriteHeight: 16 });
+
+
 const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
 new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
@@ -112,6 +115,7 @@ new Sound('jump', wavAssetsPremade('./Jump03.wav'));
 new Sound('fall', wavAssetsPremade('./Fall01.wav'));
 new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
 new Sound('explosion', wavAssetsPremade('./Attack02.wav'));
+new Sound('bow', wavAssets('./bow3.wav'));
 
 export const scenes = new SceneMap();
 
