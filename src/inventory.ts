@@ -5,11 +5,11 @@ import { Player } from "./player";
 export const itemMap = [
   'shovel', // done
   'sword', // done
-  'lamp',
+  'lamp', // done
   'bow',
   'feather', // done
   'compass',
-  'glove', // in progress
+  'glove', // done - does need to maybe break/damage still
   'mirror',
   'harp',
   'bomb',

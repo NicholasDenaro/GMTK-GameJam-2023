@@ -9,6 +9,7 @@ import { Rock } from "./rock";
 import { Inventory } from "./inventory";
 import { Grass } from "./grass";
 import { Hole } from "./hole";
+import { Fire } from "./fire";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -238,17 +239,15 @@ export class Player extends SpriteEntity {
 
         if (!this.carry && useItem == 2) { // lamp
           this.actionFunc = () => {
-            if (actionInterractable) {
-              scene.removeEntity(actionInterractable);
-            }
-            Sound.Sounds['slash'].play();
+            scene.addEntity(new Fire(this.crosshair.getPos().x, this.crosshair.getPos().y));
+            Sound.Sounds['dig'].play();
           }
           this.action = true;
           this.imageIndex = 0;
           this.imageTimer = 0;
-          this.baseImage.setAnimation('attack_strip10');
-          this.hairImage.setAnimation('attack_strip10');
-          this.toolImage.setAnimation('attack_strip10');
+          this.baseImage.setAnimation('doing_strip8');
+          this.hairImage.setAnimation('doing_strip8');
+          this.toolImage.setAnimation('doing_strip8');
         }
 
         if (!this.carry && useItem == 3) { // bow
@@ -419,56 +418,66 @@ export class Player extends SpriteEntity {
     if (this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
       this.transitionTimer++;
       this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
-      if (this.transitionTimer >= 10) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX + 1, this.worldCoordsY)) {
         this.worldCoordsX++;
         transition = true;
         this.x = 0;
         this.transitionTimer = 0;
+        this.spawnX = this.x;
+        this.spawnY = this.y;
       }
     }
 
     if (this.x - Player.xOffset < 0) {
       this.transitionTimer++;
       this.x = Player.xOffset;
-      if (this.transitionTimer >= 10) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX - 1, this.worldCoordsY)) {
         this.worldCoordsX--;
         transition = true;
         this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
         this.transitionTimer = 0;
+        this.spawnX = this.x;
+        this.spawnY = this.y;
       }
     }
 
     if (this.y + this.painter.rectangle().height - Player.yOffset > screenHeight) {
       this.transitionTimer++;
       this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
-      if (this.transitionTimer >= 10) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY + 1)) {
         this.worldCoordsY++;
         transition = true;
         this.y = 16;
         this.transitionTimer = 0;
+        this.spawnX = this.x;
+        this.spawnY = this.y;
       }
     }
 
     if (this.y < 16) {
       this.transitionTimer++;
       this.y = 16;
-      if (this.transitionTimer >= 10) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY - 1)) {
         this.worldCoordsY--;
         transition = true;
         this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
         this.transitionTimer = 0;
+        this.spawnX = this.x;
+        this.spawnY = this.y;
       }
     }
 
     if (transition) {
       const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
-      engine.switchToScene(nextScene.scene);
-      engine.addEntity(nextScene.scene, this);
-      engine.addEntity(nextScene.scene, this.baseImage);
-      engine.addEntity(nextScene.scene, this.hairImage);
-      engine.addEntity(nextScene.scene, this.toolImage);
-      engine.addEntity(nextScene.scene, this.crosshair);
-      engine.addEntity(nextScene.scene, this.statusBar);
+      if (nextScene) {
+        engine.switchToScene(nextScene.scene);
+        engine.addEntity(nextScene.scene, this);
+        engine.addEntity(nextScene.scene, this.baseImage);
+        engine.addEntity(nextScene.scene, this.hairImage);
+        engine.addEntity(nextScene.scene, this.toolImage);
+        engine.addEntity(nextScene.scene, this.crosshair);
+        engine.addEntity(nextScene.scene, this.statusBar);
+      }
     }
 
     if (engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
