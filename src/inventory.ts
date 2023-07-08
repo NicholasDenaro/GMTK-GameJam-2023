@@ -11,7 +11,7 @@ export const itemMap = [
   'compass', // 5 done // quest done (needs sword OR bow OR bombs OR glove)
   'glove', //   6 done - does need to maybe break/damage still
   'mirror', //  7 done // quest done (needs bombs AND (sword OR bow OR glove))
-  'harp', //    8 done - plan to need bow
+  'harp', //    8 done // quest done (needs bow AND (sword OR bombs OR glove))
   'bombs', //   9 done // quest done (needs feather)
 ];
 

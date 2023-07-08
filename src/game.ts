@@ -13,6 +13,9 @@ import { Pot } from './pot';
 import { Door } from './door';
 import { Tree } from './tree';
 import { Barrel } from './barrel';
+import { Stairs } from './stairs';
+import { HalfWall } from './half-wall';
+import { Switch } from './switch';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -94,8 +97,10 @@ new Sprite('main4', spriteAssetsPremade('./main4.png'), { spriteWidth: screenWid
 new Sprite('main5', spriteAssetsPremade('./main5.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main6', spriteAssetsPremade('./main6.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main7', spriteAssetsPremade('./main7.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main8', spriteAssetsPremade('./main8.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('house2', spriteAssetsPremade('./house2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
@@ -118,7 +123,8 @@ new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spri
 
 new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
-new Sprite('arrow', spriteAssets('./arrow.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('arrowV', spriteAssets('./arrowV.png'), { spriteWidth: 8, spriteHeight: 16 });
+new Sprite('arrowH', spriteAssets('./arrowH.png'), { spriteWidth: 16, spriteHeight: 8 });
 
 
 const wavAssets = require.context('../assets/', false, /\.wav$/);
@@ -243,6 +249,8 @@ function buildMap(view: View) {
   buildHousee10(view, keyController);
   buildw10(view, keyController);
   buildw20(view, keyController);
+  buildw30(view, keyController);
+  buildHousew30(view, keyController);
   builde1n1(view, keyController);
   builde1n2(view, keyController);
   builde1s1(view, keyController);
@@ -253,6 +261,7 @@ function buildMap(view: View) {
   scenes.setScene('1,0', 1, 0);
   scenes.setScene('-1,0', -1, 0);
   scenes.setScene('-2,0', -2, 0);
+  scenes.setScene('-3,0', -3, 0);
   scenes.setScene('1,-1', 1, -1);
   scenes.setScene('1,-2', 1, -2);
   scenes.setScene('1,1', 1, 1);
@@ -590,7 +599,7 @@ function buildw20(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(screenWidth - 32, screenHeight - 32, 32, 32));
 
   // house
-  scene.addEntity(new Wall(4 * 16, 3 * 16, 3 * 16, 3 * 16));
+  scene.addEntity(new Wall(4 * 16, 3 * 16, 3 * 16 - 8, 3 * 16));
 
   // fence
   scene.addEntity(new Wall(2 * 16 + 8, 3 * 16, 3 * 16, 1 * 16));
@@ -608,18 +617,76 @@ function buildw20(view: View, keyController: KeyboardController) {
     [
       'I put the barrels and\nfence there while he was\nnapping.',
       'Serves him right for\nsleeping on the job.'
-    ],[], -1, 'spikeyhair'));
+    ], [], -1, 'spikeyhair'));
 
   scene.addEntity(new Npc(scene, 3 * 16, 4 * 16,
     [
       'I don\'t know how I got\nstuck. Could you spare\nyour mirror?',
-      {options: ['Keep mirror', 'Give mirror']}
+      { options: ['Keep mirror', 'Give mirror'] }
     ],
     [
       'Thank you!'
     ], 7, 'shorthair'));
 
   engine.addScene('-2,0', scene);
+}
+
+function buildw30(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+
+  scene.addController(keyController);
+  scene.addEntity(new BackgroundEntity('main8'));
+  // top
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  // left
+  scene.addEntity(new Wall(0, 0, 32, screenHeight));
+
+  // house
+  scene.addEntity(new Wall(2 * 16, 3 * 16, 6 * 16, 3 * 16));
+  scene.addEntity(new Wall(2 * 16, 6 * 16, 2 * 16, 1 * 16));
+  scene.addEntity(new Wall(5 * 16, 6 * 16, 3 * 16, 1 * 16));
+  scene.addEntity(new Door(4 * 16, 6 * 16, 'h_-3,0', 4 * 16, 8 * 16, -3, 0));
+
+  engine.addScene('-3,0', scene);
+}
+
+function buildHousew30(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('house2'));
+  //top
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //left
+  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 16, 4 * 16, 16));
+  scene.addEntity(new Door(4 * 16, 9 * 16, '-3,0', 4 * 16, 7 * 16, -3, 0));
+  scene.addEntity(new Wall(5 * 16, screenHeight - 16, 6 * 16, 16));
+
+  // lane
+  scene.addEntity(new Wall(1 * 16, 3 * 16, 1 * 16, 5 * 16));
+  scene.addEntity(new HalfWall(2 * 16, 6 * 16, 1 * 16, 1 * 16));
+  scene.addEntity(new Wall(3 * 16, 3 * 16, 1 * 16, 5 * 16));
+  scene.addEntity(new Switch(2 * 16, 3 * 16, () => {
+    stairs.activate();
+  }))
+
+  // table
+  scene.addEntity(new Wall(7 * 16, 7 * 16, 1 * 16, 1 * 16));
+
+  let stairs = new Stairs(6 * 16, 4 * 16)
+  // stage
+  scene.addEntity(new Wall(4 * 16, 4 * 16, 2 * 16, 1 * 16));
+  scene.addEntity(stairs);
+  scene.addEntity(new Wall(7 * 16, 4 * 16, 2 * 16, 1 * 16));
+
+  scene.addEntity(new Npc(scene, 6 * 16, 3 * 16,
+    ['That harp looks like it\nwould match nicely on stage.', { options: ['Keep harp', 'Give harp'] }], ['Come back later for\nthe show.'], 8, 'longhair'));
+
+  engine.addScene('h_-3,0', scene);
 }
 
 init();

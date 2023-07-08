@@ -16,6 +16,7 @@ import { Arrow } from "./arrow";
 import { Sign } from "./sign";
 import { Pot } from "./pot";
 import { Door } from "./door";
+import { Stairs } from "./stairs";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -169,7 +170,8 @@ export class Player extends SpriteEntity {
     }
     let usedMirror = false;
     if (canMove) {
-      const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
+      const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)]
+        .filter(entity => !(entity instanceof Stairs) || !entity.isActivated());
 
       //for (let i = 0; i < (scene.isControl('sprint', ControllerState.Held) ? 2 : 1); i++) {
       if (scene.isControl('left', ControllerState.Held) && !this.action && !this.falling) {
@@ -278,7 +280,7 @@ export class Player extends SpriteEntity {
           Sound.setVolume(0.4);
           Sound.Sounds['bow'].play();
           Sound.setVolume(0.1);
-          scene.addEntity(new Arrow(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4, this.lookDirection));
+          scene.addEntity(new Arrow(this.crosshair.getPos().x, this.crosshair.getPos().y, this.lookDirection));
         }
 
         if (!this.carry && useItem == 4 && !this.jumping && !this.falling) { // feather

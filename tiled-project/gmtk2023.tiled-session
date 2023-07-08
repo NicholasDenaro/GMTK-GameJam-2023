@@ -13,8 +13,16 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 78.10618248678466,
-                "y": 87.59365663065962
+                "x": 77.959089864399,
+                "y": 87.15237876350264
+            }
+        },
+        "house2.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 77.40142435296161,
+                "y": 75.66440854611777
             }
         },
         "inventory.tmx": {
@@ -45,7 +53,7 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 80.01838657779822,
+                "x": 79.87129395541254,
                 "y": 86.56400827396003
             }
         },
@@ -53,24 +61,40 @@
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 79.62480458572172,
-                "y": 104.2904290429043
+                "x": 79.3468820566267,
+                "y": 104.01250651380927
             }
         },
         "main5.tmx": {
             "scale": 7.19625,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 69.8975160673962,
-                "y": 101.65016501650165
+                "x": 69.6195935383012,
+                "y": 101.37224248740662
             }
         },
         "main6.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 85.60013896126455,
-                "y": 81.77870418620809
+                "x": 85.32221643216953,
+                "y": 81.63974292166058
+            }
+        },
+        "main7.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 93.63636363636363,
+                "y": 84.27272727272727
+            }
+        },
+        "main8.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 76.84557929477157,
+                "y": 101.23328122285912
             }
         },
         "overworld.tsx": {
@@ -81,8 +105,8 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 86.93173982992417,
-                "y": 94.0657320156286
+                "x": 86.78464720753851,
+                "y": 93.91863939324294
             }
         }
     },
@@ -101,14 +125,15 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
+        "house1.tmx",
+        "underground1.tmx",
+        "main3.tmx",
+        "main6.tmx",
+        "main5.tmx",
+        "main4.tmx",
+        "main7.tmx",
         "main1.tmx",
         "main2.tmx",
-        "main6.tmx",
-        "main3.tmx",
-        "main4.tmx",
-        "main5.tmx",
-        "underground1.tmx",
-        "house1.tmx",
         "overworld.tsx",
         "inventory.tmx",
         "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"
