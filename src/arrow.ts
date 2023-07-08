@@ -3,6 +3,7 @@ import { Wall } from "./wall";
 import { Interactable } from "./interactable";
 import { Grass } from "./grass";
 import { screenHeight, screenWidth } from "./game";
+import { Pot } from "./pot";
 
 export class Arrow extends SpriteEntity {
   constructor(x: number, y: number, private flyDirection: number) {
@@ -34,7 +35,7 @@ export class Arrow extends SpriteEntity {
     for (let entity of collisionEntities) {
       if (entity.collision(this)) {
         scene.removeEntity(this);
-        if (entity instanceof Grass) {
+        if (entity instanceof Grass || entity instanceof Pot) {
           scene.removeEntity(entity);
           Sound.Sounds['slash'].play();
         }

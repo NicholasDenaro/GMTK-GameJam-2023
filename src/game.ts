@@ -89,6 +89,7 @@ new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWid
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
@@ -233,6 +234,7 @@ function buildMap(view: View) {
 
   build00(view, keyController);
   builde10(view, keyController);
+  buildHousee10(view, keyController);
   buildw10(view, keyController);
   buildUndergroundw10(view, keyController);
 
@@ -305,36 +307,6 @@ function buildw10(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
 
   engine.addScene('-1,0', scene);
-}
-
-function builde10(view: View, keyController: KeyboardController) {
-  const scene2 = new Scene(view);
-  scene2.addController(keyController);
-
-  scene2.addEntity(new BackgroundEntity('main2'));
-  //top
-  scene2.addEntity(new Wall(0, 16, 2 * 16, 16));
-  scene2.addEntity(new Rock(32, 16));
-  scene2.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
-  //right
-  scene2.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //bottom
-  scene2.addEntity(new Wall(0, screenHeight - 16, 16, 16));
-
-  // house
-  scene2.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));
-  scene2.addEntity(new Wall(4 * 16 - 8, 64, 5 * 16, 2 * 16));
-  scene2.addEntity(new Wall(6.5 * 16 - 8, 64, 2.5 * 16, 3 * 16));
-  // crate1
-  scene2.addEntity(new Wall(screenWidth - 32, 3 * 16, 5 * 16, 3 * 16));
-  // crate2
-  scene2.addEntity(new Wall(screenWidth - 32, 7 * 16, 16, 16));
-
-  scene2.addEntity(new Npc(scene2, 7 * 16, 7 * 16,
-    ['I need a shovel to dig my\ngarden. Could you give\nme yours?', { options: ['keep shovel', 'give shovel'] }],
-    ['Thank you, now it\'s\ntime to get planting.'], 0));
-
-  engine.addScene('1,0', scene2);
 }
 
 function buildUndergroundw10(view: View, keyController: KeyboardController) {
@@ -418,5 +390,88 @@ function buildUndergroundw10(view: View, keyController: KeyboardController) {
 
   engine.addScene('u_-1,0', scene);
 }
+
+function builde10(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('main2'));
+  //top
+  scene.addEntity(new Wall(0, 16, 2 * 16, 16));
+  scene.addEntity(new Rock(32, 16));
+  scene.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 16, 16, 16));
+
+  // house
+  scene.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));
+  scene.addEntity(new Wall(4 * 16 - 8, 64, 5 * 16, 2 * 16));
+  scene.addEntity(new Wall(6.5 * 16 - 8, 64, 2.5 * 16, 3 * 16));
+
+  scene.addEntity(new Door(5 * 16, 6 * 16, 'h_1,0', 3 * 16, 8 * 16, 1, 0));
+  // crate1
+  scene.addEntity(new Wall(screenWidth - 32, 3 * 16, 5 * 16, 3 * 16));
+  // crate2
+  scene.addEntity(new Wall(screenWidth - 32, 7 * 16, 16, 16));
+
+  scene.addEntity(new Npc(scene, 7 * 16, 7 * 16,
+    ['I need a shovel to dig my\ngarden. Could you give\nme yours?', { options: ['keep shovel', 'give shovel'] }],
+    ['Thank you, now it\'s\ntime to get planting.'], 0));
+
+  engine.addScene('1,0', scene);
+}
+
+function buildHousee10(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('house1'));
+  //top
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  //right
+  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
+  //left
+  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  //bottom
+  scene.addEntity(new Wall(0, screenHeight - 16, 3 * 16, 16));
+  scene.addEntity(new Door(3 * 16, 9 * 16, '1,0', 5 * 16, 7 * 16, 1, 0));
+  scene.addEntity(new Wall(4 * 16, screenHeight - 16, 6 * 16, 16));
+
+  scene.addEntity(new Pot(2 * 16, 3 * 16));
+  scene.addEntity(new Pot(3 * 16, 3 * 16));
+  scene.addEntity(new Pot(4 * 16, 3 * 16));
+  scene.addEntity(new Pot(5 * 16, 3 * 16));
+  scene.addEntity(new Pot(6 * 16, 3 * 16));
+
+  scene.addEntity(new Pot(2 * 16, 4 * 16));
+  scene.addEntity(new Pot(3 * 16, 4 * 16));
+  scene.addEntity(new Pot(4 * 16, 4 * 16));
+  scene.addEntity(new Pot(5 * 16, 4 * 16));
+  scene.addEntity(new Pot(6 * 16, 4 * 16));
+
+  scene.addEntity(new Pot(2 * 16, 5 * 16));
+  scene.addEntity(new Pot(3 * 16, 5 * 16));
+  scene.addEntity(new Pot(4 * 16, 5 * 16));
+  scene.addEntity(new Pot(5 * 16, 5 * 16));
+  scene.addEntity(new Pot(6 * 16, 5 * 16));
+  scene.addEntity(new Pot(7 * 16, 5 * 16));
+  scene.addEntity(new Pot(8 * 16, 5 * 16));
+
+  scene.addEntity(new Pot(2 * 16, 6 * 16));
+  scene.addEntity(new Pot(3 * 16, 6 * 16));
+  scene.addEntity(new Pot(4 * 16, 6 * 16));
+  scene.addEntity(new Pot(5 * 16, 6 * 16));
+  scene.addEntity(new Pot(6 * 16, 6 * 16));
+  scene.addEntity(new Pot(7 * 16, 6 * 16));
+  scene.addEntity(new Pot(8 * 16, 6 * 16));
+
+  scene.addEntity(new Npc(scene, 7 * 16, 3 * 16,
+    ['You destroyed my pot collection.'], [], 0, 'mophair'));
+
+  engine.addScene('h_1,0', scene);
+}
+
 
 init();
