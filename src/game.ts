@@ -6,6 +6,7 @@ import { BackgroundEntity } from './background';
 import { SceneMap } from './scene-map';
 import { Npc } from './npc';
 import { Rock } from './rock';
+import { Grass } from './grass';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -31,13 +32,20 @@ export const engine: Engine = new FixedTickEngine(60);
 const spriteAssets = require.context('../assets/', false, /\.png$/);
 const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
 new Sprite('buddy', spriteAssets('./buddy.png'), { spriteWidth: 16, spriteHeight: 16 });
+//idle
 new Sprite('base_idle_strip9', spriteAssetsPremade('./base_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('bowlhair_idle_strip9', spriteAssetsPremade('./bowlhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('longhair_idle_strip9', spriteAssetsPremade('./longhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//walk
 new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+//jump
+new Sprite('base_jump_strip9', spriteAssetsPremade('./base_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('bowlhair_jump_strip9', spriteAssetsPremade('./bowlhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('tools_jump_strip9', spriteAssetsPremade('./tools_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
@@ -54,12 +62,16 @@ new Sprite('compass', spriteAssetsPremade('./item8BIT_compass.png'), { spriteWid
 new Sprite('lamp', spriteAssetsPremade('./item8BIT_lamp.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('mirror', spriteAssetsPremade('./item8BIT_mirror.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('harp', spriteAssetsPremade('./item8BIT_harp.png'), { spriteWidth: 16, spriteHeight: 16 });
+new Sprite('heart', spriteAssetsPremade('./item8BIT_heart.png'), { spriteWidth: 16, spriteHeight: 16 });
 const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
 new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
 new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.wav'), true);
 new Sound('talk', wavAssetsPremade('./MenuCursor01.wav'));
 new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
+new Sound('slash', wavAssetsPremade('./Attack03.wav'));
+new Sound('dig', wavAssetsPremade('./Attack02.wav'));
+new Sound('jump', wavAssetsPremade('./Jump03.wav'));
 
 export const scenes = new SceneMap();
 
@@ -88,8 +100,15 @@ async function init() {
   scenePause.addEntity(new PauseMenu());
 
   scene.addEntity(new BackgroundEntity('main1'));
+  // top
   scene.addEntity(new Wall(0, 16, screenWidth, 16));
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
+  // left
+  scene.addEntity(new Wall(0, 16, 16, 3 * 16));
+  scene.addEntity(new Grass(0, 4 * 16));
+  scene.addEntity(new Grass(0, 5 * 16));
+  scene.addEntity(new Grass(0, 6 * 16));
+  scene.addEntity(new Wall(0, 7 * 16, 16, 3 * 16));
+  // bottom
   scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
   scene.addEntity(new Player(scene, 48, 48));
 
@@ -98,9 +117,10 @@ async function init() {
   scene2.addEntity(new Wall(0, 16, 2 * 16, 16));
   scene2.addEntity(new Rock(32, 16));
   scene2.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
-  //others
+  //right
   scene2.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  scene2.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
+  //bottom
+  scene2.addEntity(new Wall(0, screenHeight - 16, 16, 16));
 
   // house
   scene2.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));

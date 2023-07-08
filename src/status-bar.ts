@@ -32,5 +32,9 @@ export class StatusBar extends SpriteEntity {
     if (this.player.getItem1() != -1) {
       ctx.drawImage(Sprite.Sprites[itemMap[this.player.getItem1()]].getImage(), 45, 0);
     }
+
+    for (let i = 0; i < 6; i++) {
+      ctx.drawImage(Sprite.Sprites['heart'].getImage(), 64 + i * 16, 0);
+    }
   }
 }

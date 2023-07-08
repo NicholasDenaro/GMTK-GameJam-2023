@@ -3,36 +3,42 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "inventory.tmx",
     "expandedProjectPaths": [
+        "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
-        "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx": {
-            "scaleInDock": 3,
-            "scaleInEditor": 1
+        "inventory.tmx": {
+            "scale": 4.845,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 80.1857585139319,
+                "y": 79.77296181630548
+            }
         },
         "main1.tmx": {
             "scale": 4,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 79.625,
-                "y": 62.875
+                "x": 87.125,
+                "y": 55.625
             }
         },
         "main2.tmx": {
             "scale": 4.476875,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 70.24989529526736,
-                "y": 116.04076504257995
+                "x": 87.00265251989391,
+                "y": 80.07817953371493
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 1,
+            "scaleInDock": 2,
             "scaleInEditor": 1
         }
     },
+    "last.externalTilesetPath": "C:/Source/GMTK-GameJam-2023/tiled-project",
     "last.imagePath": "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset",
     "map.height": 10,
     "map.lastUsedFormat": "tmx",
@@ -40,13 +46,19 @@
     "map.tileWidth": 16,
     "map.width": 10,
     "openFiles": [
+        "overworld.tsx",
+        "main2.tmx",
+        "main1.tmx",
+        "inventory.tmx"
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
-        "main1.tmx",
         "overworld.tsx",
-        "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"
+        "main2.tmx",
+        "main1.tmx",
+        "inventory.tmx"
     ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 16,

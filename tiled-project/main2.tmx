@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
- <tileset firstgid="1" source="../../../Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"/>
+ <tileset firstgid="1" source="overworld.tsx"/>
  <layer id="1" name="Tile Layer 1" width="10" height="10">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
@@ -40,7 +40,7 @@
 0,0,0,853,792,909,792,792,861,308,
 0,0,0,0,206,207,208,0,352,308,
 0,0,0,0,0,0,0,0,0,308,
-308,308,308,308,308,308,308,308,308,308
+308,0,0,0,0,0,0,0,0,308
 </data>
  </layer>
  <layer id="3" name="Tile Layer 3" width="10" height="10">

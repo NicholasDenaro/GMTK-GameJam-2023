@@ -7,6 +7,7 @@ import { Interactable } from "./interactable";
 import { StatusBar } from "./status-bar";
 import { Rock } from "./rock";
 import { Inventory } from "./inventory";
+import { Grass } from "./grass";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -17,6 +18,7 @@ export class PlayerImage extends SpriteEntity {
     this.x = this.player.getPos().x;
     this.y = this.player.getPos().y - 1;
     this.imageIndex = this.player.imageIndex;
+    this.y -= this.player.isJumping() ? (5 - Math.abs(5 - this.imageIndex)) * 2 : 0;
     this.flipHorizontal = this.player.flipHorizontal;
   }
 
@@ -52,12 +54,15 @@ export class Player extends SpriteEntity {
   private crosshair: Cursor;
   private statusBar: StatusBar;
   private inventory: Inventory;
+  static xOffset = -4;
+  static yOffset = -7;
 
   public lookDirection: number = 0;
   private item1: number = -1;
   private item2: number = -1;
+  private jumping = false;
   constructor(scene: Scene, x: number, y: number) {
-    super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: -4, spriteOffsetY: -7 }), x, y);
+    super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: Player.xOffset, spriteOffsetY: Player.yOffset }), x, y);
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new PlayerImage(this, 'bowlhair', 'idle_strip9'));
     scene.addEntity(this.toolImage = new PlayerImage(this, 'tools', 'idle_strip9'));
@@ -88,6 +93,10 @@ export class Player extends SpriteEntity {
     return {x: this.worldCoordsX, y: this.worldCoordsY};
   }
 
+  isJumping() {
+    return this.jumping;
+  }
+
   private transitionTimer = 0;
   private imageTimer = 0;
   tick(scene: Scene): Promise<void> | void {
@@ -103,6 +112,13 @@ export class Player extends SpriteEntity {
 
     let moving = false;
     this.imageTimer++;
+    if (this.jumping) {
+      if (this.imageIndex < 3 || this.imageIndex > 7) {
+        this.imageTimer += 4;
+      } else {
+        this.imageTimer += 2;
+      }
+    }
     if (this.imageTimer > 10) {
       this.imageIndex++;
       this.imageTimer = 0;
@@ -150,34 +166,53 @@ export class Player extends SpriteEntity {
       }
 
       const actionInterractable = scene.entitiesByType(Interactable).filter(interractable => interractable.collision(this.crosshair))[0];
-      if (scene.isControl('action1', ControllerState.Press) && actionInterractable) {
-        if (actionInterractable instanceof Rock && this.getItem1() == 0) {
-          scene.removeEntity(actionInterractable);
-        }
+      let useItem = -1;
+      if (scene.isControl('action1', ControllerState.Press)) {
+        useItem = this.getItem1();
+      }
+      if (scene.isControl('action2', ControllerState.Press)) {
+        useItem = this.getItem2();
       }
 
-      if (scene.isControl('action2', ControllerState.Press) && actionInterractable) {
-        if (actionInterractable instanceof Rock && this.getItem2() == 0) {
-          scene.removeEntity(actionInterractable);
-        }
+      if (actionInterractable instanceof Rock && useItem == 0) {
+        scene.removeEntity(actionInterractable);
+        Sound.Sounds['dig'].play();
+      }
+      if (actionInterractable instanceof Grass && useItem == 1) {
+        scene.removeEntity(actionInterractable);
+        Sound.Sounds['slash'].play();
+      }
+
+      if (this.jumping && this.imageIndex == this.baseImage.spriteFrames()) {
+        this.jumping = false;
+      }
+
+      if (useItem == 4 && !this.jumping) {
+        Sound.Sounds['jump'].play();
+        this.baseImage.setAnimation('jump_strip9');
+        this.hairImage.setAnimation('jump_strip9');
+        this.toolImage.setAnimation('jump_strip9');
+        this.jumping = true;
+        this.imageIndex = 0;
+        this.imageTimer = 0;
       }
     }
 
-    if (!moving) {
+    if (!moving && !this.jumping) {
       this.transitionTimer = 0;
       this.baseImage.setAnimation('idle_strip9');
       this.hairImage.setAnimation('idle_strip9');
       this.toolImage.setAnimation('idle_strip9');
-    } else {
+    } else if (!this.jumping) {
       this.baseImage.setAnimation('walk_strip8');
       this.hairImage.setAnimation('walk_strip8');
       this.toolImage.setAnimation('walk_strip8');
     }
 
     let transition = false;
-    if (this.x + this.painter.rectangle().width > screenWidth) {
+    if (this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
       this.transitionTimer++;
-      this.x = screenWidth - this.painter.rectangle().width;
+      this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
       if (this.transitionTimer >= 10) {
         this.worldCoordsX++;
         transition = true;
@@ -186,20 +221,20 @@ export class Player extends SpriteEntity {
       }
     }
 
-    if (this.x < 0) {
+    if (this.x - Player.xOffset < 0) {
       this.transitionTimer++;
-      this.x = 0;
+      this.x = Player.xOffset;
       if (this.transitionTimer >= 10) {
         this.worldCoordsX--;
         transition = true;
-        this.x = screenWidth - this.painter.rectangle().width;
+        this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
         this.transitionTimer = 0;
       }
     }
 
-    if (this.y + this.painter.rectangle().height > screenHeight) {
+    if (this.y + this.painter.rectangle().height - Player.yOffset > screenHeight) {
       this.transitionTimer++;
-      this.y = screenHeight - this.painter.rectangle().height;
+      this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
       if (this.transitionTimer >= 10) {
         this.worldCoordsY++;
         transition = true;
@@ -214,7 +249,7 @@ export class Player extends SpriteEntity {
       if (this.transitionTimer >= 10) {
         this.worldCoordsY--;
         transition = true;
-        this.y = screenHeight - this.painter.rectangle().height;
+        this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
         this.transitionTimer = 0;
       }
     }
