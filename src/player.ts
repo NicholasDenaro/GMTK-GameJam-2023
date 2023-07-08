@@ -14,6 +14,7 @@ import { Bomb } from "./bomb";
 import { Explosion } from "./explosion";
 import { Arrow } from "./arrow";
 import { Sign } from "./sign";
+import { Pot } from "./pot";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -270,7 +271,7 @@ export class Player extends SpriteEntity {
           scene.addEntity(new Arrow(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4, this.lookDirection));
         }
 
-        if (!this.carry && useItem == 4 && !this.jumping) { // feather
+        if (!this.carry && useItem == 4 && !this.jumping && !this.falling) { // feather
           Sound.Sounds['jump'].play();
           this.jumping = true;
           this.imageIndex = 0;
@@ -286,7 +287,7 @@ export class Player extends SpriteEntity {
 
         if (useItem == 6) { // glove
           if (!this.carry) { // pickup
-            if (actionInterractable instanceof Grass) {
+            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot) {
               this.actionFunc = () => {
                 if (actionInterractable) {
                   this.carry = true;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="1">
  <tileset firstgid="1" source="overworld.tsx"/>
  <layer id="1" name="Tile Layer 1" width="10" height="10">
   <data encoding="csv">
@@ -19,7 +19,7 @@
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,0,0,466,0,0,0,527,0,0,
+0,1957,0,466,0,0,0,527,0,0,
 0,0,0,0,529,529,529,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
@@ -33,14 +33,28 @@
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,
 308,308,308,308,308,308,308,308,308,308,
-308,98,879,0,324,324,324,163,0,0,
-308,132,0,0,0,0,0,0,0,0,
+308,680,879,0,324,324,324,163,0,0,
+308,308,0,0,0,0,0,0,0,0,
 0,0,0,134,0,228,0,0,130,0,
 0,0,160,0,0,0,0,0,0,0,
 0,135,0,0,130,0,0,0,0,0,
-308,0,0,0,0,324,0,0,226,0,
-308,131,226,0,0,0,0,94,0,0,
+308,308,0,0,0,324,0,0,226,0,
+308,1960,226,0,0,0,0,94,0,0,
 308,308,308,308,308,308,308,308,308,308
+</data>
+ </layer>
+ <layer id="5" name="Tile Layer 5" width="10" height="10">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,1896,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
 </map>

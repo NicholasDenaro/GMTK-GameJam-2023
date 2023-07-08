@@ -21,8 +21,8 @@
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 87.125,
-                "y": 55.625
+                "x": 93.25,
+                "y": 96.375
             }
         },
         "main2.tmx": {
@@ -31,6 +31,14 @@
             "viewCenter": {
                 "x": 70.24989529526736,
                 "y": 116.04076504257995
+            }
+        },
+        "main3.tmx": {
+            "scale": 6.7984374999999995,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 80.4596644449552,
+                "y": 86.56400827396003
             }
         },
         "overworld.tsx": {
@@ -53,9 +61,9 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
+        "main1.tmx",
         "overworld.tsx",
         "inventory.tmx",
-        "main1.tmx",
         "main2.tmx",
         "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset/overworld.tsx"
     ],

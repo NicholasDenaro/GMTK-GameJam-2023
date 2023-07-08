@@ -9,6 +9,7 @@ import { Rock } from './rock';
 import { Grass } from './grass';
 import { Hole } from './hole';
 import { Sign } from './sign';
+import { Pot } from './pot';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -78,8 +79,11 @@ new Sprite('base_carry_strip8', spriteAssetsPremade('./base_carry_strip8.png'), 
 new Sprite('bowlhair_carry_strip8', spriteAssetsPremade('./bowlhair_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
+//backgrounds
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
@@ -222,11 +226,13 @@ function buildMap(view: View) {
   // scene.addController(new GamepadController(gamepadMap));
 
   build00(view, keyController);
-  build10(view, keyController);
+  builde10(view, keyController);
+  buildw10(view, keyController);
 
   // build layout
   scenes.setScene('0,0', 0, 0);
   scenes.setScene('1,0', 1, 0);
+  scenes.setScene('-1,0', -1, 0);
 
   engine.addScene('pause', scenePause);
 
@@ -244,11 +250,11 @@ function build00(view: View, keyController: KeyboardController) {
   // top
   scene.addEntity(new Wall(0, 16, screenWidth, 16));
   // left
-  scene.addEntity(new Wall(0, 16, 16, 3 * 16));
-  scene.addEntity(new Grass(0, 4 * 16));
-  scene.addEntity(new Grass(0, 5 * 16));
-  scene.addEntity(new Grass(0, 6 * 16));
-  scene.addEntity(new Wall(0, 7 * 16, 16, 3 * 16));
+  scene.addEntity(new Wall(0, 16, 32, 3 * 16));
+  scene.addEntity(new Grass(16, 4 * 16));
+  scene.addEntity(new Grass(16, 5 * 16));
+  scene.addEntity(new Grass(16, 6 * 16));
+  scene.addEntity(new Wall(0, 7 * 16, 32, 3 * 16));
   // bottom
   scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
   scene.addEntity(new Sign(32, 32, [
@@ -269,7 +275,29 @@ function build00(view: View, keyController: KeyboardController) {
   engine.addScene('0,0', scene);
 }
 
-function build10(view: View, keyController: KeyboardController) {
+function buildw10(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+
+  scene.addController(keyController);
+  scene.addEntity(new BackgroundEntity('main3'));
+  // top
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  // right
+  scene.addEntity(new Wall(screenWidth - 16, 16, 32, 3 * 16));
+  scene.addEntity(new Wall(screenWidth - 16, 7 * 16, 32, 3 * 16));
+  // bottom
+  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
+
+
+  scene.addEntity(new Wall(2 * 16, 4 * 16, 5 * 16, 1 * 16));
+  scene.addEntity(new Wall(2 * 16, 4 * 16, 1 * 16, 2 * 16));
+  scene.addEntity(new Pot(5 * 16, 5 * 16));
+  scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
+
+  engine.addScene('-1,0', scene);
+}
+
+function builde10(view: View, keyController: KeyboardController) {
   const scene2 = new Scene(view);
   scene2.addController(keyController);
 
