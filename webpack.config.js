@@ -11,7 +11,7 @@ module.exports = {
       { test: /\.ts?$/, use: 'ts-loader', exclude: /node_modules/ },
       { test: /\.js?$/, type: 'javascript/auto' },
       { test: /\.js?$/, resolve: { fullySpecified: false } },
-      { test: /\.png$|\.wav$/, type: 'asset/resource' },
+      { test: /\.png$|\.wav$|\.ttf$/, type: 'asset/resource' },
     ]
   },
   resolve: {
