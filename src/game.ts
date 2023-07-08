@@ -10,6 +10,7 @@ import { Grass } from './grass';
 import { Hole } from './hole';
 import { Sign } from './sign';
 import { Pot } from './pot';
+import { Door } from './door';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -41,6 +42,10 @@ new Sprite('buddy', spriteAssets('./buddy.png'), { spriteWidth: 16, spriteHeight
 new Sprite('base_idle_strip9', spriteAssetsPremade('./base_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('bowlhair_idle_strip9', spriteAssetsPremade('./bowlhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('longhair_idle_strip9', spriteAssetsPremade('./longhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('spikeyhair_idle_strip9', spriteAssetsPremade('./spikeyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('mophair_idle_strip9', spriteAssetsPremade('./mophair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 //walk
 new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -83,6 +88,7 @@ new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png')
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
@@ -228,6 +234,7 @@ function buildMap(view: View) {
   build00(view, keyController);
   builde10(view, keyController);
   buildw10(view, keyController);
+  buildUndergroundw10(view, keyController);
 
   // build layout
   scenes.setScene('0,0', 0, 0);
@@ -262,6 +269,7 @@ function build00(view: View, keyController: KeyboardController) {
     'But more people are in\nneed of help. Luckily you\nhave gathered many',
     'items across your journey.',
     'Find the right order\nto save everyone\'s day.',
+    'PS Gaze into the mirror\nto return here instantly.'
   ]));
   scene.addEntity(new Player(scene, 32, 48));
 
@@ -291,6 +299,8 @@ function buildw10(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Wall(2 * 16, 4 * 16, 5 * 16, 1 * 16));
   scene.addEntity(new Wall(2 * 16, 4 * 16, 1 * 16, 2 * 16));
+
+  scene.addEntity(new Door(3 * 16, 5 * 16, 'u_-1,0', 1 * 16, 4 * 16, -1, 0));
   scene.addEntity(new Pot(5 * 16, 5 * 16));
   scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
 
@@ -325,6 +335,88 @@ function builde10(view: View, keyController: KeyboardController) {
     ['Thank you, now it\'s\ntime to get planting.'], 0));
 
   engine.addScene('1,0', scene2);
+}
+
+function buildUndergroundw10(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+  scene.addController(keyController);
+
+  scene.addEntity(new BackgroundEntity('underground1'));
+  scene.addEntity(new Wall(0, 32, screenWidth, 16));
+  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
+
+  scene.addEntity(new Wall(0, 16, 16, screenHeight));
+  scene.addEntity(new Wall(screenWidth - 16, 16, 16, screenHeight));
+
+  scene.addEntity(new Door( 1 * 16, 3 * 16, '-1,0', 4 * 16, 5 * 16, -1, 0));
+
+  scene.addEntity(new Wall(4 * 16, 6 * 16, 16, 16));
+
+  // row 1
+  // skip
+  scene.addEntity(new Hole(2 * 16, 3 * 16));
+  scene.addEntity(new Hole(3 * 16, 3 * 16));
+  scene.addEntity(new Hole(4 * 16, 3 * 16));
+  scene.addEntity(new Hole(5 * 16, 3 * 16));
+  scene.addEntity(new Hole(6 * 16, 3 * 16));
+  scene.addEntity(new Hole(7 * 16, 3 * 16));
+  scene.addEntity(new Hole(8 * 16, 3 * 16));
+
+  // row 2
+  // skip
+  scene.addEntity(new Hole(2 * 16, 4 * 16));
+  scene.addEntity(new Hole(3 * 16, 4 * 16));
+  scene.addEntity(new Hole(4 * 16, 4 * 16));
+  // skip
+  scene.addEntity(new Hole(6 * 16, 4 * 16));
+  // skip
+  // skip
+
+  // row 3
+  scene.addEntity(new Hole(1 * 16, 5 * 16));
+  scene.addEntity(new Hole(2 * 16, 5 * 16));
+  scene.addEntity(new Hole(3 * 16, 5 * 16));
+  scene.addEntity(new Hole(4 * 16, 5 * 16));
+  scene.addEntity(new Hole(5 * 16, 5 * 16));
+  scene.addEntity(new Hole(6 * 16, 5 * 16));
+  scene.addEntity(new Hole(7 * 16, 5 * 16));
+  scene.addEntity(new Hole(8 * 16, 5 * 16));
+
+  // row 4
+  // skip
+  scene.addEntity(new Hole(2 * 16, 6 * 16));
+  // skip
+  // skip
+  // skip
+  scene.addEntity(new Hole(6 * 16, 6 * 16));
+  scene.addEntity(new Hole(7 * 16, 6 * 16));
+  // skip
+
+  // row 5
+  scene.addEntity(new Hole(1 * 16, 7 * 16));
+  scene.addEntity(new Hole(2 * 16, 7 * 16));
+  scene.addEntity(new Hole(3 * 16, 7 * 16));
+  scene.addEntity(new Hole(4 * 16, 7 * 16));
+  scene.addEntity(new Hole(5 * 16, 7 * 16));
+  scene.addEntity(new Hole(6 * 16, 7 * 16));
+  scene.addEntity(new Hole(7 * 16, 7 * 16));
+  // skip
+
+  // row 6
+  scene.addEntity(new Hole(1 * 16, 8 * 16));
+  scene.addEntity(new Hole(2 * 16, 8 * 16));
+  // skip
+  scene.addEntity(new Hole(4 * 16, 8 * 16));
+  // skip
+  scene.addEntity(new Hole(6 * 16, 8 * 16));
+  scene.addEntity(new Hole(7 * 16, 8 * 16));
+  // skip
+
+  scene.addEntity(new Npc(scene, 8 * 16, 8 * 16,
+    ['I don\'t know how I\nmanaged to get stuck here.', 'Hey! That feather looks\nlike could help!', {options: ['Keep feather', 'Give feather']}],
+    ['Thank you! Now I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
+
+  engine.addScene('u_-1,0', scene);
 }
 
 init();

@@ -3,16 +3,16 @@ import { screenHeight, screenWidth } from "./game";
 import { Player } from "./player";
 
 export const itemMap = [
-  'shovel', // done
-  'sword', // done
-  'lamp', // done
-  'bow', // done
-  'feather', // done
-  'compass', // specifies current coordinates
-  'glove', // done - does need to maybe break/damage still
-  'mirror', // warps you back to 0, 0
-  'harp', // makes music
-  'bombs', // done
+  'shovel', // 0 done
+  'sword', // 1 done
+  'lamp', // 2 done
+  'bow', // 3 done
+  'feather', // 4 done
+  'compass', // 5 specifies current coordinates
+  'glove', // 6 done - does need to maybe break/damage still
+  'mirror', // 7 warps you back to 0, 0
+  'harp', // 8 makes music
+  'bombs', // 9 done
 ];
 
 export class Inventory extends SpriteEntity {

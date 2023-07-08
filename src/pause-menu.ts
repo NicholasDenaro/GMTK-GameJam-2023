@@ -9,8 +9,8 @@ export class PauseMenu extends SpriteEntity {
   tick(scene: Scene): void | Promise<void> {
 
     if (scene.isControl('pause', ControllerState.Press)) {
-      const coords = scene.entitiesByType(Player)[0].getWorldCoords();
-      engine.switchToScene(scenes.getScene(coords.x, coords.y).scene);
+      const lastScene = scene.entitiesByType(Player)[0].lastScene;
+      engine.switchToScene(lastScene);
     }
   }
   

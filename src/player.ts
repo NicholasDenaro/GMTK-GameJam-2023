@@ -15,6 +15,7 @@ import { Explosion } from "./explosion";
 import { Arrow } from "./arrow";
 import { Sign } from "./sign";
 import { Pot } from "./pot";
+import { Door } from "./door";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -52,6 +53,7 @@ export class Cursor extends SpriteEntity {
 
 export class Player extends SpriteEntity {
   private pause: boolean;
+  public lastScene = '';
   private worldCoordsX = 0;
   private worldCoordsY = 0;
   private spawnX = 0;
@@ -162,6 +164,7 @@ export class Player extends SpriteEntity {
       this.imageIndex++;
       this.imageTimer = 0;
     }
+    let usedMirror = false;
     if (canMove) {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)];
 
@@ -205,7 +208,7 @@ export class Player extends SpriteEntity {
       // Do actions
       let dialog = false;
       const actionNpc = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign)].filter(npc => npc.collision(this.crosshair))[0];
-      if (scene.isControl('action1', ControllerState.Press) && actionNpc) {
+      if (scene.isControl('action1', ControllerState.Press) && actionNpc && !this.jumping && !this.falling) {
         actionNpc.showDialog(scene);
         dialog = true;
       }
@@ -238,7 +241,7 @@ export class Player extends SpriteEntity {
 
         if (!this.carry && useItem == 1) { // sword
           this.actionFunc = () => {
-            if (actionInterractable instanceof Grass) {
+            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot) {
               scene.removeEntity(actionInterractable);
             }
             Sound.Sounds['slash'].play();
@@ -313,6 +316,7 @@ export class Player extends SpriteEntity {
         }
 
         if (!this.carry && useItem == 7) { // mirror
+          usedMirror = true;
           this.worldCoordsX = 0;
           this.worldCoordsY = 0;
           this.x = 32;
@@ -481,11 +485,13 @@ export class Player extends SpriteEntity {
       engine.addEntity('pause', this);
       engine.addEntity('pause', this.statusBar);
       engine.addEntity('pause', this.inventory);
+      this.lastScene = engine.sceneKey(scene);
       engine.switchToScene('pause');
       Sound.Sounds['pause'].play();
     }
 
-    if (!this.jumping && ! this.falling) {
+    // falling
+    if (!this.jumping && !this.falling && !usedMirror) {
       const holes = scene.entitiesByType(Hole);
       holes.forEach(hole => {
         if (hole.collision(this)) {
@@ -511,6 +517,32 @@ export class Player extends SpriteEntity {
           }
         }
       });
+
+      if (!this.jumping) {
+        const doors = scene.entitiesByType(Door);
+        doors.forEach(door => {
+          if (door.collision(this)) {
+            const travelInfo = door.travelInfo();
+
+            this.worldCoordsX = travelInfo.worldX;
+            this.worldCoordsY = travelInfo.worldY;
+            this.x = travelInfo.x;
+            this.y = travelInfo.y;
+            this.spawnX = this.x;
+            this.spawnY = this.y;
+            const nextScene = travelInfo.destination;
+            if (nextScene) {
+              engine.switchToScene(nextScene);
+              engine.addEntity(nextScene, this);
+              engine.addEntity(nextScene, this.baseImage);
+              engine.addEntity(nextScene, this.hairImage);
+              engine.addEntity(nextScene, this.toolImage);
+              engine.addEntity(nextScene, this.crosshair);
+              engine.addEntity(nextScene, this.statusBar);
+            }
+          }
+        });
+      }
 
       if (!this.jumping && !this.damage) {
         const explosions = scene.entitiesByType(Explosion);
@@ -550,5 +582,7 @@ export class Player extends SpriteEntity {
       this.item2 = -1;
     }
     this.inventory.removeItem(item);
+    this.spawnX = Math.round(this.x / 16) * 16;
+    this.spawnY = Math.round(this.y / 16) * 16;
   }
 }
