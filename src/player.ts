@@ -17,6 +17,7 @@ import { Sign } from "./sign";
 import { Pot } from "./pot";
 import { Door } from "./door";
 import { Stairs } from "./stairs";
+import { HeavyRock } from "./heavy-rocky";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -299,7 +300,7 @@ export class Player extends SpriteEntity {
 
         if (useItem == 6) { // glove
           if (!this.carry) { // pickup
-            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot) {
+            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot || actionInterractable instanceof HeavyRock) {
               this.actionFunc = () => {
                 if (actionInterractable) {
                   this.carry = true;

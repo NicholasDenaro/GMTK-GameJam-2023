@@ -9,7 +9,7 @@ export const itemMap = [
   'bow', //     3 done // quest done (needs shovel AND lamp)
   'feather', // 4 done // quest done (needs mirror AND (sword OR bow OR bombs OR glove))
   'compass', // 5 done // quest done (needs sword OR bow OR bombs OR glove)
-  'glove', //   6 done - does need to maybe break/damage still
+  'glove', //   6 done // quest done (needs shovel AND bombs)
   'mirror', //  7 done // quest done (needs bombs AND (sword OR bow OR glove))
   'harp', //    8 done // quest done (needs bow AND (sword OR bombs OR glove))
   'bombs', //   9 done // quest done (needs feather)
