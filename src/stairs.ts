@@ -1,4 +1,4 @@
-import { Sprite, SpritePainter } from "game-engine";
+import { Sound, Sprite, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 
 export class Stairs extends Interactable {
@@ -11,6 +11,7 @@ export class Stairs extends Interactable {
   activate() {
     this.activated = true;
     this.imageIndex = this.index;
+    Sound.Sounds['start'].play();
   }
 
   deactivate() {
