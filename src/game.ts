@@ -776,19 +776,22 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Door(1 * 16, 3 * 16, '-2,1', 3 * 16, 7 * 16, -2, 1));
 
+  scene.addEntity(new Rock(1 * 16, 4 * 16));
+  scene.addEntity(new Rock(2 * 16, 4 * 16));
+  scene.addEntity(new Rock(3 * 16, 4 * 16));
 
-  scene.addEntity(new Rock(1 * 16, 5 * 16));
-  scene.addEntity(new Rock(2 * 16, 5 * 16));
-  scene.addEntity(new Rock(3 * 16, 5 * 16));
+  scene.addEntity(new Grass(4 * 16, 5 * 16));
+
+  scene.addEntity(new Hole(5 * 16, 5 * 16));
 
   // rails
-  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, screenHeight));
-  scene.addEntity(new Wall(4 * 16, 3 * 16, 16, screenHeight));
-  scene.addEntity(new Wall(6 * 16, 3 * 16, 16, screenHeight));
+  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 2 * 16));
+  scene.addEntity(new Wall(4 * 16, 3 * 16, 16, 2 * 16));
+  scene.addEntity(new Wall(6 * 16, 3 * 16, 16, 2 * 16));
 
-  scene.addEntity(new Portal(2 * 16, 7 * 16, 7 * 16, 5 * 16));
-
-  scene.addEntity(new Portal(7 * 16, 7 * 16, 2 * 16, 5 * 16));
+  scene.addEntity(new Wall(5 * 16, 6 * 16, 16, 3 * 16));
+  scene.addEntity(new Wall(4 * 16, 6 * 16, 16, 3 * 16));
+  scene.addEntity(new Wall(6 * 16, 6 * 16, 16, 3 * 16));
 
   scene.addEntity(new Npc(scene, 7 * 16, 4 * 16, 
     [

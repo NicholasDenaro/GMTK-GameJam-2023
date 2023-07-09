@@ -127,9 +127,9 @@
         },
         "underground2.tmx": {
             "scale": 5.5,
-            "selectedLayer": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 87.0909090909091,
+                "x": 86.90909090909092,
                 "y": 95.00000000000001
             }
         }
@@ -149,18 +149,18 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
-        "main3.tmx",
-        "overworld.tsx",
-        "main8.tmx",
-        "main9.tmx",
-        "main10.tmx",
-        "underground2.tmx",
-        "main1.tmx",
-        "main7.tmx",
         "main6.tmx",
         "main5.tmx",
         "main4.tmx",
-        "main2.tmx"
+        "main2.tmx",
+        "main1.tmx",
+        "main9.tmx",
+        "main3.tmx",
+        "overworld.tsx",
+        "main8.tmx",
+        "main10.tmx",
+        "underground2.tmx",
+        "main7.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

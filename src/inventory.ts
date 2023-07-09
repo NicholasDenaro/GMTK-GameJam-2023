@@ -5,7 +5,7 @@ import { Player } from "./player";
 export const itemMap = [
   'shovel', //  0 done // quest done (free)
   'sword', //   1 done - plan to need glove and mirror
-  'lamp', //    2 done // quest done (needs harp AND (sword OR bow OR bombs OR glove))
+  'lamp', //    2 done // quest done (needs harp AND shovel AND (sword OR bow OR bombs OR glove))
   'bow', //     3 done // quest done (needs shovel AND lamp)
   'feather', // 4 done // quest done (needs mirror AND (sword OR bow OR bombs OR glove))
   'compass', // 5 done // quest done (needs sword OR bow OR bombs OR glove)
