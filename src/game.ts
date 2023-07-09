@@ -582,10 +582,12 @@ function builde1s1(view: View, keyController: KeyboardController) {
   //bottom
   scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
 
-  // holes
-  scene.addEntity(new Hole(1 * 16, 4 * 16));
-  scene.addEntity(new Hole(2 * 16, 4 * 16));
-  scene.addEntity(new Hole(3 * 16, 4 * 16));
+  // bushes
+  scene.addEntity(new Wall(1 * 16, 4 * 16, 3 * 16, 1 * 16));
+
+  scene.addEntity(new Portal(1 * 16, 3 * 16, 1 * 16, 5 * 16));
+
+  scene.addEntity(new Portal(3 * 16, 5 * 16, 3 * 16, 3 * 16));
 
   //mountain
   scene.addEntity(new Wall(4 * 16, 2 * 16, 6 * 16, 6 * 16));
@@ -776,13 +778,9 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Door(1 * 16, 3 * 16, '-2,1', 3 * 16, 7 * 16, -2, 1));
 
-  scene.addEntity(new Rock(1 * 16, 4 * 16));
-  scene.addEntity(new Rock(2 * 16, 4 * 16));
-  scene.addEntity(new Rock(3 * 16, 4 * 16));
-
-  scene.addEntity(new Grass(4 * 16, 5 * 16));
-
-  scene.addEntity(new Hole(5 * 16, 5 * 16));
+  scene.addEntity(new Rock(4 * 16, 5 * 16));
+  scene.addEntity(new Rock(5 * 16, 5 * 16));
+  scene.addEntity(new Rock(6 * 16, 5 * 16));
 
   // rails
   scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 2 * 16));
