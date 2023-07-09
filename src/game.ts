@@ -140,6 +140,7 @@ new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 
 new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
 new Sprite('arrowV', spriteAssets('./arrowV.png'), { spriteWidth: 8, spriteHeight: 16 });
 new Sprite('arrowH', spriteAssets('./arrowH.png'), { spriteWidth: 16, spriteHeight: 8 });
+new Sprite('shadow', spriteAssets('./shadow.png'), { spriteWidth: 16, spriteHeight: 8, spriteOffsetY: -12 });
 
 new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
 
@@ -154,9 +155,12 @@ new Sound('dig', wavAssetsPremade('./Attack02.wav'));
 new Sound('jump', wavAssetsPremade('./Jump03.wav'));
 new Sound('fall', wavAssetsPremade('./Fall01.wav'));
 new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
-new Sound('explosion', wavAssetsPremade('./Attack02.wav'));
 new Sound('harp', wavAssetsPremade('./GuitarStinger4.wav'));
 new Sound('bow', wavAssets('./bow3.wav'));
+new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.wav'));
+new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.wav'));
+new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.wav'));
+new Sound('explosion', wavAssetsPremade('./explosion_36.wav'));
 
 export const scenes = new SceneMap();
 
@@ -553,7 +557,7 @@ function buildHousee10(view: View, keyController: KeyboardController) {
     ['You destroyed my\npot collection.', 'Give me your compass, so\nI can go searching for more.', {options: ['Keep compass', 'Give compass']}], ['Alright, now scram!'], 5, 'mophair'));
 
   engine.addScene('h_1,0', scene);
-  scenes.setScene('h_1,0', 11, 0, () => resetter.reset(scene))
+  scenes.setScene('h_1,0', 11, 0, () => {}) // Don't reset this room. It's for the joke.
 }
 
 function builde1n1(view: View, keyController: KeyboardController) {

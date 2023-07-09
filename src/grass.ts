@@ -1,4 +1,4 @@
-import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
+import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 
 export class Grass extends Interactable {
@@ -11,5 +11,10 @@ export class Grass extends Interactable {
     this.x = this.initialX;
     this.y = this.initialY;
     super.reset();
+  }
+
+  playBreakSound() {
+    Sound.Sounds['cut_grass'].play();
+    return true;
   }
 }

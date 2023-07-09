@@ -26,8 +26,6 @@ export class Bomb extends SpriteEntity {
       scene.removeEntity(this);
       scene.addEntity(new Explosion(this.x - 8, this.y - 8));
       Sound.Sounds['explosion'].play();
-      Sound.Sounds['slash'].play();
-      Sound.Sounds['explosion'].play();
     }
   }
 }

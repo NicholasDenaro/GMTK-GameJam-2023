@@ -1,4 +1,4 @@
-import { Sprite, SpritePainter } from "game-engine";
+import { Sound, Sprite, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 
 export class Pot extends Interactable {
@@ -12,5 +12,10 @@ export class Pot extends Interactable {
     this.x = this.initialX;
     this.y = this.initialY;
     super.reset();
+  }
+
+  playBreakSound() {
+    Sound.Sounds['smash_pot'].play();
+    return true;
   }
 }

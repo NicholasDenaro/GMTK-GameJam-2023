@@ -77,8 +77,8 @@
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 105.88848358520063,
-                "y": 85.39169706444328
+                "x": 96.43911759597012,
+                "y": 82.61247177349314
             }
         },
         "main5.tmx": {
@@ -122,7 +122,7 @@
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 3,
+            "scaleInDock": 16,
             "scaleInEditor": 8
         },
         "underground1.tmx": {
@@ -157,6 +157,7 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
+        "main4.tmx",
         "main5.tmx",
         "main6.tmx",
         "main7.tmx",
@@ -166,7 +167,6 @@
         "main10.tmx",
         "main1.tmx",
         "house2.tmx",
-        "main4.tmx",
         "underground2.tmx",
         "main2.tmx"
     ],

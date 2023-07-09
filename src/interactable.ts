@@ -1,5 +1,7 @@
 import { Scene, Sound, SpriteEntity } from "game-engine";
 import { FPS } from "./game";
+import { Pot } from "./pot";
+import { Grass } from "./grass";
 
 export class Interactable extends SpriteEntity {
   private thrownDirection: number;
@@ -12,7 +14,9 @@ export class Interactable extends SpriteEntity {
       this.throwTimer--;
       if (this.throwTimer <= 0) {
         scene.removeEntity(this);
-        Sound.Sounds['slash'].play();
+        if (!this.playBreakSound()) {
+          Sound.Sounds['dig'].play();
+        }
         this.thrown = false;
         this.throwTimer = FPS * 0.3;
       }
@@ -49,5 +53,9 @@ export class Interactable extends SpriteEntity {
     this.carried = false;
     this.thrown = false;
     this.throwTimer = FPS * 0.3;
+  }
+
+  playBreakSound() {
+    return false;
   }
 }

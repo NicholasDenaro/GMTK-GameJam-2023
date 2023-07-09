@@ -7,11 +7,25 @@ import { Pot } from "./pot";
 import { HalfWall } from "./half-wall";
 import { Switch } from "./switch";
 
-export class Arrow extends SpriteEntity {
-  constructor(x: number, y: number, private flyDirection: number) {
-    super(new SpritePainter(Sprite.Sprites[flyDirection == 0 || flyDirection == Math.PI ? 'arrowH' : 'arrowV']), x, y);
+export class ArrowImage extends SpriteEntity {
+  constructor(private arrow: Arrow, flyDirection: number) {
+    super(new SpritePainter(Sprite.Sprites[flyDirection == 0 || flyDirection == Math.PI ? 'arrowH' : 'arrowV']));
     this.flipHorizontal = flyDirection == Math.PI;
     this.flipVertical = flyDirection == Math.PI / 2;
+  }
+
+  tick(scene: Scene): void | Promise<void> {
+    this.x = this.arrow.getPos().x;
+    this.y = this.arrow.getPos().y;
+  }
+}
+
+export class Arrow extends SpriteEntity {
+  private arrowImage: ArrowImage;
+  constructor(scene: Scene, x: number, y: number, private flyDirection: number) {
+    super(new SpritePainter(ctx => {}, {spriteWidth: 1, spriteHeight: 1}), x, y);
+    scene.addEntity(this.arrowImage = new ArrowImage(this, flyDirection));
+
   }
 
   tick(scene: Scene): void | Promise<void> {
@@ -20,6 +34,7 @@ export class Arrow extends SpriteEntity {
 
     if (this.x > screenWidth || this.x < 0 || this.y > screenHeight || this.y < 16) {
       scene.removeEntity(this);
+      scene.removeEntity(this.arrowImage);
       return;
     }
 
@@ -28,9 +43,15 @@ export class Arrow extends SpriteEntity {
     for (let entity of collisionEntities) {
       if (entity.collision(this)) {
         scene.removeEntity(this);
+        scene.removeEntity(this.arrowImage);
         if (entity instanceof Grass || entity instanceof Pot) {
           scene.removeEntity(entity);
-          Sound.Sounds['slash'].play();
+          if (entity instanceof Pot) {
+            Sound.Sounds['smash_pot'].play();
+          }
+          if (entity instanceof Grass) {
+            Sound.Sounds['cut_grass'].play();
+          }
         }
         if (entity instanceof Switch) {
           entity.doAction();

@@ -26,8 +26,8 @@ export class PlayerImage extends SpriteEntity {
   }
 
   tick(scene: Scene): void | Promise<void> {
-    this.x = this.player.getPos().x;
-    this.y = this.player.getPos().y - 1;
+    this.x = this.player.getPos().x + 2;
+    this.y = this.player.getPos().y - 5;
     this.imageIndex = this.player.imageIndex;
     this.y -= this.player.isJumping() ? (5 - Math.abs(5 - this.imageIndex)) * 2 : 0;
     this.flipHorizontal = this.player.flipHorizontal;
@@ -40,6 +40,18 @@ export class PlayerImage extends SpriteEntity {
 
   spriteFrames() {
     return Sprite.Sprites[`${this.sprite}_${this.animation}`].getGrid().columns;
+  }
+}
+
+
+export class PlayerShadow extends SpriteEntity {
+  constructor(private player: Player) {
+    super(new SpritePainter(Sprite.Sprites[`shadow`]));
+  }
+
+  tick(scene: Scene): void | Promise<void> {
+    this.x = this.player.getPos().x + 2;
+    this.y = this.player.getPos().y - 5;
   }
 }
 
@@ -65,6 +77,7 @@ export class Player extends SpriteEntity {
   private spawnX = 0;
   private spawnY = 0;
 
+  private shadow: PlayerShadow;
   private baseImage: PlayerImage;
   private hairImage: PlayerImage;
   private toolImage: PlayerImage;
@@ -87,6 +100,7 @@ export class Player extends SpriteEntity {
   private carryEntity: Interactable;
   constructor(scene: Scene, x: number, y: number) {
     super(new SpritePainter(() => { }, { spriteWidth: 10, spriteHeight: 6, spriteOffsetX: Player.xOffset, spriteOffsetY: Player.yOffset }), x, y);
+    scene.addEntity(this.shadow = new PlayerShadow(this));
     scene.addEntity(this.baseImage = new PlayerImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new PlayerImage(this, 'bowlhair', 'idle_strip9'));
     scene.addEntity(this.toolImage = new PlayerImage(this, 'tools', 'idle_strip9'));
@@ -281,6 +295,12 @@ export class Player extends SpriteEntity {
             actionInterractables.forEach(interactable => {
               if (interactable instanceof Grass || interactable instanceof Pot) {
                 scene.removeEntity(interactable);
+                if (interactable instanceof Pot) {
+                  Sound.Sounds['smash_pot'].play();
+                }
+                if (interactable instanceof Grass) {
+                  Sound.Sounds['cut_grass'].play();
+                }
               }
             })
             
@@ -297,7 +317,7 @@ export class Player extends SpriteEntity {
         if (!this.carry && useItem == 2) { // lamp
           this.actionFunc = () => {
             scene.addEntity(new Fire(this.crosshair.getPos().x, this.crosshair.getPos().y));
-            Sound.Sounds['dig'].play();
+            Sound.Sounds['fire'].play();
           }
           this.action = true;
           this.imageIndex = 0;
@@ -311,7 +331,7 @@ export class Player extends SpriteEntity {
           Sound.setVolume(0.4);
           Sound.Sounds['bow'].play();
           Sound.setVolume(0.1);
-          scene.addEntity(new Arrow(this.crosshair.getPos().x, this.crosshair.getPos().y, this.lookDirection));
+          scene.addEntity(new Arrow(scene, this.crosshair.getPos().x - Math.cos(this.lookDirection) * 3, this.crosshair.getPos().y + 1 - Math.sin(this.lookDirection) * 3, this.lookDirection));
         }
 
         if (!this.carry && useItem == 4 && !this.jumping && !this.falling) { // feather
@@ -368,11 +388,13 @@ export class Player extends SpriteEntity {
             engine.switchToScene(nextScene.scene);
             nextScene.reset();
             engine.addEntity(nextScene.scene, this);
+            engine.removeEntity(nextScene.scene, this.shadow);
             engine.removeEntity(nextScene.scene, this.baseImage);
             engine.removeEntity(nextScene.scene, this.hairImage);
             engine.removeEntity(nextScene.scene, this.toolImage);
             engine.removeEntity(nextScene.scene, this.crosshair);
             engine.removeEntity(nextScene.scene, this.statusBar);
+            engine.addEntity(nextScene.scene, this.shadow);
             engine.addEntity(nextScene.scene, this.baseImage);
             engine.addEntity(nextScene.scene, this.hairImage);
             engine.addEntity(nextScene.scene, this.toolImage);
@@ -528,11 +550,13 @@ export class Player extends SpriteEntity {
         engine.switchToScene(nextScene.scene);
         nextScene.reset();
         engine.addEntity(nextScene.scene, this);
+        engine.removeEntity(nextScene.scene, this.shadow);
         engine.removeEntity(nextScene.scene, this.baseImage);
         engine.removeEntity(nextScene.scene, this.hairImage);
         engine.removeEntity(nextScene.scene, this.toolImage);
         engine.removeEntity(nextScene.scene, this.crosshair);
         engine.removeEntity(nextScene.scene, this.statusBar);
+        engine.addEntity(nextScene.scene, this.shadow);
         engine.addEntity(nextScene.scene, this.baseImage);
         engine.addEntity(nextScene.scene, this.hairImage);
         engine.addEntity(nextScene.scene, this.toolImage);
@@ -596,11 +620,13 @@ export class Player extends SpriteEntity {
               engine.switchToScene(nextScene);
               scenes.getSceneByKey(nextScene).reset();
               engine.addEntity(nextScene, this);
+              engine.removeEntity(nextScene, this.shadow);
               engine.removeEntity(nextScene, this.baseImage);
               engine.removeEntity(nextScene, this.hairImage);
               engine.removeEntity(nextScene, this.toolImage);
               engine.removeEntity(nextScene, this.crosshair);
               engine.removeEntity(nextScene, this.statusBar);
+              engine.addEntity(nextScene, this.shadow);
               engine.addEntity(nextScene, this.baseImage);
               engine.addEntity(nextScene, this.hairImage);
               engine.addEntity(nextScene, this.toolImage);

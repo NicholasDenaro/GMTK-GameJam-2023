@@ -17,6 +17,10 @@ export class Credits extends SpriteEntity {
     '',
     '--SOUNDS--',
     'General Effects - CanariPack 8BIT TopDown',
+    'grass cut - Epic Stock Media',
+    'pot shatter - Epic Stock Media',
+    'fire - Epic Stock Media',
+    'explosion - Mega-SFX-Pack',
     'Bow firing - nDev',
     '',
     '---TOOLS---',
@@ -49,8 +53,8 @@ export class Credits extends SpriteEntity {
     if (scene.isControl('sprint', ControllerState.Held)) {
       this.scroll += 2;
     }
-    if (this.scroll >= screenHeight * 2.5 + 16) {
-      this.scroll = screenHeight * 2.5 + 16;
+    if (this.scroll >= screenHeight * 2.5 + 64) {
+      this.scroll = screenHeight * 2.5 + 64;
       if (scene.isControl('pause', ControllerState.Press)) {
         engine.switchToScene('main_menu');
         this.scroll = -screenHeight / 2;
