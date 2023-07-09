@@ -1,4 +1,4 @@
-import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
+import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 import { Grass } from "./grass";
 import { Pot } from "./pot";
@@ -17,6 +17,12 @@ export class Explosion extends SpriteEntity {
         if (interactable instanceof Grass || interactable instanceof Pot || interactable instanceof Barrel) {
           if (interactable.collision(this)) {
             scene.removeEntity(interactable);
+            if (interactable instanceof Pot) {
+              Sound.Sounds['smash_pot'].play();
+            }
+            if (interactable instanceof Grass) {
+              Sound.Sounds['cut_grass'].play();
+            }
           }
         }
       });

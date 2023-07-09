@@ -25,7 +25,6 @@ export class Arrow extends SpriteEntity {
   constructor(scene: Scene, x: number, y: number, private flyDirection: number) {
     super(new SpritePainter(ctx => {}, {spriteWidth: 1, spriteHeight: 1}), x, y);
     scene.addEntity(this.arrowImage = new ArrowImage(this, flyDirection));
-
   }
 
   tick(scene: Scene): void | Promise<void> {
