@@ -14,7 +14,7 @@ export class Stairs extends Interactable {
   }
 
   deactivate() {
-    this.activated = true;
+    this.activated = false;
     this.imageIndex = this.disabledIndex;
   }
 

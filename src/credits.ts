@@ -1,5 +1,5 @@
 import { ControllerState, Scene, SpriteEntity, SpritePainter } from "game-engine";
-import { engine, screenHeight, screenWidth } from "./game";
+import { changeLoop, engine, screenHeight, screenWidth } from "./game";
 
 export class Credits extends SpriteEntity {
   private text: string[] = [
@@ -12,7 +12,7 @@ export class Credits extends SpriteEntity {
     'holes - remixed from Sunnyside World - nDev',
     '',
     '---MUSIC---',
-    'Daytime loop - T K I M U S E',
+    'Music Loops - T K I M U S E',
     'Harp - T K I M U S E',
     '',
     '--SOUNDS--',
@@ -53,8 +53,12 @@ export class Credits extends SpriteEntity {
     if (scene.isControl('sprint', ControllerState.Held)) {
       this.scroll += 2;
     }
-    if (this.scroll >= screenHeight * 2.5 + 64) {
-      this.scroll = screenHeight * 2.5 + 64;
+    if (scene.isControl('restart', ControllerState.Press)) {
+      engine.switchToScene('main_menu');
+      changeLoop('overworld');
+    }
+    if (this.scroll >= screenHeight * 2.5 + 64 + 16) {
+      this.scroll = screenHeight * 2.5 + 64 + 16;
       if (scene.isControl('pause', ControllerState.Press)) {
         engine.switchToScene('main_menu');
         this.scroll = -screenHeight / 2;

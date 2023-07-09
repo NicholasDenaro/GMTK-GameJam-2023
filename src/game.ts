@@ -21,6 +21,7 @@ import { Portal } from './portal';
 import { Credits } from './credits';
 import { MainMenu } from './main-menu';
 import { Interactable } from './interactable';
+import { Title } from './title';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -99,6 +100,9 @@ new Sprite('bowlhair_carry_strip8', spriteAssetsPremade('./bowlhair_carry_strip8
 new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
 //backgrounds
+new Sprite('logo', spriteAssetsPremade('./gmtk-logo-downscale.png'), { spriteWidth: 292, spriteHeight: 160 });
+new Sprite('title', spriteAssetsPremade('./title.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('menu', spriteAssetsPremade('./menu.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
@@ -148,6 +152,10 @@ const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
 new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
 new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.wav'), true);
+new Sound('caveloop', wavAssetsPremade('./CaveLoop.wav'), true);
+new Sound('townloop', wavAssetsPremade('./Town1DayLoop.wav'), true);
+new Sound('houseloop', wavAssetsPremade('./MysteriousTempleLayer3Loop.wav'), true);
+new Sound('sadloop', wavAssetsPremade('./SadPianoLoop.wav'), true);
 new Sound('talk', wavAssetsPremade('./MenuCursor01.wav'));
 new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
 new Sound('slash', wavAssetsPremade('./Attack03.wav'));
@@ -173,7 +181,8 @@ export const stopwatch = {
 export const loopTrack = {
   track: {
     stop: () => {}
-  }
+  },
+  current: ''
 }
 
 async function init() {
@@ -182,9 +191,14 @@ async function init() {
 
   const view = new Canvas2DView(screenWidth, screenHeight, { scale: scale, bgColor: '#BBBBBB' });
 
+  const intro = new Scene(view);
+  intro.addEntity(new BackgroundEntity('title'));
+  intro.addEntity(new Title());
+  engine.addScene('intro', intro);
+
   const mainMenu = new Scene(view);
   mainMenu.addController(keyController)
-  mainMenu.addEntity(new BackgroundEntity('main1'));
+  mainMenu.addEntity(new BackgroundEntity('menu'));
   mainMenu.addEntity(new MainMenu());
 
   engine.addScene('main_menu', mainMenu);
@@ -199,10 +213,44 @@ async function init() {
 
   Sound.setVolume(0.1);
 
-  // Sound.Sounds['start'].play();
-  loopTrack.track = Sound.Sounds['dayloop'].play();
+  Sound.Sounds['start'].play();
 
   await engine.start();
+}
+
+export function stopLoop() {
+  loopTrack.track.stop();
+}
+
+export function restartLoop() {
+  loopTrack.track = Sound.Sounds[loopTrack.current].play();
+}
+
+export function changeLoop(place: 'overworld' | 'town' | 'underground' | 'house' | 'grave') {
+  let track = 'dayloop';
+  switch (place) {
+    case 'overworld':
+      track = 'dayloop';
+      break;
+    case 'town':
+      track = 'townloop';
+      break;
+    case 'underground':
+      track = 'caveloop';
+      break;
+    case 'grave':
+      track = 'sadloop';
+      break;
+    case 'house':
+      track = 'houseloop';
+      break;
+  }
+
+  if (loopTrack.current != track) {
+    loopTrack.track.stop();
+    loopTrack.track = Sound.Sounds[track].play();
+    loopTrack.current = track;
+  }
 }
 
 const keyMap = [
@@ -764,7 +812,9 @@ function buildHousew30(view: View, keyController: KeyboardController) {
 
   engine.addScene('h_-3,0', scene);
   scenes.setScene('h_-3,0', -13, 0, () => {
-    stairs.deactivate();
+    if (!statefulMode.enabled) {
+      stairs.deactivate();
+    }
   })
 }
 

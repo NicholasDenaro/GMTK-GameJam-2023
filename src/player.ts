@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch } from "./game";
+import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch, changeLoop, stopLoop, restartLoop } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -145,6 +145,7 @@ export class Player extends SpriteEntity {
     this.ticks++;
     if (scene.isControl('restart', ControllerState.Press)) {
       engine.switchToScene('main_menu');
+      this.playTrackForScene('0,0');
     }
     if (this.pause) {
       return;
@@ -182,6 +183,7 @@ export class Player extends SpriteEntity {
         this.shownEndingText = true;
       } else {
         engine.switchToScene('credits');
+        this.playTrackForScene('0,0');
       }
     }
 
@@ -216,7 +218,16 @@ export class Player extends SpriteEntity {
     let usedMirror = false;
     if (canMove) {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)]
-        .filter(entity => !(entity instanceof Portal) && (!(entity instanceof Stairs) || !entity.isActivated()));
+        .filter(entity => {
+          if (entity instanceof Portal) {
+            return false;
+          }
+          if (entity instanceof Stairs) {
+            return !entity.isActivated();
+          }
+          return true;
+        }
+      );
 
       //for (let i = 0; i < (scene.isControl('sprint', ControllerState.Held) ? 2 : 1); i++) {
       if (scene.isControl('left', ControllerState.Held) && !this.action && !this.falling) {
@@ -377,6 +388,7 @@ export class Player extends SpriteEntity {
 
         if (!this.carry && useItem == 7) { // mirror
           usedMirror = true;
+          const wasInOrigin = this.worldCoordsX ==0 && this.worldCoordsY == 0;
           this.worldCoordsX = 0;
           this.worldCoordsY = 0;
           this.x = 32;
@@ -384,7 +396,7 @@ export class Player extends SpriteEntity {
           this.spawnX = this.x;
           this.spawnY = this.y;
           const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
-          if (nextScene) {
+          if (!wasInOrigin && nextScene) {
             engine.switchToScene(nextScene.scene);
             nextScene.reset();
             engine.addEntity(nextScene.scene, this);
@@ -400,6 +412,8 @@ export class Player extends SpriteEntity {
             engine.addEntity(nextScene.scene, this.toolImage);
             engine.addEntity(nextScene.scene, this.crosshair);
             engine.addEntity(nextScene.scene, this.statusBar);
+
+            this.playTrackForScene(nextScene.scene);
           }
         }
 
@@ -407,8 +421,7 @@ export class Player extends SpriteEntity {
           Sound.setVolume(0.2);
           Sound.Sounds['harp'].play();
           Sound.setVolume(0.1);
-          loopTrack.track.stop();
-          loopTrack.track = {stop: () => {}};
+          stopLoop();
           this.action = true;
           this.actionFunc = () => {
             const portals = scene.entitiesByType(Portal);
@@ -436,8 +449,7 @@ export class Player extends SpriteEntity {
       if (this.action && this.imageIndex == this.baseImage.spriteFrames()) {
         this.action = false;
         if (this.harp) {
-          // restart the loop
-          loopTrack.track = Sound.Sounds['dayloop'].play();
+          restartLoop();
           const portals = scene.entitiesByType(Portal);
           if (portals.length == 0) {
             scene.addEntity(new TextboxEntity(['Your tune echos in vain.']));
@@ -544,6 +556,7 @@ export class Player extends SpriteEntity {
       }
     }
 
+    // Overworld transition
     if (transition) {
       const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
       if (nextScene) {
@@ -562,6 +575,8 @@ export class Player extends SpriteEntity {
         engine.addEntity(nextScene.scene, this.toolImage);
         engine.addEntity(nextScene.scene, this.crosshair);
         engine.addEntity(nextScene.scene, this.statusBar);
+
+        this.playTrackForScene(nextScene.scene);
       }
     }
 
@@ -603,6 +618,7 @@ export class Player extends SpriteEntity {
         }
       }
 
+      // Door transition
       if (!this.jumping) {
         const doors = scene.entitiesByType(Door);
         doors.forEach(door => {
@@ -632,11 +648,12 @@ export class Player extends SpriteEntity {
               engine.addEntity(nextScene, this.toolImage);
               engine.addEntity(nextScene, this.crosshair);
               engine.addEntity(nextScene, this.statusBar);
+
+              this.playTrackForScene(nextScene);
             }
           }
         });
       }
-
 
       if (!this.jumping) {
         const portals = scene.entitiesByType(Portal);
@@ -676,6 +693,21 @@ export class Player extends SpriteEntity {
     }
 
     this.imageIndex %= this.baseImage.spriteFrames();
+  }
+
+  playTrackForScene(nextScene: string) {
+    if (nextScene.indexOf('u') != -1) {
+      changeLoop('underground');
+    } else if (nextScene.indexOf('h') != -1) {
+      changeLoop('house');
+    } else if (this.worldCoordsX < -1 || this.worldCoordsY < -1) {
+      changeLoop('town');
+    } else if (this.worldCoordsY == -1) {
+      changeLoop('grave');
+    } else {
+      changeLoop('overworld');
+    }
+
   }
 
   removeItem(item: number) {
