@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { engine, loopTrack, scenes, screenHeight, screenWidth, stopwatch } from "./game";
+import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -126,7 +126,9 @@ export class Player extends SpriteEntity {
   private transitionTimer = 0;
   private imageTimer = 0;
   private shownEndingText = false;
+  private ticks = 0;
   tick(scene: Scene): Promise<void> | void {
+    this.ticks++;
     if (scene.isControl('restart', ControllerState.Press)) {
       engine.switchToScene('main_menu');
     }
@@ -153,15 +155,20 @@ export class Player extends SpriteEntity {
         const seconds = Math.floor((stopwatch.end - stopwatch.start) / 1000) % 60;
         const minutes = Math.floor((stopwatch.end - stopwatch.start) / 1000 / 60) % 60;
         const hours = Math.floor((stopwatch.end - stopwatch.start) / 1000 / 60 / 60);
+
+        const tmilis = Math.floor(((this.ticks % FPS) / FPS) * 1000);
+        const tseconds = Math.floor(this.ticks / FPS) % 60;
+        const tminutes = Math.floor(this.ticks / FPS / 60) % 60;
+        const thours = Math.floor(this.ticks / FPS / 60 / 60);
         scene.addEntity(new TextboxEntity([
-          'Congratulations on giving\naway all your items!',
-          `Your time was:\n${hours > 0 ? hours : '00'}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${milis < 100 ? '0' : ''}${milis < 10 ? '0' : ''}${milis}`
+          `Congratulations on giving\naway all your items!`,
+          `Your time was:${statefulMode.enabled ? '\nstateful' : ''}\n${hours > 0 ? hours : '00'}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${milis < 100 ? '0' : ''}${milis < 10 ? '0' : ''}${milis}`,
+          `Your time in ticks was:\n${statefulMode.enabled ? 'stateful ' : ''}${this.ticks}\n${thours > 0 ? thours : '00'}:${tminutes < 10 ? '0' : ''}${tminutes}:${tseconds < 10 ? '0' : ''}${tseconds}.${tmilis < 100 ? '0' : ''}${tmilis < 10 ? '0' : ''}${tmilis}`
         ]));
         this.shownEndingText = true;
       } else {
         engine.switchToScene('credits');
       }
-
     }
 
     let moving = false;
@@ -255,7 +262,7 @@ export class Player extends SpriteEntity {
 
         if (!this.carry && useItem == 0) { // shovel
           this.actionFunc = () => {
-            if (actionInterractable instanceof Rock) {
+            if (actionInterractable instanceof Rock || actionInterractable instanceof Grass) {
               scene.removeEntity(actionInterractable);
             }
 
@@ -359,7 +366,13 @@ export class Player extends SpriteEntity {
           const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
           if (nextScene) {
             engine.switchToScene(nextScene.scene);
+            nextScene.reset();
             engine.addEntity(nextScene.scene, this);
+            engine.removeEntity(nextScene.scene, this.baseImage);
+            engine.removeEntity(nextScene.scene, this.hairImage);
+            engine.removeEntity(nextScene.scene, this.toolImage);
+            engine.removeEntity(nextScene.scene, this.crosshair);
+            engine.removeEntity(nextScene.scene, this.statusBar);
             engine.addEntity(nextScene.scene, this.baseImage);
             engine.addEntity(nextScene.scene, this.hairImage);
             engine.addEntity(nextScene.scene, this.toolImage);
@@ -376,7 +389,8 @@ export class Player extends SpriteEntity {
           loopTrack.track = {stop: () => {}};
           this.action = true;
           this.actionFunc = () => {
-            scene.entitiesByType(Portal).forEach(portal => portal.activate());
+            const portals = scene.entitiesByType(Portal);
+            portals.forEach(portal => portal.activate());
           }
           this.harp = true;
           this.imageIndex = 0;
@@ -402,6 +416,10 @@ export class Player extends SpriteEntity {
         if (this.harp) {
           // restart the loop
           loopTrack.track = Sound.Sounds['dayloop'].play();
+          const portals = scene.entitiesByType(Portal);
+          if (portals.length == 0) {
+            scene.addEntity(new TextboxEntity(['Your tune echos in vain.']));
+          }
         }
         this.harp = false;
       }
@@ -455,7 +473,7 @@ export class Player extends SpriteEntity {
     if (this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
       this.transitionTimer++;
       this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
-      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX + 1, this.worldCoordsY)) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX + 1, this.worldCoordsY) && !this.carry) {
         this.worldCoordsX++;
         transition = true;
         this.x = 0;
@@ -468,7 +486,7 @@ export class Player extends SpriteEntity {
     if (this.x - Player.xOffset < 0) {
       this.transitionTimer++;
       this.x = Player.xOffset;
-      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX - 1, this.worldCoordsY)) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX - 1, this.worldCoordsY) && !this.carry) {
         this.worldCoordsX--;
         transition = true;
         this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
@@ -481,7 +499,7 @@ export class Player extends SpriteEntity {
     if (this.y + this.painter.rectangle().height - Player.yOffset > screenHeight) {
       this.transitionTimer++;
       this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
-      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY + 1)) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY + 1) && !this.carry) {
         this.worldCoordsY++;
         transition = true;
         this.y = 16;
@@ -494,7 +512,7 @@ export class Player extends SpriteEntity {
     if (this.y < 16) {
       this.transitionTimer++;
       this.y = 16;
-      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY - 1)) {
+      if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY - 1) && !this.carry) {
         this.worldCoordsY--;
         transition = true;
         this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
@@ -508,7 +526,13 @@ export class Player extends SpriteEntity {
       const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
       if (nextScene) {
         engine.switchToScene(nextScene.scene);
+        nextScene.reset();
         engine.addEntity(nextScene.scene, this);
+        engine.removeEntity(nextScene.scene, this.baseImage);
+        engine.removeEntity(nextScene.scene, this.hairImage);
+        engine.removeEntity(nextScene.scene, this.toolImage);
+        engine.removeEntity(nextScene.scene, this.crosshair);
+        engine.removeEntity(nextScene.scene, this.statusBar);
         engine.addEntity(nextScene.scene, this.baseImage);
         engine.addEntity(nextScene.scene, this.hairImage);
         engine.addEntity(nextScene.scene, this.toolImage);
@@ -570,7 +594,13 @@ export class Player extends SpriteEntity {
             const nextScene = travelInfo.destination;
             if (nextScene) {
               engine.switchToScene(nextScene);
+              scenes.getSceneByKey(nextScene).reset();
               engine.addEntity(nextScene, this);
+              engine.removeEntity(nextScene, this.baseImage);
+              engine.removeEntity(nextScene, this.hairImage);
+              engine.removeEntity(nextScene, this.toolImage);
+              engine.removeEntity(nextScene, this.crosshair);
+              engine.removeEntity(nextScene, this.statusBar);
               engine.addEntity(nextScene, this.baseImage);
               engine.addEntity(nextScene, this.hairImage);
               engine.addEntity(nextScene, this.toolImage);

@@ -1,4 +1,4 @@
-import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState } from 'game-engine';
+import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState, Entity } from 'game-engine';
 import { Player } from './player';
 import { PauseMenu } from './pause-menu';
 import { Wall } from './wall';
@@ -20,6 +20,7 @@ import { HeavyRock } from './heavy-rocky';
 import { Portal } from './portal';
 import { Credits } from './credits';
 import { MainMenu } from './main-menu';
+import { Interactable } from './interactable';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -43,6 +44,10 @@ const scale = 3;
 export const FPS = 60;
 
 export const engine: Engine = new FixedTickEngine(FPS);
+
+export const statefulMode = {
+  enabled: false,
+}
 
 const spriteAssets = require.context('../assets/', false, /\.png$/);
 const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
@@ -110,6 +115,7 @@ new Sprite('underground2', spriteAssetsPremade('./underground2.png'), { spriteWi
 new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('house2', spriteAssetsPremade('./house2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
+// items
 new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
@@ -126,6 +132,7 @@ new Sprite('mirror', spriteAssetsPremade('./item8BIT_mirror.png'), { spriteWidth
 new Sprite('harp', spriteAssetsPremade('./item8BIT_harp.png'), { spriteWidth: 16, spriteHeight: 16 });
 new Sprite('heart', spriteAssetsPremade('./item8BIT_heart.png'), { spriteWidth: 16, spriteHeight: 16 });
 
+// effects
 new Sprite('fire1', spriteAssetsPremade('./spr_deco_fire_01_strip4.png'), { spriteWidth: 5, spriteHeight: 10 });
 new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spriteWidth: 8, spriteHeight: 12 });
 
@@ -134,6 +141,7 @@ new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spri
 new Sprite('arrowV', spriteAssets('./arrowV.png'), { spriteWidth: 8, spriteHeight: 16 });
 new Sprite('arrowH', spriteAssets('./arrowH.png'), { spriteWidth: 16, spriteHeight: 8 });
 
+new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
 
 const wavAssets = require.context('../assets/', false, /\.wav$/);
 const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
@@ -269,6 +277,7 @@ const gamepadMap = [
 ];
 
 export function buildMap(view: View, keyController: KeyboardController) {
+  scenes.clear();
   const scenePause = new Scene(view);
   scenePause.addController(keyController);
   // scene.addController(new MouseController(mouseMap));
@@ -290,25 +299,32 @@ export function buildMap(view: View, keyController: KeyboardController) {
   builde1s1(view, keyController);
   buildUndergroundw10(view, keyController);
 
-  // build layout
-  scenes.setScene('0,0', 0, 0);
-  scenes.setScene('1,0', 1, 0);
-  scenes.setScene('-1,0', -1, 0);
-  scenes.setScene('-2,0', -2, 0);
-  scenes.setScene('-3,0', -3, 0);
-  scenes.setScene('-3,1', -3, 1);
-  scenes.setScene('-2,1', -2, 1);
-  scenes.setScene('-1,1', -1, 1);
-  scenes.setScene('1,-1', 1, -1);
-  scenes.setScene('1,-2', 1, -2);
-  scenes.setScene('1,1', 1, 1);
-
   engine.addScene('pause', scenePause);
 
   scenePause.addEntity(new BackgroundEntity('inventory'));
   scenePause.addEntity(new PauseMenu());
 
   
+}
+
+class EntityResetter {
+  private entities: Entity[] = []
+  add(entity: Entity): Entity {
+    this.entities.push(entity);
+    return entity;
+  }
+
+  reset(scene: Scene, action: (entity: Entity) => void = (entity: Entity) => {}) {
+    if (!statefulMode.enabled) {
+      this.entities.forEach(entity => {
+        scene.addEntity(entity);
+        if (entity instanceof Interactable) {
+          entity.reset();
+        }
+        action(entity);
+      });
+    }
+  }
 }
 
 function build00(view: View, keyController: KeyboardController) {
@@ -320,9 +336,10 @@ function build00(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(0, 16, screenWidth, 16));
   // left
   scene.addEntity(new Wall(0, 16, 32, 3 * 16));
-  scene.addEntity(new Grass(16, 4 * 16));
-  scene.addEntity(new Grass(16, 5 * 16));
-  scene.addEntity(new Grass(16, 6 * 16));
+  const resetter = new EntityResetter();
+  scene.addEntity(resetter.add(new Grass(16, 4 * 16)));
+  scene.addEntity(resetter.add(new Grass(16, 5 * 16)));
+  scene.addEntity(resetter.add(new Grass(16, 6 * 16)));
   scene.addEntity(new Wall(0, 7 * 16, 32, 3 * 16));
   // bottom
   scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
@@ -330,23 +347,21 @@ function build00(view: View, keyController: KeyboardController) {
     'Congratulations on defeating\nthe evil Frogman. The\nKingdom is safe.',
     'But more people are in\nneed of help. Luckily you\nhave gathered many',
     'items across your journey.',
-    'Find the right order\nto save everyone\'s day.',
+    'Find the correct order\nto give away each item\nso you can help everyone.',
     'PS Gaze into the mirror\nto return here instantly.'
   ]));
   scene.addEntity(new Player(scene, 32, 48));
 
-
-  scene.addEntity(new Hole(4 * 16, 2 * 16));
-  scene.addEntity(new Hole(5 * 16, 2 * 16));
-  scene.addEntity(new Hole(6 * 16, 2 * 16));
-
-  scene.addEntity(new Hole(5 * 16, 7 * 16));
-
   engine.addScene('0,0', scene);
+  scenes.setScene('0,0', 0, 0, () => {
+    resetter.reset(scene);
+  });
 }
 
 function buildw10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
+
+  const resetter = new EntityResetter();
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main3'));
@@ -363,10 +378,11 @@ function buildw10(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(2 * 16, 4 * 16, 1 * 16, 2 * 16));
 
   scene.addEntity(new Door(3 * 16, 5 * 16, 'u_-1,0', 1 * 16, 4 * 16, -1, 0));
-  scene.addEntity(new Pot(5 * 16, 5 * 16));
+  scene.addEntity(resetter.add(new Pot(5 * 16, 5 * 16)));
   scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
 
   engine.addScene('-1,0', scene);
+  scenes.setScene('-1,0', -1, 0, () => resetter.reset(scene));
 }
 
 function buildUndergroundw10(view: View, keyController: KeyboardController) {
@@ -449,16 +465,19 @@ function buildUndergroundw10(view: View, keyController: KeyboardController) {
     ['Thank you!\nNow I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
 
   engine.addScene('u_-1,0', scene);
+  scenes.setScene('u_-1,0', -12, 1, () => {});
 }
 
 function builde10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
+  const resetter = new EntityResetter();
+
   scene.addEntity(new BackgroundEntity('main2'));
   //top
   scene.addEntity(new Wall(0, 16, 2 * 16, 16));
-  scene.addEntity(new Rock(32, 16));
+  scene.addEntity(resetter.add(new Rock(32, 32)));
   scene.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
   //right
   scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
@@ -481,11 +500,14 @@ function builde10(view: View, keyController: KeyboardController) {
     ['Thank you, now it\'s\ntime to get planting.'], 0));
 
   engine.addScene('1,0', scene);
+  scenes.setScene('1,0', 1, 0, () => { resetter.reset(scene) });
 }
 
 function buildHousee10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
+
+  const resetter = new EntityResetter();
 
   scene.addEntity(new BackgroundEntity('house1'));
   //top
@@ -499,44 +521,46 @@ function buildHousee10(view: View, keyController: KeyboardController) {
   scene.addEntity(new Door(3 * 16, 9 * 16, '1,0', 5 * 16, 7 * 16, 1, 0));
   scene.addEntity(new Wall(4 * 16, screenHeight - 16, 6 * 16, 16));
 
-  scene.addEntity(new Pot(2 * 16, 3 * 16));
-  scene.addEntity(new Pot(3 * 16, 3 * 16));
-  scene.addEntity(new Pot(4 * 16, 3 * 16));
-  scene.addEntity(new Pot(5 * 16, 3 * 16));
-  scene.addEntity(new Pot(6 * 16, 3 * 16));
+  scene.addEntity(resetter.add(new Pot(2 * 16, 3 * 16)));
+  scene.addEntity(resetter.add(new Pot(3 * 16, 3 * 16)));
+  scene.addEntity(resetter.add(new Pot(4 * 16, 3 * 16)));
+  scene.addEntity(resetter.add(new Pot(5 * 16, 3 * 16)));
+  scene.addEntity(resetter.add(new Pot(6 * 16, 3 * 16)));
 
-  scene.addEntity(new Pot(2 * 16, 4 * 16));
-  scene.addEntity(new Pot(3 * 16, 4 * 16));
-  scene.addEntity(new Pot(4 * 16, 4 * 16));
-  scene.addEntity(new Pot(5 * 16, 4 * 16));
-  scene.addEntity(new Pot(6 * 16, 4 * 16));
+  scene.addEntity(resetter.add(new Pot(2 * 16, 4 * 16)));
+  scene.addEntity(resetter.add(new Pot(3 * 16, 4 * 16)));
+  scene.addEntity(resetter.add(new Pot(4 * 16, 4 * 16)));
+  scene.addEntity(resetter.add(new Pot(5 * 16, 4 * 16)));
+  scene.addEntity(resetter.add(new Pot(6 * 16, 4 * 16)));
 
-  scene.addEntity(new Pot(2 * 16, 5 * 16));
-  scene.addEntity(new Pot(3 * 16, 5 * 16));
-  scene.addEntity(new Pot(4 * 16, 5 * 16));
-  scene.addEntity(new Pot(5 * 16, 5 * 16));
-  scene.addEntity(new Pot(6 * 16, 5 * 16));
-  scene.addEntity(new Pot(7 * 16, 5 * 16));
-  scene.addEntity(new Pot(8 * 16, 5 * 16));
+  scene.addEntity(resetter.add(new Pot(2 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(3 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(4 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(5 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(6 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(7 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Pot(8 * 16, 5 * 16)));
 
-  scene.addEntity(new Pot(2 * 16, 6 * 16));
-  scene.addEntity(new Pot(3 * 16, 6 * 16));
-  scene.addEntity(new Pot(4 * 16, 6 * 16));
-  scene.addEntity(new Pot(5 * 16, 6 * 16));
-  scene.addEntity(new Pot(6 * 16, 6 * 16));
-  scene.addEntity(new Pot(7 * 16, 6 * 16));
-  scene.addEntity(new Pot(8 * 16, 6 * 16));
+  scene.addEntity(resetter.add(new Pot(2 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(3 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(4 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(5 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(6 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(7 * 16, 6 * 16)));
+  scene.addEntity(resetter.add(new Pot(8 * 16, 6 * 16)));
 
   scene.addEntity(new Npc(scene, 7 * 16, 3 * 16,
     ['You destroyed my\npot collection.', 'Give me your compass, so\nI can go searching for more.', {options: ['Keep compass', 'Give compass']}], ['Alright, now scram!'], 5, 'mophair'));
 
   engine.addScene('h_1,0', scene);
+  scenes.setScene('h_1,0', 11, 0, () => resetter.reset(scene))
 }
-
 
 function builde1n1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
+
+  const resetter = new EntityResetter();
 
   scene.addEntity(new BackgroundEntity('main4'));
   //bottom
@@ -560,12 +584,13 @@ function builde1n1(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 16));
   scene.addEntity(new Wall(7 * 16, 3 * 16, 16, 16));
 
-  scene.addEntity(new Tree(8 * 16, 1 * 16));
+  scene.addEntity(resetter.add(new Tree(8 * 16, 2 * 16)));
 
   // well
   scene.addEntity(new Wall(7 * 16, 7 * 16, 32, 32));
 
   engine.addScene('1,-1', scene);
+  scenes.setScene('1,-1', 1, -1, () => resetter.reset(scene));
 }
 
 function builde1n2(view: View, keyController: KeyboardController) {
@@ -595,11 +620,14 @@ function builde1n2(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(1 * 16, 7 * 16, 16, 16));
 
   engine.addScene('1,-2', scene);
+  scenes.setScene('1,-2', 1, -2, () => { });
 }
 
 function builde1s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
+
+  const resetter = new EntityResetter();
 
   scene.addEntity(new BackgroundEntity('main6'));
   //left
@@ -612,9 +640,9 @@ function builde1s1(view: View, keyController: KeyboardController) {
   // bushes
   scene.addEntity(new Wall(1 * 16, 4 * 16, 3 * 16, 1 * 16));
 
-  scene.addEntity(new Portal(1 * 16, 3 * 16, 1 * 16, 5 * 16));
+  scene.addEntity(resetter.add(new Portal(1 * 16, 3 * 16, 1 * 16, 5 * 16)));
 
-  scene.addEntity(new Portal(3 * 16, 5 * 16, 3 * 16, 3 * 16));
+  scene.addEntity(resetter.add(new Portal(3 * 16, 5 * 16, 3 * 16, 3 * 16)));
 
   //mountain
   scene.addEntity(new Wall(4 * 16, 2 * 16, 6 * 16, 6 * 16));
@@ -624,11 +652,14 @@ function builde1s1(view: View, keyController: KeyboardController) {
     ['Let me gather my nerves.'], 9));
 
   engine.addScene('1,1', scene);
+  scenes.setScene('1,1', 1, 1, () => resetter.reset(scene, (entity) => entity instanceof Portal ? entity.deactivate() : ''));
 }
 
 
 function buildw20(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
+
+  const resetter = new EntityResetter();
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main7'));
@@ -648,9 +679,9 @@ function buildw20(view: View, keyController: KeyboardController) {
   //campfire
   scene.addEntity(new Wall(3 * 16, 6 * 16, 2 * 16, 2 * 16));
 
-  scene.addEntity(new Barrel(1 * 16 + 8, 3 * 16));
-  scene.addEntity(new Barrel(1 * 16 + 8, 4 * 16));
-  scene.addEntity(new Barrel(1 * 16 + 8, 5 * 16));
+  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 3 * 16)));
+  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 4 * 16)));
+  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 5 * 16)));
 
   scene.addEntity(new Npc(scene, 5 * 16, 6 * 16,
     [
@@ -668,6 +699,7 @@ function buildw20(view: View, keyController: KeyboardController) {
     ], 7, 'shorthair'));
 
   engine.addScene('-2,0', scene);
+  scenes.setScene('-2,0', -2, 0, () => resetter.reset(scene));
 }
 
 function buildw30(view: View, keyController: KeyboardController) {
@@ -687,6 +719,7 @@ function buildw30(view: View, keyController: KeyboardController) {
   scene.addEntity(new Door(4 * 16, 6 * 16, 'h_-3,0', 4 * 16, 8 * 16, -3, 0));
 
   engine.addScene('-3,0', scene);
+  scenes.setScene('-3,0', -3, 0, () => { });
 }
 
 function buildHousew30(view: View, keyController: KeyboardController) {
@@ -726,10 +759,15 @@ function buildHousew30(view: View, keyController: KeyboardController) {
     ['That harp looks like it\nwould match nicely on stage.', { options: ['Keep harp', 'Give harp'] }], ['Come back later for\nthe show.'], 8, 'longhair'));
 
   engine.addScene('h_-3,0', scene);
+  scenes.setScene('h_-3,0', -13, 0, () => {
+    stairs.deactivate();
+  })
 }
 
 function buildw3s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
+
+  const resetter = new EntityResetter();
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main9'));
@@ -752,8 +790,8 @@ function buildw3s1(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(5 * 16, 6 * 16, 2 * 16, 1 * 16));
   scene.addEntity(new Wall(8 * 16, 7 * 16, 1 * 16, 1 * 16));
 
-  scene.addEntity(new Barrel(5 * 16, 7 * 16));
-  scene.addEntity(new Rock(6 * 16, 7 * 16));
+  scene.addEntity(resetter.add(new Barrel(5 * 16, 7 * 16)));
+  scene.addEntity(resetter.add(new Rock(6 * 16, 7 * 16)));
 
   scene.addEntity(new Npc(scene, 8, 7 * 16, [
     ],
@@ -769,10 +807,13 @@ function buildw3s1(view: View, keyController: KeyboardController) {
   ], 6, 'spikeyhair'));
 
   engine.addScene('-3,1', scene);
+  scenes.setScene('-3,1', -3, 1, () => resetter.reset(scene));
 }
 
 function buildw2s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
+
+  const resetter = new EntityResetter();
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main10'));
@@ -785,16 +826,23 @@ function buildw2s1(view: View, keyController: KeyboardController) {
   // Plants
   scene.addEntity(new Wall(2 * 16, 4 * 16 - 4, 5 * 16, 3 * 16));
 
-  scene.addEntity(new HeavyRock(8 * 16, 5 * 16));
+  scene.addEntity(resetter.add(new HeavyRock(8 * 16, 5 * 16)));
 
   scene.addEntity(new Door(4 * 16, 7 * 16, 'u_-2,1', 2 * 16, 3 * 16, -2, 1));
 
   engine.addScene('-2,1', scene);
+  scenes.setScene('-2,1', -2, 1, () => resetter.reset(scene, (entity) => {
+    if (entity instanceof HeavyRock) {
+      entity.reset();
+    }
+  }));
 }
 
 function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
+
+  const resetter = new EntityResetter();
 
   scene.addEntity(new BackgroundEntity('underground2'));
   scene.addEntity(new Wall(0, 32, screenWidth, 16));
@@ -805,9 +853,9 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Door(1 * 16, 3 * 16, '-2,1', 3 * 16, 7 * 16, -2, 1));
 
-  scene.addEntity(new Rock(4 * 16, 5 * 16));
-  scene.addEntity(new Rock(5 * 16, 5 * 16));
-  scene.addEntity(new Rock(6 * 16, 5 * 16));
+  scene.addEntity(resetter.add(new Rock(4 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Rock(5 * 16, 5 * 16)));
+  scene.addEntity(resetter.add(new Rock(6 * 16, 5 * 16)));
 
   // rails
   scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 2 * 16));
@@ -831,12 +879,13 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
     2, 'shorthair'))
 
   engine.addScene('u_-2,1', scene);
+  scenes.setScene('u_-2,1', -12, 1, () => resetter.reset(scene));
 }
-
-
 
 function buildw1s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
+
+  const resetter = new EntityResetter();
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main11'));
@@ -862,7 +911,21 @@ function buildw1s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Hole(4 * 16, 7 * 16));
 
-  scene.addEntity(new Grass(6 * 16, 7 * 16));
+  scene.addEntity(resetter.add(new Grass(6 * 16, 7 * 16)));
+
+
+  scene.addEntity(new Grass(2 * 16, 3 * 16));
+  scene.addEntity(new Grass(3 * 16, 3 * 16));
+  scene.addEntity(new Grass(4 * 16, 3 * 16));
+  scene.addEntity(new Grass(5 * 16, 3 * 16));
+  scene.addEntity(new Grass(6 * 16, 3 * 16));
+  scene.addEntity(new Grass(7 * 16, 3 * 16));
+
+  scene.addEntity(new Grass(5 * 16, 4 * 16));
+  scene.addEntity(new Grass(6 * 16, 4 * 16));
+
+  scene.addEntity(new Grass(5 * 16, 5 * 16));
+  scene.addEntity(new Grass(6 * 16, 5 * 16));
 
   scene.addEntity(new Npc(scene, 6 * 16, 6 * 16,
     [
@@ -875,6 +938,7 @@ function buildw1s1(view: View, keyController: KeyboardController) {
     ], 1));
 
   engine.addScene('-1,1', scene);
+  scenes.setScene('-1,1', -1, 1, () => resetter.reset(scene));
 }
 
 init();

@@ -21,8 +21,8 @@
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 77.2624630884141,
-                "y": 75.66440854611777
+                "x": 78.65207573388918,
+                "y": 103.45666145561923
             }
         },
         "inventory.tmx": {
@@ -37,24 +37,24 @@
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 102.25,
-                "y": 93.625
+                "x": 101.25,
+                "y": 93.125
             }
         },
         "main10.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 140.76776098662498,
-                "y": 79.83324648254299
+                "x": 72.95466388744138,
+                "y": 89.83845752996352
             }
         },
         "main11.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 80.73649470210178,
-                "y": 86.08650338718081
+                "x": 80.31961090845925,
+                "y": 85.5306583289908
             }
         },
         "main2.tmx": {
@@ -75,33 +75,33 @@
         },
         "main4.tmx": {
             "scale": 7.19625,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 83.93260378669444,
-                "y": 86.92027097446586
+                "x": 105.88848358520063,
+                "y": 85.39169706444328
             }
         },
         "main5.tmx": {
             "scale": 7.19625,
-            "selectedLayer": 3,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 74.62219906201145,
-                "y": 84.14104568351571
+                "x": 59.05853743269064,
+                "y": 104.98523536564181
             }
         },
         "main6.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 51.27670661803022,
-                "y": 78.3046725725204
+                "x": 50.9987840889352,
+                "y": 78.1657113079729
             }
         },
         "main7.tmx": {
             "scale": 5.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 93.27272727272728,
+                "x": 92.90909090909092,
                 "y": 84.09090909090911
             }
         },
@@ -109,16 +109,16 @@
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 81.84818481848184,
-                "y": 111.23849227027965
+                "x": 81.57026228938682,
+                "y": 110.82160847663712
             }
         },
         "main9.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 85.0442939030745,
-                "y": 84.14104568351571
+                "x": 84.62741010943199,
+                "y": 83.8631231544207
             }
         },
         "overworld.tsx": {
@@ -157,18 +157,18 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
-        "main10.tmx",
-        "main11.tmx",
         "main5.tmx",
         "main6.tmx",
+        "main7.tmx",
+        "main8.tmx",
+        "main9.tmx",
+        "main11.tmx",
+        "main10.tmx",
         "main1.tmx",
+        "house2.tmx",
         "main4.tmx",
         "underground2.tmx",
-        "main2.tmx",
-        "main9.tmx",
-        "main3.tmx",
-        "overworld.tsx",
-        "main8.tmx"
+        "main2.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

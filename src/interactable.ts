@@ -13,6 +13,8 @@ export class Interactable extends SpriteEntity {
       if (this.throwTimer <= 0) {
         scene.removeEntity(this);
         Sound.Sounds['slash'].play();
+        this.thrown = false;
+        this.throwTimer = FPS * 0.3;
       }
       if (this.thrownDirection == 0 || this.thrownDirection == Math.PI) {
         this.y += 0.8;
@@ -41,5 +43,11 @@ export class Interactable extends SpriteEntity {
   setCarriedBy(entity: SpriteEntity) {
     this.carried = true;
     this.carriedBy = entity;
+  }
+
+  reset() {
+    this.carried = false;
+    this.thrown = false;
+    this.throwTimer = FPS * 0.3;
   }
 }

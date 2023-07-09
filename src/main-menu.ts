@@ -1,5 +1,5 @@
 import { ControllerState, Scene, SpriteEntity, SpritePainter } from "game-engine";
-import { buildMap, engine, keyController, screenHeight, screenWidth, stopwatch } from "./game";
+import { buildMap, engine, statefulMode, keyController, screenHeight, screenWidth, stopwatch } from "./game";
 
 export class MainMenu extends SpriteEntity {
   constructor() {
@@ -7,9 +7,11 @@ export class MainMenu extends SpriteEntity {
   }
   tick(scene: Scene): void | Promise<void> {
     if (scene.isControl('pause', ControllerState.Press)) {
+      statefulMode.enabled = scene.isControl('action1', ControllerState.Down);
       buildMap(scene.getView(), keyController);
       engine.switchToScene('0,0');
       stopwatch.start = Date.now();
+      console.log(`ez mode: ${statefulMode.enabled}`);
     }
     if (scene.isControl('sprint', ControllerState.Press)) {
       engine.switchToScene('credits');
@@ -32,14 +34,21 @@ export class MainMenu extends SpriteEntity {
     ctx.strokeText('Press Shift for credits', 12, screenHeight * 3 / 4 - 8);
     ctx.fillText('Press Shift for credits', 12, screenHeight * 3 / 4 - 8);
 
+    ctx.strokeText('x+Enter=stateful mode', 12, screenHeight * 3 / 4 + 8);
+    ctx.fillText('x+Enter=stateful mode', 12, screenHeight * 3 / 4 + 8);
+
     ctx.fillStyle = '#000000CC';
     ctx.fillRect(4, screenHeight * 5 / 6 + 8 - 12, screenWidth - 8, 28);
 
     ctx.fillStyle = '#FFFFFF';
-    ctx.strokeText('Controls: Arrow Keys, X, Z', 4, screenHeight * 5 / 6 + 8);
-    ctx.fillText('Controls: Arrow Keys, X, Z', 4, screenHeight * 5 / 6 + 8);
+    ctx.font = '12px game';
+    ctx.strokeText('Controls: Arrow Keys, X, Z', 5, screenHeight * 5 / 6 + 4);
+    ctx.fillText('Controls: Arrow Keys, X, Z', 5, screenHeight * 5 / 6 + 4);
 
-    ctx.strokeText('Escape key: reset', 26, screenHeight * 5 / 6 + 20);
-    ctx.fillText('Escape key: reset', 26, screenHeight * 5 / 6 + 20);
+    ctx.strokeText('Enter key: inventory', 5, screenHeight * 5 / 6 + 12);
+    ctx.fillText('Enter key: inventory', 5, screenHeight * 5 / 6 + 12);
+
+    ctx.strokeText('Escape key: reset', 5, screenHeight * 5 / 6 + 20);
+    ctx.fillText('Escape key: reset', 5, screenHeight * 5 / 6 + 20);
   }
 }

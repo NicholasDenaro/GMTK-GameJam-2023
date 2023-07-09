@@ -1,4 +1,4 @@
-import { ControllerState, Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
+import { ControllerState, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { screenHeight, screenWidth } from "./game";
 import { Player } from "./player";
 
@@ -41,39 +41,51 @@ export class Inventory extends SpriteEntity {
   private cursorX = 0;
   private cursorY = 0;
   tick(scene: Scene): void | Promise<void> {
+    let move = false;
     if (scene.isControl('left', ControllerState.Press)) {
       this.cursorX--;
       if (this.cursorX < 0) {
         this.cursorX = 3;
       }
+      move = true;
     }
     if (scene.isControl('right', ControllerState.Press)) {
       this.cursorX++;
       if (this.cursorX > 3) {
         this.cursorX = 0;
       }
+      move = true;
     }
     if (scene.isControl('up', ControllerState.Press)) {
       this.cursorY--;
       if (this.cursorY < 0) {
         this.cursorY = 3;
       }
+      move = true;
     }
     if (scene.isControl('down', ControllerState.Press)) {
       this.cursorY++;
       if (this.cursorY > 3) {
         this.cursorY = 0;
       }
+      move = true;
     }
+
+    if (move) {
+      Sound.Sounds['talk'].play();
+    }
+
     if (scene.isControl('action1', ControllerState.Press)) {
       const temp = this.grid[this.cursorX][this.cursorY];
       this.grid[this.cursorX][this.cursorY] = this.player.getItem1();
       this.player.setItem1(temp);
+      Sound.Sounds['pause'].play();
     }
     if (scene.isControl('action2', ControllerState.Press)) {
       const temp = this.grid[this.cursorX][this.cursorY];
       this.grid[this.cursorX][this.cursorY] = this.player.getItem2();
       this.player.setItem2(temp);
+      Sound.Sounds['pause'].play();
     }
   }
 
