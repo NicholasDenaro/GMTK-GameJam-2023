@@ -18,6 +18,7 @@ import { Pot } from "./pot";
 import { Door } from "./door";
 import { Stairs } from "./stairs";
 import { HeavyRock } from "./heavy-rocky";
+import { Portal } from "./portal";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -172,7 +173,7 @@ export class Player extends SpriteEntity {
     let usedMirror = false;
     if (canMove) {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)]
-        .filter(entity => !(entity instanceof Stairs) || !entity.isActivated());
+        .filter(entity => !(entity instanceof Portal) && (!(entity instanceof Stairs) || !entity.isActivated()));
 
       //for (let i = 0; i < (scene.isControl('sprint', ControllerState.Held) ? 2 : 1); i++) {
       if (scene.isControl('left', ControllerState.Held) && !this.action && !this.falling) {
@@ -352,6 +353,9 @@ export class Player extends SpriteEntity {
           loopTrack.track.stop();
           loopTrack.track = {stop: () => {}};
           this.action = true;
+          this.actionFunc = () => {
+            scene.entitiesByType(Portal).forEach(portal => portal.activate());
+          }
           this.harp = true;
           this.imageIndex = 0;
           this.imageTimer = 0;
@@ -551,6 +555,17 @@ export class Player extends SpriteEntity {
               engine.addEntity(nextScene, this.crosshair);
               engine.addEntity(nextScene, this.statusBar);
             }
+          }
+        });
+      }
+
+
+      if (!this.jumping) {
+        const portals = scene.entitiesByType(Portal);
+        portals.forEach(portal => {
+          if (portal.collision(this) && portal.isActivated()) {
+            this.x = portal.getDestPos().x;
+            this.y = portal.getDestPos().y;
           }
         });
       }

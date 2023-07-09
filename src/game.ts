@@ -17,6 +17,7 @@ import { Stairs } from './stairs';
 import { HalfWall } from './half-wall';
 import { Switch } from './switch';
 import { HeavyRock } from './heavy-rocky';
+import { Portal } from './portal';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -686,7 +687,7 @@ function buildHousew30(view: View, keyController: KeyboardController) {
   // table
   scene.addEntity(new Wall(7 * 16, 7 * 16, 1 * 16, 1 * 16));
 
-  let stairs = new Stairs(6 * 16, 4 * 16)
+  let stairs = new Stairs(6 * 16, 4 * 16, 0, 806);
   // stage
   scene.addEntity(new Wall(4 * 16, 4 * 16, 2 * 16, 1 * 16));
   scene.addEntity(stairs);
@@ -757,7 +758,7 @@ function buildw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new HeavyRock(8 * 16, 5 * 16));
 
-  scene.addEntity(new Door(4 * 16, 7 * 16, 'u_-2,1', 1 * 16, 4 * 16, -2, 1));
+  scene.addEntity(new Door(4 * 16, 7 * 16, 'u_-2,1', 2 * 16, 3 * 16, -2, 1));
 
   engine.addScene('-2,1', scene);
 }
@@ -775,6 +776,31 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Door(1 * 16, 3 * 16, '-2,1', 3 * 16, 7 * 16, -2, 1));
 
+
+  scene.addEntity(new Rock(1 * 16, 5 * 16));
+  scene.addEntity(new Rock(2 * 16, 5 * 16));
+  scene.addEntity(new Rock(3 * 16, 5 * 16));
+
+  // rails
+  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, screenHeight));
+  scene.addEntity(new Wall(4 * 16, 3 * 16, 16, screenHeight));
+  scene.addEntity(new Wall(6 * 16, 3 * 16, 16, screenHeight));
+
+  scene.addEntity(new Portal(2 * 16, 7 * 16, 7 * 16, 5 * 16));
+
+  scene.addEntity(new Portal(7 * 16, 7 * 16, 2 * 16, 5 * 16));
+
+  scene.addEntity(new Npc(scene, 7 * 16, 4 * 16, 
+    [
+      'It\'s so dark in here.',
+      'Hey, is that a lamp?',
+      'Mind if I take it?',
+      {options: ['Keep lamp', 'Give lamp']}
+    ],
+    [
+      'Thanks, now I can light\nup the room.'
+    ],
+    2, 'shorthair'))
 
   engine.addScene('u_-2,1', scene);
 }
