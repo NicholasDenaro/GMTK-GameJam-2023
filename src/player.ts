@@ -19,6 +19,8 @@ import { Door } from "./door";
 import { Stairs } from "./stairs";
 import { HeavyRock } from "./heavy-rocky";
 import { Portal } from "./portal";
+import { Grave, Skeleton } from "./grave";
+import { PermaFire } from "./perma-fire";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -155,6 +157,16 @@ export class Player extends SpriteEntity {
       return;
     }
 
+    if (scene.entitiesByType(PlayerShadow).length == 0) {
+      const sceneKey = engine.sceneKey(scene);
+      engine.addEntity(sceneKey, this.shadow);
+      engine.addEntity(sceneKey, this.baseImage);
+      engine.addEntity(sceneKey, this.hairImage);
+      engine.addEntity(sceneKey, this.toolImage);
+      engine.addEntity(sceneKey, this.crosshair);
+      engine.addEntity(sceneKey, this.statusBar);
+    }
+
     const canMove = scene.entitiesByType(TextboxEntity).length == 0;
 
     if (!canMove) {
@@ -268,7 +280,7 @@ export class Player extends SpriteEntity {
 
       // Do actions
       let dialog = false;
-      const actionNpc = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign)].filter(npc => npc.collision(this.crosshair))[0];
+      const actionNpc = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign), ...scene.entitiesByType(Skeleton)].filter(npc => npc.collision(this.crosshair))[0];
       if (scene.isControl('action1', ControllerState.Press) && actionNpc && !this.jumping && !this.falling) {
         actionNpc.showDialog(scene);
         dialog = true;
@@ -289,6 +301,10 @@ export class Player extends SpriteEntity {
           this.actionFunc = () => {
             if (actionInterractable instanceof Rock || actionInterractable instanceof Grass) {
               scene.removeEntity(actionInterractable);
+            }
+            if (actionInterractable instanceof Grave) {
+              actionInterractable.dig(scene);
+              this.resetHeight(scene);
             }
 
             Sound.Sounds['dig'].play();
@@ -329,6 +345,9 @@ export class Player extends SpriteEntity {
           this.actionFunc = () => {
             scene.addEntity(new Fire(this.crosshair.getPos().x, this.crosshair.getPos().y));
             Sound.Sounds['fire'].play();
+          }
+          if (actionInterractable instanceof PermaFire) {
+            actionInterractable.light(scene);
           }
           this.action = true;
           this.imageIndex = 0;
@@ -720,5 +739,15 @@ export class Player extends SpriteEntity {
     this.inventory.removeItem(item);
     this.spawnX = Math.round(this.x / 16) * 16;
     this.spawnY = Math.round(this.y / 16) * 16;
+  }
+
+  resetHeight(scene: Scene) {
+    const sceneKey = engine.sceneKey(scene);
+    engine.removeEntity(sceneKey, this.shadow);
+    engine.removeEntity(sceneKey, this.baseImage);
+    engine.removeEntity(sceneKey, this.hairImage);
+    engine.removeEntity(sceneKey, this.toolImage);
+    engine.removeEntity(sceneKey, this.crosshair);
+    engine.removeEntity(sceneKey, this.statusBar);
   }
 }

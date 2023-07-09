@@ -22,6 +22,8 @@ import { Credits } from './credits';
 import { MainMenu } from './main-menu';
 import { Interactable } from './interactable';
 import { Title } from './title';
+import { Grave } from './grave';
+import { PermaFire } from './perma-fire';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -62,6 +64,8 @@ new Sprite('spikeyhair_idle_strip9', spriteAssetsPremade('./spikeyhair_idle_stri
 new Sprite('mophair_idle_strip9', spriteAssetsPremade('./mophair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('shorthair_idle_strip9', spriteAssetsPremade('./shorthair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+
+new Sprite('skeleton_idle_strip6', spriteAssetsPremade('./skeleton_idle_strip6.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 //walk
 new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -633,8 +637,11 @@ function builde1n1(view: View, keyController: KeyboardController) {
 
   //graves
   scene.addEntity(new Wall(3 * 16, 3 * 16, 16, 16));
+  scene.addEntity(new Grave(3 * 16, 4 * 16, ['Good morning!']));
   scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 16));
+  scene.addEntity(new Grave(5 * 16, 4 * 16, ['It was dark down there.']));
   scene.addEntity(new Wall(7 * 16, 3 * 16, 16, 16));
+  scene.addEntity(new Grave(7 * 16, 4 * 16, ['Back from the dead!']));
 
   scene.addEntity(resetter.add(new Tree(8 * 16, 2 * 16)));
 
@@ -730,6 +737,7 @@ function buildw20(view: View, keyController: KeyboardController) {
 
   //campfire
   scene.addEntity(new Wall(3 * 16, 6 * 16, 2 * 16, 2 * 16));
+  scene.addEntity(new PermaFire(3 * 16 + 8, 6 * 16 + 8));
 
   scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 3 * 16)));
   scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 4 * 16)));
