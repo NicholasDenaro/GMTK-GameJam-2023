@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { engine, loopTrack, scenes, screenHeight, screenWidth } from "./game";
+import { engine, loopTrack, scenes, screenHeight, screenWidth, stopwatch } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -125,7 +125,11 @@ export class Player extends SpriteEntity {
 
   private transitionTimer = 0;
   private imageTimer = 0;
+  private shownEndingText = false;
   tick(scene: Scene): Promise<void> | void {
+    if (scene.isControl('restart', ControllerState.Press)) {
+      engine.switchToScene('main_menu');
+    }
     if (this.pause) {
       return;
     }
@@ -140,6 +144,24 @@ export class Player extends SpriteEntity {
       this.baseImage.setAnimation('idle_strip9');
       this.hairImage.setAnimation('idle_strip9');
       this.toolImage.setAnimation('idle_strip9');
+    }
+
+    if (canMove && this.getItem1() == -1 && this.getItem2() == -1 && this.inventory.isEmpty()) {
+      if (!this.shownEndingText) {
+        stopwatch.end = Date.now();
+        const milis = (stopwatch.end - stopwatch.start) % 1000;
+        const seconds = Math.floor((stopwatch.end - stopwatch.start) / 1000) % 60;
+        const minutes = Math.floor((stopwatch.end - stopwatch.start) / 1000 / 60) % 60;
+        const hours = Math.floor((stopwatch.end - stopwatch.start) / 1000 / 60 / 60);
+        scene.addEntity(new TextboxEntity([
+          'Congratulations on giving\naway all your items!',
+          `Your time was:\n${hours > 0 ? hours : '00'}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${milis < 100 ? '0' : ''}${milis < 10 ? '0' : ''}${milis}`
+        ]));
+        this.shownEndingText = true;
+      } else {
+        engine.switchToScene('credits');
+      }
+
     }
 
     let moving = false;
@@ -495,7 +517,7 @@ export class Player extends SpriteEntity {
       }
     }
 
-    if (engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
+    if (canMove && engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
       engine.addEntity('pause', this);
       engine.addEntity('pause', this.statusBar);
       engine.addEntity('pause', this.inventory);

@@ -37,16 +37,24 @@
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 102.5,
-                "y": 93.875
+                "x": 102.25,
+                "y": 93.625
             }
         },
         "main10.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 71.98193503560883,
-                "y": 84.41896821261074
+                "x": 140.76776098662498,
+                "y": 79.83324648254299
+            }
+        },
+        "main11.tmx": {
+            "scale": 7.19625,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 80.73649470210178,
+                "y": 86.08650338718081
             }
         },
         "main2.tmx": {
@@ -69,24 +77,24 @@
             "scale": 7.19625,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 84.21052631578947,
-                "y": 87.33715476810839
+                "x": 83.93260378669444,
+                "y": 86.92027097446586
             }
         },
         "main5.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 74.90012159110647,
-                "y": 84.41896821261074
+                "x": 74.62219906201145,
+                "y": 84.14104568351571
             }
         },
         "main6.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 62.39360778183082,
-                "y": 76.77609866249783
+                "x": 51.27670661803022,
+                "y": 78.3046725725204
             }
         },
         "main7.tmx": {
@@ -114,7 +122,7 @@
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 4,
+            "scaleInDock": 3,
             "scaleInEditor": 8
         },
         "underground1.tmx": {
@@ -149,18 +157,18 @@
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [
-        "underground2.tmx",
-        "main6.tmx",
+        "main10.tmx",
+        "main11.tmx",
         "main5.tmx",
-        "main4.tmx",
-        "main2.tmx",
+        "main6.tmx",
         "main1.tmx",
+        "main4.tmx",
+        "underground2.tmx",
+        "main2.tmx",
         "main9.tmx",
         "main3.tmx",
         "overworld.tsx",
-        "main8.tmx",
-        "main10.tmx",
-        "main7.tmx"
+        "main8.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

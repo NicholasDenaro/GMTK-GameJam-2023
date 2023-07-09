@@ -18,6 +18,8 @@ import { HalfWall } from './half-wall';
 import { Switch } from './switch';
 import { HeavyRock } from './heavy-rocky';
 import { Portal } from './portal';
+import { Credits } from './credits';
+import { MainMenu } from './main-menu';
 
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
@@ -102,6 +104,7 @@ new Sprite('main7', spriteAssetsPremade('./main7.png'), { spriteWidth: screenWid
 new Sprite('main8', spriteAssetsPremade('./main8.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main9', spriteAssetsPremade('./main9.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('main10', spriteAssetsPremade('./main10.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+new Sprite('main11', spriteAssetsPremade('./main11.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('underground2', spriteAssetsPremade('./underground2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
@@ -149,6 +152,12 @@ new Sound('bow', wavAssets('./bow3.wav'));
 
 export const scenes = new SceneMap();
 
+export const stopwatch = {
+  start: 0,
+  end: 0,
+  items: 10,
+};
+
 export const loopTrack = {
   track: {
     stop: () => {}
@@ -161,9 +170,20 @@ async function init() {
 
   const view = new Canvas2DView(screenWidth, screenHeight, { scale: scale, bgColor: '#BBBBBB' });
 
-  buildMap(view);
+  const mainMenu = new Scene(view);
+  mainMenu.addController(keyController)
+  mainMenu.addEntity(new BackgroundEntity('main1'));
+  mainMenu.addEntity(new MainMenu());
 
-  engine.switchToScene('0,0');
+  engine.addScene('main_menu', mainMenu);
+
+  const credits = new Scene(view);
+  credits.addController(keyController);
+  credits.addEntity(new Credits());
+
+  engine.addScene('credits', credits);
+
+  engine.switchToScene('main_menu');
 
   Sound.setVolume(0.1);
 
@@ -206,7 +226,13 @@ const keyMap = [
     binding: new ControllerBinding<undefined>('pause'),
     keys: ['Enter'],
   },
+  {
+    binding: new ControllerBinding<undefined>('restart'),
+    keys: ['Escape'],
+  },
 ];
+
+export const keyController = new KeyboardController(keyMap);
 
 const mouseMap = [
   {
@@ -242,8 +268,7 @@ const gamepadMap = [
   }
 ];
 
-function buildMap(view: View) {
-  const keyController = new KeyboardController(keyMap);
+export function buildMap(view: View, keyController: KeyboardController) {
   const scenePause = new Scene(view);
   scenePause.addController(keyController);
   // scene.addController(new MouseController(mouseMap));
@@ -258,6 +283,7 @@ function buildMap(view: View) {
   buildHousew30(view, keyController);
   buildw3s1(view, keyController);
   buildw2s1(view, keyController);
+  buildw1s1(view, keyController);
   buildUndergroundw2s1(view, keyController);
   builde1n1(view, keyController);
   builde1n2(view, keyController);
@@ -272,6 +298,7 @@ function buildMap(view: View) {
   scenes.setScene('-3,0', -3, 0);
   scenes.setScene('-3,1', -3, 1);
   scenes.setScene('-2,1', -2, 1);
+  scenes.setScene('-1,1', -1, 1);
   scenes.setScene('1,-1', 1, -1);
   scenes.setScene('1,-2', 1, -2);
   scenes.setScene('1,1', 1, 1);
@@ -419,7 +446,7 @@ function buildUndergroundw10(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Npc(scene, 8 * 16, 8 * 16,
     ['I don\'t know how I\nmanaged to get stuck here.', 'Hey! That feather looks\nlike could help!', {options: ['Keep feather', 'Give feather']}],
-    ['Thank you! Now I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
+    ['Thank you!\nNow I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
 
   engine.addScene('u_-1,0', scene);
 }
@@ -804,6 +831,50 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
     2, 'shorthair'))
 
   engine.addScene('u_-2,1', scene);
+}
+
+
+
+function buildw1s1(view: View, keyController: KeyboardController) {
+  const scene = new Scene(view);
+
+  scene.addController(keyController);
+  scene.addEntity(new BackgroundEntity('main11'));
+  // top
+  scene.addEntity(new Wall(0, 16, screenWidth, 4 * 16));
+  // right
+  scene.addEntity(new Wall(screenWidth - 16, 16, 16, screenHeight));
+  // left
+  scene.addEntity(new Wall(0, 6 * 16, 32, 4 * 16));
+  // bottom
+  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 2 * 16));
+
+  // fence
+  scene.addEntity(new Wall(2 * 16, 4 * 16, 3 * 16, 1 * 16));
+  scene.addEntity(new Wall(4 * 16, 4 * 16, 1 * 16, 3 * 16));
+  scene.addEntity(new Wall(4 * 16, 6 * 16, 2* 16, 1 * 16));
+
+  // house
+  scene.addEntity(new Wall(7 * 16, 3 * 16, 3 * 16, 4 * 16));
+
+  scene.addEntity(new Hole(2 * 16, 6 * 16));
+  scene.addEntity(new Hole(3 * 16, 6 * 16));
+
+  scene.addEntity(new Hole(4 * 16, 7 * 16));
+
+  scene.addEntity(new Grass(6 * 16, 7 * 16));
+
+  scene.addEntity(new Npc(scene, 6 * 16, 6 * 16,
+    [
+      'That sword looks good\nfor cutting.',
+      'My yard could use a trim.',
+      {options: ['Keep sword', 'Give sword']}
+    ],
+    [
+      'I\'m going to have the\nbest yard in the kingom!'
+    ], 1));
+
+  engine.addScene('-1,1', scene);
 }
 
 init();

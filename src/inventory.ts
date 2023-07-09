@@ -87,6 +87,18 @@ export class Inventory extends SpriteEntity {
     }
   }
 
+  isEmpty() {
+    for (let j = 0; j < 4; j++) {
+      for (let i = 0; i < 4; i++) {
+        if (this.grid[i][j] != -1) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   draw(ctx: CanvasRenderingContext2D) {
     for (let j = 0; j < 4; j++) {
       for (let i = 0; i < 4; i++) {
