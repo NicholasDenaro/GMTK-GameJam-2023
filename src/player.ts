@@ -145,9 +145,11 @@ export class Player extends SpriteEntity {
   private ticks = 0;
   tick(scene: Scene): Promise<void> | void {
     this.ticks++;
-    if (scene.isControl('restart', ControllerState.Press)) {
-      engine.switchToScene('main_menu');
-      this.playTrackForScene('0,0');
+    if (scene.isControl('restart', ControllerState.Press) && engine.sceneKey(scene) != 'pause') {
+      scene.addEntity(new TextboxEntity(['Go back to main menu?', {options: ['No', 'Yes']}], undefined, () => {
+        engine.switchToScene('main_menu');
+        this.playTrackForScene('0,0');
+      }));
     }
     if (this.pause) {
       return;

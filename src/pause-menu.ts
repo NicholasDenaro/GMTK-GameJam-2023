@@ -7,11 +7,9 @@ export class PauseMenu extends SpriteEntity {
     super(new SpritePainter(() => {}, {spriteWidth: 0, spriteHeight: 0}));
   }
   tick(scene: Scene): void | Promise<void> {
-
-    if (scene.isControl('pause', ControllerState.Press)) {
+    if (scene.isControl('pause', ControllerState.Press) || scene.isControl('restart', ControllerState.Press)) {
       const lastScene = scene.entitiesByType(Player)[0].lastScene;
       engine.switchToScene(lastScene);
     }
   }
-  
 }

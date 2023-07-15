@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "inventory.tmx",
+    "activeFile": "",
     "expandedProjectPaths": [
         "."
     ],
@@ -166,10 +166,6 @@
     "map.tileWidth": 16,
     "map.width": 10,
     "openFiles": [
-        "overworld.tsx",
-        "main2.tmx",
-        "main1.tmx",
-        "inventory.tmx"
     ],
     "project": "gmtk2023.tiled-project",
     "recentFiles": [

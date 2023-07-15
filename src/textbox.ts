@@ -4,7 +4,7 @@ import { Npc } from "./npc";
 import { Player } from "./player";
 
 export class TextboxEntity extends SpriteEntity {
-  constructor(private dialog: (string | { options: string[] })[], private target?: Npc) {
+  constructor(private dialog: (string | { options: string[] })[], private target?: Npc, private action?: () => void) {
     super(new SpritePainter(ctx => this.draw(ctx), {spriteWidth: screenWidth, spriteHeight: 48}));
   }
   private dialogIndex = 0;
@@ -18,8 +18,13 @@ export class TextboxEntity extends SpriteEntity {
     if (scene.isControl('action1', ControllerState.Press)) {
       if ((<any>this.dialog[this.dialogIndex]).options) {
         if (this.cursor == 1) {
-          this.target.giveItem(scene.entitiesByType(Player)[0]);
-          Sound.Sounds['pause'].play();
+          if (this.target) {
+            this.target.giveItem(scene.entitiesByType(Player)[0]);
+            Sound.Sounds['pause'].play();
+          }
+          if (this.action) {
+            this.action();
+          }
         }
       }
       this.dialogIndex++;
