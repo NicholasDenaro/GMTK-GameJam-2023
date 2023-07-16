@@ -3,6 +3,7 @@ import { FPS } from "./game";
 import { Pot } from "./pot";
 import { Grass } from "./grass";
 import { Player } from "./player";
+import { HeavyRock } from "./heavy-rocky";
 
 export class Interactable extends SpriteEntity {
   private thrownDirection: number;
@@ -14,10 +15,14 @@ export class Interactable extends SpriteEntity {
     if (this.thrown) {
       this.throwTimer--;
       if (this.throwTimer <= 0) {
-        scene.removeEntity(this);
-        if (!this.playBreakSound()) {
-          Sound.Sounds['dig'].play();
+        const self = this;
+        if (this.breakWhenThrown()) {
+          scene.removeEntity(this);
+          if (!this.playBreakSound()) {
+            Sound.Sounds['dig'].play();
+          }
         }
+        
         this.thrown = false;
         this.throwTimer = FPS * 0.3;
       }
@@ -36,6 +41,10 @@ export class Interactable extends SpriteEntity {
       this.x = this.carriedBy.getPos().x;
       this.y = this.carriedBy.getPos().y - 16;
     }
+  }
+
+  breakWhenThrown() {
+    return true;
   }
 
   throw(direction: number) {

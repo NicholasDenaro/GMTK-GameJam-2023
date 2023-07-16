@@ -12,4 +12,8 @@ export class HeavyRock extends Interactable {
     this.y = this.initialY;
     super.reset();
   }
+
+  breakWhenThrown() {
+    return false;
+  }
 }

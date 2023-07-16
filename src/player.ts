@@ -307,12 +307,13 @@ export class Player extends SpriteEntity {
         }
 
         if (!this.carry && useItem == 0) { // shovel
+          const shovelable = actionInterractables.filter(ais => ais instanceof Rock || ais instanceof Grass)[0]
           this.actionFunc = () => {
-            if (actionInterractable instanceof Rock || actionInterractable instanceof Grass) {
-              scene.removeEntity(actionInterractable);
+            if (shovelable instanceof Rock || shovelable instanceof Grass) {
+              scene.removeEntity(shovelable);
             }
-            if (actionInterractable instanceof Grave) {
-              actionInterractable.dig(scene);
+            if (shovelable instanceof Grave) {
+              shovelable.dig(scene);
               this.resetHeight(scene);
             }
 
@@ -389,13 +390,14 @@ export class Player extends SpriteEntity {
 
         if (useItem == 6) { // glove
           if (!this.carry) { // pickup
-            if (actionInterractable instanceof Grass || actionInterractable instanceof Pot || actionInterractable instanceof HeavyRock) {
+            const pickupable = actionInterractables.filter(ais => ais instanceof Grass || ais instanceof Pot || ais instanceof HeavyRock)[0]
+            if (pickupable instanceof Grass || pickupable instanceof Pot || pickupable instanceof HeavyRock) {
               this.actionFunc = () => {
-                if (actionInterractable) {
+                if (pickupable) {
                   this.carry = true;
-                  this.carryEntity = actionInterractable;
-                  actionInterractable.setCarriedBy(this);
-                  scene.removeEntity(actionInterractable);
+                  this.carryEntity = pickupable;
+                  pickupable.setCarriedBy(this);
+                  scene.removeEntity(pickupable);
                 }
                 Sound.Sounds['slash'].play();
               }
@@ -412,7 +414,7 @@ export class Player extends SpriteEntity {
             this.carryEntity = undefined;
           } else { // drop
             this.carry = false;
-            this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 3);
+            this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 2);
             this.carryEntity = undefined;
           }
         }
@@ -478,7 +480,7 @@ export class Player extends SpriteEntity {
             if (moving) {
               this.carryEntity.throw(this.lookDirection);
             } else {
-              this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 3);
+              this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 2);
             }
             this.carry = false;
           }

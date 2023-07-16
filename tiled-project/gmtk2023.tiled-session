@@ -29,11 +29,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 1.5,
+            "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -74,
-                "y": 153.66666666666663
+                "x": 241,
+                "y": 71.83333333333331
             }
         },
         "inventory.tmx": {
@@ -144,11 +144,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 2,
+            "scale": 4,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -52,
-                "y": 144.75
+                "x": -322.75,
+                "y": 148.375
             }
         },
         "overworld.tsx": {
@@ -170,8 +170,8 @@
             "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -190.99999999999997,
-                "y": 181.49999999999997
+                "x": -202.66666666666666,
+                "y": 171.16666666666669
             }
         },
         "underground1.tmx": {
