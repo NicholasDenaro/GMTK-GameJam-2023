@@ -24,7 +24,11 @@ import { Interactable } from './interactable';
 import { Title } from './title';
 import { Grave } from './grave';
 import { PermaFire } from './perma-fire';
+import { TiledBackground } from './tiled-background';
 
+const world = require('../tiled-project/overworld-2.tmx');
+const houses = require('../tiled-project/houses.tmx');
+const underground = require('../tiled-project/underground.tmx');
 
 const rfont = require.context('../assets/premade', false, /\.ttf$/);
 const sfont = rfont('./BetterPixels.ttf');
@@ -173,6 +177,165 @@ new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.wav')
 new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.wav'));
 new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.wav'));
 new Sound('explosion', wavAssetsPremade('./explosion_36.wav'));
+
+const signTexts = [
+  [
+    'Congratulations on defeating\nthe evil Frogman. The\nKingdom is safe.',
+    'But more people are in\nneed of help. Luckily you\nhave gathered many',
+    'items across your journey.',
+    'Find the correct order\nto give away each item\nso you can help everyone.',
+    'PS Gaze into the mirror\nto return here instantly.'
+  ]
+];
+
+const graveTexts = [
+  ['Good morning!'],
+  ['It was dark down there.'],
+  ['Back from the dead!']
+]
+
+const npcs = [
+  { // 0 default
+    dialog: [
+      'Hello',
+    ],
+    postDialog: [
+      'Hello!'
+    ],
+    requestedItem: -1,
+    hair: 'shorthair',
+    flip: false
+  },
+  { // 1 Mirror man
+    dialog: [
+      'I don\'t know how I got\nstuck. Could you spare\nyour mirror?',
+      { options: ['Keep mirror', 'Give mirror'] }
+    ],
+    postDialog: [
+      'Thank you!'
+    ],
+    requestedItem: 7,
+    hair: 'shorthair',
+    flip: false
+  },
+  { // 2 Shovel lady
+    dialog: [
+      'I need a shovel to dig my\ngarden. Could you give\nme yours?',
+      { options: ['keep shovel', 'give shovel'] }
+    ],
+    postDialog: ['Thank you, now it\'s\ntime to get planting.'],
+    requestedItem: 0,
+    hair: 'longhair',
+    flip: false
+  },
+  { // 3 Bomb lady
+    dialog: [
+      'A rock slide is blocking\nthe way to my flower.',
+      'Could I have your bombs?',
+      { options: ['keep bombs', 'give bombs']}
+    ],
+    postDialog: ['I\'ll need some time\nto gather my nerves.'],
+    requestedItem: 9,
+    hair: 'longhair',
+    flip: false
+  },
+  { // 4 Glove man
+    dialog: [
+      'Phew, this sure is heavy.',
+      { options: ['Keep glove', 'Give glove'] }
+    ],
+    postDialog: [
+      'That should help a lot!'
+    ],
+    requestedItem: 6,
+    hair: 'spikeyhair',
+    flip: false
+  },
+  { // 5 Feater man
+    dialog: [
+      'I don\'t know how I\nmanaged to get stuck here.',
+      'Hey! That feather looks\nlike could help!',
+      { options: ['Keep feather', 'Give feather']}
+    ],
+    postDialog: ['Thank you!\nNow I can leave.', '...', '......', 'I hope you can too!'],
+    requestedItem: 4,
+    hair: 'spikeyhair',
+    flip: false
+  },
+  { // 6 Bow man
+    dialog: [
+      'The drawbridge is up,\nsomeone must be playing\na prank on me.',
+      'If you give me your bow,\nI might be able to\nshoot the switch.',
+      { options: ['Keep bow', 'Give bow'] }
+    ],
+    postDialog: [
+      'Thanks, you really saved me there.'
+    ],
+    requestedItem: 3,
+    hair: 'curlyhair',
+    flip: false
+  },
+  { // 7 Harp lady
+    dialog: [
+      'That harp looks like it\nwould match nicely on stage.',
+      { options: ['Keep harp', 'Give harp'] }
+    ],
+    postDialog: ['Come back later for\nthe show.'],
+    requestedItem: 8,
+    hair: 'longhair',
+    flip: false
+  },
+  { // 8 Compass man
+    dialog: [
+      'You destroyed my\npot collection.',
+      'Give me your compass, so\nI can go searching for more.',
+      { options: ['Keep compass', 'Give compass'] }
+    ],
+    postDialog: [
+      'Alright, now scram!'
+    ],
+    requestedItem: 5,
+    hair: 'mophair',
+    flip: false
+  },
+  { // 9 Lamp man
+    dialog: [
+      'It\'s so dark in here.',
+      'Hey, is that a lamp?',
+      'Mind if I take it?',
+      { options: ['Keep lamp', 'Give lamp'] }
+    ],
+    postDialog: [
+      'Thanks, now I can light\nup the room.'
+    ],
+    requestedItem: 2,
+    hair: 'shorthair',
+    flip: false
+  },
+  { // 10 Sword man
+    dialog: [
+      'That sword looks good\nfor cutting.',
+      'My yard could use a trim.',
+      { options: ['Keep sword', 'Give sword'] }
+    ],
+    postDialog: [
+      'I\'m going to have the\nbest yard in the kingom!'
+    ],
+    requestedItem: 1,
+    hair: null,
+    flip: false
+  },
+  { // 11 Boss man
+    dialog: [
+      'I put the barrels and\nfence there while he was\nnapping.',
+      'Serves him right for\nsleeping on the job.'
+    ],
+    postDialog: [],
+    requestedItem: -1,
+    hair: 'spikeyhair',
+    flip: false
+  },
+]
 
 export const scenes = new SceneMap();
 
@@ -333,6 +496,155 @@ const gamepadMap = [
 ];
 
 export function buildMap(view: View, keyController: KeyboardController) {
+  buildMapNew(view, keyController);
+  // buildMapOld(view, keyController);
+}
+
+export function buildMapNew(view: View, keyController: KeyboardController) {
+  scenes.clear();
+  const scenePause = new Scene(view);
+  scenePause.addController(keyController);
+  engine.addScene('pause', scenePause);
+  scenePause.addEntity(new BackgroundEntity('inventory'));
+  scenePause.addEntity(new PauseMenu());
+
+  const parser = new DOMParser();
+  const docWorld = parser.parseFromString(world, 'text/xml');
+  const docHouses = parser.parseFromString(houses, 'text/xml');
+  const docUnderground = parser.parseFromString(underground, 'text/xml');
+
+  [{doc: docWorld, key: ''}, {doc: docHouses, key: 'h'}, {doc: docUnderground, key: 'u'}].forEach(docData => {
+    const doc = docData.doc;
+    const objects = doc.querySelectorAll('object');
+
+    doc.querySelectorAll('layer').forEach(layer => {
+      const layerId = Number.parseInt(layer.getAttribute('id') || '0');
+      const layerName = layer.getAttribute('name');
+      const isOverhead = layerName === 'Overheads' || layerName === 'Overheads2' || layerName === 'UIs';
+      layer.querySelectorAll('chunk').forEach(chunk => {
+        const worldX = Number.parseInt(chunk.getAttribute('x')) / 10;
+        const worldY = Number.parseInt(chunk.getAttribute('y')) / 9;
+        if (scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`)) {
+          const scene = scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`).scene;
+          scene.addEntity(new TiledBackground(chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+          return;
+        }
+
+        console.log(`Adding chunk: ${docData.key}${worldX},${worldY}`);
+
+        const scene = new Scene(view);
+        scene.addController(keyController);
+
+        const resetter = new EntityResetter(scene);
+
+        scene.addEntity(new TiledBackground(chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+
+        engine.addScene(`${docData.key}${worldX},${worldY}`, scene);
+        scenes.setScene(scene, `${docData.key}${worldX},${worldY}`, worldX, worldY, resetter);
+      })
+    });
+
+    objects.forEach(object => {
+      const type = object.getAttribute('type');
+      let x = Number.parseInt(object.getAttribute('x'));
+      let y = Number.parseInt(object.getAttribute('y')) - (Number.parseInt(object.getAttribute('gid') || '0') != 0 ? Number.parseInt(object.getAttribute('height') || '0') : 0) // subtract height from tile objects;
+      const sceneData = scenes.getSceneByKey(`${docData.key}${Math.floor(x / 160)},${Math.floor(y / 144)}`);
+      x = x % 160;
+      y = y % 144;
+
+      x = x >= 0 ? x : 160 + x;
+      y = y >= 0 ? y : 144 + y;
+      //y = y + (Number.parseInt(object.getAttribute('gid') || '0') == 0 ? 16 : 0); // add 16 to rectangles (Walls and such)
+      y += 16;
+
+      const width = Number.parseInt(object.getAttribute('width') || '0');
+      const height = Number.parseInt(object.getAttribute('height') || '0');
+      switch (type) {
+        case 'Grass':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Grass(x, y)));
+          break;
+        case 'Pot':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Pot(x, y)));
+          break;
+        case 'Hole':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Hole(sceneData.scene, x, y, Number.parseInt(object.getAttribute('gid') || '0') - 1)));
+          break;
+        case 'HeavyRock':
+          sceneData.scene.addEntity(sceneData.resetter.add(new HeavyRock(x, y)));
+          break;
+        case 'Rock':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Rock(x, y)));
+          break;
+        case 'Barrel':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Barrel(x, y)));
+          break;
+        case 'Tree':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Tree(x, y)));
+          break;
+        case 'PermaFire':
+          sceneData.scene.addEntity(sceneData.resetter.add(new PermaFire(x, y)));
+          break;
+        case 'Portal':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Portal(x, y, Number.parseInt(object.querySelector('property[name=destX]').getAttribute('value') || '0'), Number.parseInt(object.querySelector('property[name=destY]').getAttribute('value') || '0'))));
+          break;
+        case 'Grave':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Grave(x, y, graveTexts[Number.parseInt(object.querySelector('property[name=graveIndex]').getAttribute('value'))])));
+          break;
+        case 'Sign':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Sign(x, y, signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))])));
+          break;
+        case 'Door':
+          const destSceneKey = object.querySelector('property[name=sceneKey]')?.getAttribute('value') || '0,0';
+          const destX = Number.parseInt(object.querySelector('property[name=destX]')?.getAttribute('value') || '0');
+          const destY = Number.parseInt(object.querySelector('property[name=destY]')?.getAttribute('value') || '0');
+          const worldX = Number.parseInt(object.querySelector('property[name=worldX]')?.getAttribute('value') || '0');
+          const worldY = Number.parseInt(object.querySelector('property[name=worldY]')?.getAttribute('value') || '0');
+          sceneData.scene.addEntity(sceneData.resetter.add(new Door(x, y, destSceneKey, destX, destY, worldX, worldY)));
+          break;
+        case 'Stairs':
+          const stairs = new Stairs(x, y, 0, 806, Number.parseInt(object.getAttribute('id') || '0'));
+          sceneData.scene.addEntity(sceneData.resetter.add(stairs));
+          sceneData.resetter.addAction(() => {
+            if (!statefulMode.enabled) {
+              stairs.deactivate();
+            }
+          })
+          break;
+        case 'Switch':
+          const activationId = Number.parseInt(object.querySelector('property[name=activationId]')?.getAttribute('value') || '0');
+          sceneData.scene.addEntity(sceneData.resetter.add(new Switch(x, y, () => sceneData.scene.entitiesSlice(e => true).forEach(entity => entity instanceof Stairs && entity.activationId == activationId && entity.activate()))));
+          break;
+        case 'Wall':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Wall(x, y, width, height)));
+          break;
+        case 'HalfWall':
+          sceneData.scene.addEntity(sceneData.resetter.add(new HalfWall(x, y, width, height)));
+          break;
+        case 'Player':
+          sceneData.scene.addEntity(sceneData.resetter.add(new Player(sceneData.scene, x, y)));
+          break;
+        case 'Npc':
+          const npcData = npcs[Number.parseInt(object.querySelector('property[name=npcIndex]')?.getAttribute('value') || '0')];
+
+          console.log(npcData);
+          sceneData.scene.addEntity(sceneData.resetter.add(new Npc(
+            sceneData.scene,
+            x,
+            y,
+            npcData.dialog,
+            npcData.postDialog,
+            npcData.requestedItem,
+            npcData.hair,
+            npcData.flip
+          )));
+          break;
+      }
+    });
+  });
+  
+}
+
+export function buildMapOld(view: View, keyController: KeyboardController) {
   scenes.clear();
   const scenePause = new Scene(view);
   scenePause.addController(keyController);
@@ -363,23 +675,44 @@ export function buildMap(view: View, keyController: KeyboardController) {
   
 }
 
-class EntityResetter {
-  private entities: Entity[] = []
+export class EntityResetter {
+  private entities: Entity[] = [];
+  private entityActions: ((entity: Entity) => void)[] = [];
+  private actions: (() => void)[] = [];
+
+  constructor(private scene: Scene) {
+
+  }
+
   add(entity: Entity): Entity {
     this.entities.push(entity);
     return entity;
   }
 
-  reset(scene: Scene, action: (entity: Entity) => void = (entity: Entity) => {}) {
+  addEntityAction(action: (entity: Entity) => void) {
+    this.entityActions.push(action);
+  }
+
+  addAction(action: () => void) {
+    this.actions.push(action);
+  }
+
+  reset() {
     if (!statefulMode.enabled) {
       this.entities.forEach(entity => {
-        scene.addEntity(entity);
+        this.scene.addEntity(entity);
         if (entity instanceof Interactable) {
           entity.reset();
         }
-        action(entity);
+        this.entityActions.forEach(act => {
+          act(entity);
+        })
       });
     }
+
+    this.actions.forEach(act => {
+      act();
+    })
   }
 }
 
@@ -392,7 +725,7 @@ function build00(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(0, 16, screenWidth, 16));
   // left
   scene.addEntity(new Wall(0, 16, 32, 3 * 16));
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
   scene.addEntity(resetter.add(new Grass(16, 4 * 16)));
   scene.addEntity(resetter.add(new Grass(16, 5 * 16)));
   scene.addEntity(resetter.add(new Grass(16, 6 * 16)));
@@ -409,15 +742,13 @@ function build00(view: View, keyController: KeyboardController) {
   scene.addEntity(new Player(scene, 32, 48));
 
   engine.addScene('0,0', scene);
-  scenes.setScene('0,0', 0, 0, () => {
-    resetter.reset(scene);
-  });
+  scenes.setScene(scene, '0,0', 0, 0, resetter);
 }
 
 function buildw10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main3'));
@@ -438,7 +769,7 @@ function buildw10(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
 
   engine.addScene('-1,0', scene);
-  scenes.setScene('-1,0', -1, 0, () => resetter.reset(scene));
+  scenes.setScene(scene, '-1,0', -1, 0, resetter);
 }
 
 function buildUndergroundw10(view: View, keyController: KeyboardController) {
@@ -458,62 +789,62 @@ function buildUndergroundw10(view: View, keyController: KeyboardController) {
 
   // row 1
   // skip
-  scene.addEntity(new Hole(2 * 16, 3 * 16));
-  scene.addEntity(new Hole(3 * 16, 3 * 16));
-  scene.addEntity(new Hole(4 * 16, 3 * 16));
-  scene.addEntity(new Hole(5 * 16, 3 * 16));
-  scene.addEntity(new Hole(6 * 16, 3 * 16));
-  scene.addEntity(new Hole(7 * 16, 3 * 16));
-  scene.addEntity(new Hole(8 * 16, 3 * 16));
+  scene.addEntity(new Hole(scene, 2 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 3 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 4 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 5 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 6 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 7 * 16, 3 * 16, 324));
+  scene.addEntity(new Hole(scene, 8 * 16, 3 * 16, 324));
 
   // row 2
   // skip
-  scene.addEntity(new Hole(2 * 16, 4 * 16));
-  scene.addEntity(new Hole(3 * 16, 4 * 16));
-  scene.addEntity(new Hole(4 * 16, 4 * 16));
+  scene.addEntity(new Hole(scene, 2 * 16, 4 * 16, 324));
+  scene.addEntity(new Hole(scene, 3 * 16, 4 * 16, 324));
+  scene.addEntity(new Hole(scene, 4 * 16, 4 * 16, 324));
   // skip
-  scene.addEntity(new Hole(6 * 16, 4 * 16));
+  scene.addEntity(new Hole(scene, 6 * 16, 4 * 16, 324));
   // skip
   // skip
 
   // row 3
-  scene.addEntity(new Hole(1 * 16, 5 * 16));
-  scene.addEntity(new Hole(2 * 16, 5 * 16));
-  scene.addEntity(new Hole(3 * 16, 5 * 16));
-  scene.addEntity(new Hole(4 * 16, 5 * 16));
-  scene.addEntity(new Hole(5 * 16, 5 * 16));
-  scene.addEntity(new Hole(6 * 16, 5 * 16));
-  scene.addEntity(new Hole(7 * 16, 5 * 16));
-  scene.addEntity(new Hole(8 * 16, 5 * 16));
+  scene.addEntity(new Hole(scene, 1 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 2 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 3 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 4 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 5 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 6 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 7 * 16, 5 * 16, 324));
+  scene.addEntity(new Hole(scene, 8 * 16, 5 * 16, 324));
 
   // row 4
   // skip
-  scene.addEntity(new Hole(2 * 16, 6 * 16));
+  scene.addEntity(new Hole(scene, 2 * 16, 6 * 16, 324));
   // skip
   // skip
   // skip
-  scene.addEntity(new Hole(6 * 16, 6 * 16));
-  scene.addEntity(new Hole(7 * 16, 6 * 16));
+  scene.addEntity(new Hole(scene, 6 * 16, 6 * 16, 324));
+  scene.addEntity(new Hole(scene, 7 * 16, 6 * 16, 324));
   // skip
 
   // row 5
-  scene.addEntity(new Hole(1 * 16, 7 * 16));
-  scene.addEntity(new Hole(2 * 16, 7 * 16));
-  scene.addEntity(new Hole(3 * 16, 7 * 16));
-  scene.addEntity(new Hole(4 * 16, 7 * 16));
-  scene.addEntity(new Hole(5 * 16, 7 * 16));
-  scene.addEntity(new Hole(6 * 16, 7 * 16));
-  scene.addEntity(new Hole(7 * 16, 7 * 16));
+  scene.addEntity(new Hole(scene, 1 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 2 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 3 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 4 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 5 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 6 * 16, 7 * 16, 324));
+  scene.addEntity(new Hole(scene, 7 * 16, 7 * 16, 324));
   // skip
 
   // row 6
-  scene.addEntity(new Hole(1 * 16, 8 * 16));
-  scene.addEntity(new Hole(2 * 16, 8 * 16));
+  scene.addEntity(new Hole(scene, 1 * 16, 8 * 16, 324));
+  scene.addEntity(new Hole(scene, 2 * 16, 8 * 16, 324));
   // skip
-  scene.addEntity(new Hole(4 * 16, 8 * 16));
+  scene.addEntity(new Hole(scene, 4 * 16, 8 * 16, 324));
   // skip
-  scene.addEntity(new Hole(6 * 16, 8 * 16));
-  scene.addEntity(new Hole(7 * 16, 8 * 16));
+  scene.addEntity(new Hole(scene, 6 * 16, 8 * 16, 324));
+  scene.addEntity(new Hole(scene, 7 * 16, 8 * 16, 324));
   // skip
 
   scene.addEntity(new Npc(scene, 8 * 16, 8 * 16,
@@ -521,14 +852,14 @@ function buildUndergroundw10(view: View, keyController: KeyboardController) {
     ['Thank you!\nNow I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
 
   engine.addScene('u_-1,0', scene);
-  scenes.setScene('u_-1,0', -12, 1, () => {});
+  scenes.setScene(scene, 'u_-1,0', -12, 1, new EntityResetter(scene));
 }
 
 function builde10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addEntity(new BackgroundEntity('main2'));
   //top
@@ -556,14 +887,14 @@ function builde10(view: View, keyController: KeyboardController) {
     ['Thank you, now it\'s\ntime to get planting.'], 0));
 
   engine.addScene('1,0', scene);
-  scenes.setScene('1,0', 1, 0, () => { resetter.reset(scene) });
+  scenes.setScene(scene, '1,0', 1, 0, resetter);
 }
 
 function buildHousee10(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addEntity(new BackgroundEntity('house1'));
   //top
@@ -609,14 +940,14 @@ function buildHousee10(view: View, keyController: KeyboardController) {
     ['You destroyed my\npot collection.', 'Give me your compass, so\nI can go searching for more.', {options: ['Keep compass', 'Give compass']}], ['Alright, now scram!'], 5, 'mophair'));
 
   engine.addScene('h_1,0', scene);
-  scenes.setScene('h_1,0', 11, 0, () => {}) // Don't reset this room. It's for the joke.
+  scenes.setScene(scene, 'h_1,0', 11, 0, new EntityResetter(scene)) // Don't reset this room. It's for the joke.
 }
 
 function builde1n1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addEntity(new BackgroundEntity('main4'));
   //bottom
@@ -649,7 +980,7 @@ function builde1n1(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(7 * 16, 7 * 16, 32, 32));
 
   engine.addScene('1,-1', scene);
-  scenes.setScene('1,-1', 1, -1, () => resetter.reset(scene));
+  scenes.setScene(scene, '1,-1', 1, -1, resetter);
 }
 
 function builde1n2(view: View, keyController: KeyboardController) {
@@ -679,14 +1010,14 @@ function builde1n2(view: View, keyController: KeyboardController) {
   scene.addEntity(new Wall(1 * 16, 7 * 16, 16, 16));
 
   engine.addScene('1,-2', scene);
-  scenes.setScene('1,-2', 1, -2, () => { });
+  scenes.setScene(scene, '1,-2', 1, -2, new EntityResetter(scene));
 }
 
 function builde1s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addEntity(new BackgroundEntity('main6'));
   //left
@@ -710,15 +1041,16 @@ function builde1s1(view: View, keyController: KeyboardController) {
     ['A rock slide is blocking\nthe way to my flower.', 'Could I have your bombs?', { options: ['keep bombs', 'give bombs'] }],
     ['Let me gather my nerves.'], 9));
 
-  engine.addScene('1,1', scene);
-  scenes.setScene('1,1', 1, 1, () => resetter.reset(scene, (entity) => entity instanceof Portal ? entity.deactivate() : ''));
-}
+  resetter.addEntityAction((entity) => entity instanceof Portal ? entity.deactivate() : '');
 
+  engine.addScene('1,1', scene);
+  scenes.setScene(scene, '1,1', 1, 1, resetter);
+}
 
 function buildw20(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main7'));
@@ -759,7 +1091,7 @@ function buildw20(view: View, keyController: KeyboardController) {
     ], 7, 'shorthair'));
 
   engine.addScene('-2,0', scene);
-  scenes.setScene('-2,0', -2, 0, () => resetter.reset(scene));
+  scenes.setScene(scene, '-2,0', -2, 0, resetter);
 }
 
 function buildw30(view: View, keyController: KeyboardController) {
@@ -779,7 +1111,7 @@ function buildw30(view: View, keyController: KeyboardController) {
   scene.addEntity(new Door(4 * 16, 6 * 16, 'h_-3,0', 4 * 16, 8 * 16, -3, 0));
 
   engine.addScene('-3,0', scene);
-  scenes.setScene('-3,0', -3, 0, () => { });
+  scenes.setScene(scene, '-3,0', -3, 0, new EntityResetter(scene));
 }
 
 function buildHousew30(view: View, keyController: KeyboardController) {
@@ -809,7 +1141,7 @@ function buildHousew30(view: View, keyController: KeyboardController) {
   // table
   scene.addEntity(new Wall(7 * 16, 7 * 16, 1 * 16, 1 * 16));
 
-  let stairs = new Stairs(6 * 16, 4 * 16, 0, 806);
+  let stairs = new Stairs(6 * 16, 4 * 16, 0, 806, 0);
   // stage
   scene.addEntity(new Wall(4 * 16, 4 * 16, 2 * 16, 1 * 16));
   scene.addEntity(stairs);
@@ -818,18 +1150,22 @@ function buildHousew30(view: View, keyController: KeyboardController) {
   scene.addEntity(new Npc(scene, 6 * 16, 3 * 16,
     ['That harp looks like it\nwould match nicely on stage.', { options: ['Keep harp', 'Give harp'] }], ['Come back later for\nthe show.'], 8, 'longhair'));
 
-  engine.addScene('h_-3,0', scene);
-  scenes.setScene('h_-3,0', -13, 0, () => {
+  const resetter = new EntityResetter(scene);
+
+  resetter.addAction(() => {
     if (!statefulMode.enabled) {
       stairs.deactivate();
     }
   })
+
+  engine.addScene('h_-3,0', scene);
+  scenes.setScene(scene, 'h_-3,0', -13, 0, resetter);
 }
 
 function buildw3s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main9'));
@@ -869,13 +1205,13 @@ function buildw3s1(view: View, keyController: KeyboardController) {
   ], 6, 'spikeyhair'));
 
   engine.addScene('-3,1', scene);
-  scenes.setScene('-3,1', -3, 1, () => resetter.reset(scene));
+  scenes.setScene(scene, '-3,1', -3, 1, resetter);
 }
 
 function buildw2s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main10'));
@@ -892,19 +1228,21 @@ function buildw2s1(view: View, keyController: KeyboardController) {
 
   scene.addEntity(new Door(4 * 16, 7 * 16, 'u_-2,1', 2 * 16, 3 * 16, -2, 1));
 
-  engine.addScene('-2,1', scene);
-  scenes.setScene('-2,1', -2, 1, () => resetter.reset(scene, (entity) => {
+  resetter.addEntityAction((entity: Entity) => {
     if (entity instanceof HeavyRock) {
       entity.reset();
     }
-  }));
+  })
+
+  engine.addScene('-2,1', scene);
+  scenes.setScene(scene, '-2,1', -2, 1, resetter);
 }
 
 function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
   scene.addController(keyController);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addEntity(new BackgroundEntity('underground2'));
   scene.addEntity(new Wall(0, 32, screenWidth, 16));
@@ -941,13 +1279,13 @@ function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
     2, 'shorthair'))
 
   engine.addScene('u_-2,1', scene);
-  scenes.setScene('u_-2,1', -12, 1, () => resetter.reset(scene));
+  scenes.setScene(scene, 'u_-2,1', -12, 1, resetter);
 }
 
 function buildw1s1(view: View, keyController: KeyboardController) {
   const scene = new Scene(view);
 
-  const resetter = new EntityResetter();
+  const resetter = new EntityResetter(scene);
 
   scene.addController(keyController);
   scene.addEntity(new BackgroundEntity('main11'));
@@ -968,10 +1306,10 @@ function buildw1s1(view: View, keyController: KeyboardController) {
   // house
   scene.addEntity(new Wall(7 * 16, 3 * 16, 3 * 16, 4 * 16));
 
-  scene.addEntity(new Hole(2 * 16, 6 * 16));
-  scene.addEntity(new Hole(3 * 16, 6 * 16));
+  scene.addEntity(new Hole(scene, 2 * 16, 6 * 16, 324));
+  scene.addEntity(new Hole(scene, 3 * 16, 6 * 16, 324));
 
-  scene.addEntity(new Hole(4 * 16, 7 * 16));
+  scene.addEntity(new Hole(scene, 4 * 16, 7 * 16, 324));
 
   scene.addEntity(resetter.add(new Grass(6 * 16, 7 * 16)));
 
@@ -1000,7 +1338,7 @@ function buildw1s1(view: View, keyController: KeyboardController) {
     ], 1));
 
   engine.addScene('-1,1', scene);
-  scenes.setScene('-1,1', -1, 1, () => resetter.reset(scene));
+  scenes.setScene(scene, '-1,1', -1, 1, resetter);
 }
 
 init();

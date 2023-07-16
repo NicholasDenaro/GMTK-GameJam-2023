@@ -6,6 +6,7 @@ import { Player } from "./player";
 export class StatusBar extends SpriteEntity {
   constructor(private player: Player) {
     super(new SpritePainter(ctx => this.draw(ctx), {spriteWidth: screenWidth, spriteHeight: 16}));
+    this.zIndex = -998;
   }
 
   tick(scene: Scene): void | Promise<void> {

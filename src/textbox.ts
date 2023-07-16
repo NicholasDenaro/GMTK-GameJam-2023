@@ -6,6 +6,7 @@ import { Player } from "./player";
 export class TextboxEntity extends SpriteEntity {
   constructor(private dialog: (string | { options: string[] })[], private target?: Npc, private action?: () => void) {
     super(new SpritePainter(ctx => this.draw(ctx), {spriteWidth: screenWidth, spriteHeight: 48}));
+    this.zIndex = -999;
   }
   private dialogIndex = 0;
   private cursor = 0;

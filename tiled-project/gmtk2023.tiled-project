@@ -8,5 +8,264 @@
         "."
     ],
     "propertyTypes": [
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 5,
+            "members": [
+            ],
+            "name": "Barrel",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 15,
+            "members": [
+                {
+                    "name": "destX",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "destY",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "sceneKey",
+                    "type": "string",
+                    "value": ""
+                },
+                {
+                    "name": "worldX",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "worldY",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Door",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 3,
+            "members": [
+            ],
+            "name": "Grass",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 18,
+            "members": [
+                {
+                    "name": "graveIndex",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Grave",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 10,
+            "members": [
+            ],
+            "name": "HalfWall",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 8,
+            "members": [
+            ],
+            "name": "HeavyRock",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 6,
+            "members": [
+            ],
+            "name": "Hole",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 17,
+            "members": [
+                {
+                    "name": "npcIndex",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Npc",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 19,
+            "members": [
+            ],
+            "name": "PermaFire",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": false,
+            "id": 1,
+            "members": [
+            ],
+            "name": "Player",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 9,
+            "members": [
+                {
+                    "name": "destX",
+                    "type": "int",
+                    "value": 0
+                },
+                {
+                    "name": "destY",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Portal",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 4,
+            "members": [
+            ],
+            "name": "Pot",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 7,
+            "members": [
+            ],
+            "name": "Rock",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 11,
+            "members": [
+                {
+                    "name": "textIndex",
+                    "type": "int",
+                    "value": 0
+                }
+            ],
+            "name": "Sign",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 13,
+            "members": [
+                {
+                    "name": "activationId",
+                    "type": "object",
+                    "value": 0
+                }
+            ],
+            "name": "Switch",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 16,
+            "members": [
+            ],
+            "name": "Tree",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
+            "id": 2,
+            "members": [
+            ],
+            "name": "Wall",
+            "type": "class",
+            "useAs": [
+                "object"
+            ]
+        }
     ]
 }

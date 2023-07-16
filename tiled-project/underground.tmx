@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="9" tilewidth="16" tileheight="16" infinite="1" nextlayerid="13" nextobjectid="238">
+ <editorsettings>
+  <chunksize width="10" height="9"/>
+ </editorsettings>
+ <tileset firstgid="1" source="overworld.tsx"/>
+ <layer id="1" name="Base" width="10" height="9">
+  <data encoding="csv">
+   <chunk x="-10" y="0" width="10" height="9">
+2060,1998,2061,1998,1998,2059,1998,1998,2059,1998,
+1803,1804,1804,1804,1804,1804,1804,1804,1804,1805,
+2684356364,1933,1932,1932,1932,1932,1932,1932,1932,536872716,
+2684356364,1932,1931,1932,1932,1932,1932,1932,1932,536872716,
+2684356364,1933,1932,1996,1932,1932,1931,1932,1932,536872716,
+2684356364,1932,1933,1931,1932,1932,1932,1931,1932,536872716,
+2684356364,1932,1932,1932,1932,1996,1932,1933,1931,536872716,
+2684356364,1932,1996,1933,1933,1932,1932,1932,1932,536872716,
+3221227277,2147485452,2147485452,2147485452,2147485452,2147485452,2147485452,2147485452,2147485452,2684356365
+</chunk>
+   <chunk x="-20" y="9" width="10" height="9">
+2060,1998,2061,1998,1998,2059,1998,1998,2059,1998,
+1803,1804,1804,1804,1804,1804,1804,1804,1804,1805,
+2684356364,1933,1932,1932,1932,1932,1932,1932,1932,536872716,
+2684356364,1932,1931,1932,1932,1932,1932,1932,1932,536872716,
+2684356364,1933,1932,1996,1932,1932,1931,1932,1932,536872716,
+2684356364,1932,1933,1931,1932,1932,1932,1931,1932,536872716,
+2684356364,1932,1932,1932,1932,1996,1932,1933,1931,536872716,
+2684356364,1932,1996,1933,1933,1932,1932,1932,1932,536872716,
+3221227277,2147485452,2147485452,2147485452,3221227341,1932,1073743693,2147485452,2147485452,2684356365
+</chunk>
+  </data>
+ </layer>
+ <layer id="2" name="Floor" width="10" height="9">
+  <data encoding="csv">
+   <chunk x="-10" y="0" width="10" height="9">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,586,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="-20" y="9" width="10" height="9">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,2147484234,0,0,0,561,0,0,0,0,
+0,0,0,0,0,1610613294,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,536871470,0,0,0,0,
+0,0,0,0,0,561,0,0,0,0,
+0,0,0,0,0,561,0,0,0,0,
+0,0,0,0,0,561,0,0,0,0
+</chunk>
+  </data>
+ </layer>
+ <layer id="9" name="Floor2" width="10" height="9">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="8" name="Wall-Shadow" width="10" height="9">
+  <data encoding="csv">
+   <chunk x="-20" y="9" width="10" height="9">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,139,140,141,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</chunk>
+  </data>
+ </layer>
+ <layer id="3" name="Walls" width="10" height="9">
+  <data encoding="csv">
+   <chunk x="-10" y="0" width="10" height="9">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,232,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0
+</chunk>
+   <chunk x="-20" y="9" width="10" height="9">
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,429,0,0,0,0,
+0,0,0,0,105,493,105,0,348,0,
+0,0,0,0,233,0,233,0,167,0,
+0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,233,0,233,0,0,0,
+0,0,0,0,233,0,233,0,0,0,
+0,0,0,0,297,429,297,0,0,0,
+0,0,0,0,0,493,0,0,0,0
+</chunk>
+  </data>
+ </layer>
+ <layer id="4" name="Overheads" width="10" height="9">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="10" name="Overheads2" width="10" height="9">
+  <data encoding="csv"/>
+ </layer>
+ <layer id="5" name="UIs" width="10" height="9">
+  <data encoding="csv">
+   <chunk x="-20" y="9" width="10" height="9">
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,13,13
+</chunk>
+  </data>
+ </layer>
+ <objectgroup id="6" name="Objects">
+  <object id="53" type="Door" gid="1073744744" x="-144" y="48" width="16" height="16">
+   <properties>
+    <property name="destX" type="int" value="64"/>
+    <property name="destY" type="int" value="80"/>
+    <property name="sceneKey" value="-1,0"/>
+    <property name="worldX" type="int" value="-1"/>
+    <property name="worldY" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="54" type="Wall" x="-160" y="0" width="160" height="32"/>
+  <object id="55" type="Wall" x="-160" y="128" width="160" height="16"/>
+  <object id="59" type="Wall" x="-320" y="272" width="160" height="16"/>
+  <object id="159" type="Door" gid="1073744744" x="-304" y="192" width="16" height="16">
+   <properties>
+    <property name="destX" type="int" value="48"/>
+    <property name="destY" type="int" value="96"/>
+    <property name="sceneKey" value="-2,1"/>
+    <property name="worldX" type="int" value="-2"/>
+    <property name="worldY" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="160" type="Wall" x="-320" y="144" width="160" height="32"/>
+  <object id="183" type="Wall" x="-320" y="144" width="16" height="144"/>
+  <object id="184" type="Wall" x="-176" y="144" width="16" height="144"/>
+  <object id="185" type="Wall" x="-160" y="0" width="16" height="144"/>
+  <object id="186" type="Wall" x="-16" y="0" width="16" height="144"/>
+  <object id="187" type="Hole" gid="325" x="-128" y="48" width="16" height="16"/>
+  <object id="188" type="Hole" gid="325" x="-112" y="48" width="16" height="16"/>
+  <object id="189" type="Hole" gid="325" x="-96" y="48" width="16" height="16"/>
+  <object id="190" type="Hole" gid="325" x="-80" y="48" width="16" height="16"/>
+  <object id="191" type="Hole" gid="325" x="-64" y="48" width="16" height="16"/>
+  <object id="192" type="Hole" gid="325" x="-48" y="48" width="16" height="16"/>
+  <object id="193" type="Hole" gid="325" x="-32" y="48" width="16" height="16"/>
+  <object id="194" type="Hole" gid="325" x="-64" y="64" width="16" height="16"/>
+  <object id="195" type="Hole" gid="325" x="-96" y="64" width="16" height="16"/>
+  <object id="196" type="Hole" gid="325" x="-112" y="64" width="16" height="16"/>
+  <object id="198" type="Hole" gid="325" x="-128" y="64" width="16" height="16"/>
+  <object id="199" type="Hole" gid="325" x="-144" y="80" width="16" height="16"/>
+  <object id="200" type="Hole" gid="325" x="-128" y="80" width="16" height="16"/>
+  <object id="201" type="Hole" gid="325" x="-112" y="80" width="16" height="16"/>
+  <object id="202" type="Hole" gid="325" x="-96" y="80" width="16" height="16"/>
+  <object id="203" type="Hole" gid="325" x="-80" y="80" width="16" height="16"/>
+  <object id="204" type="Hole" gid="325" x="-64" y="80" width="16" height="16"/>
+  <object id="205" type="Hole" gid="325" x="-48" y="80" width="16" height="16"/>
+  <object id="206" type="Hole" gid="325" x="-32" y="80" width="16" height="16"/>
+  <object id="207" type="Hole" gid="325" x="-48" y="96" width="16" height="16"/>
+  <object id="208" type="Hole" gid="325" x="-64" y="96" width="16" height="16"/>
+  <object id="209" type="Hole" gid="325" x="-64" y="112" width="16" height="16"/>
+  <object id="210" type="Hole" gid="325" x="-48" y="112" width="16" height="16"/>
+  <object id="211" type="Hole" gid="325" x="-48" y="128" width="16" height="16"/>
+  <object id="212" type="Hole" gid="325" x="-64" y="128" width="16" height="16"/>
+  <object id="213" type="Hole" gid="325" x="-80" y="112" width="16" height="16"/>
+  <object id="214" type="Hole" gid="325" x="-96" y="112" width="16" height="16"/>
+  <object id="215" type="Hole" gid="325" x="-112" y="112" width="16" height="16"/>
+  <object id="216" type="Hole" gid="325" x="-96" y="128" width="16" height="16"/>
+  <object id="217" type="Hole" gid="325" x="-128" y="96" width="16" height="16"/>
+  <object id="218" type="Hole" gid="325" x="-128" y="112" width="16" height="16"/>
+  <object id="219" type="Hole" gid="325" x="-144" y="112" width="16" height="16"/>
+  <object id="220" type="Hole" gid="325" x="-144" y="128" width="16" height="16"/>
+  <object id="221" type="Hole" gid="325" x="-128" y="128" width="16" height="16"/>
+  <object id="224" type="Wall" x="-96" y="80" width="16" height="16"/>
+  <object id="225" name="FeatherMan" type="Npc" gid="2986" x="-32" y="128" width="16" height="16">
+   <properties>
+    <property name="npcIndex" type="int" value="5"/>
+   </properties>
+  </object>
+  <object id="226" name="LampMan" type="Npc" gid="2986" x="-208" y="208" width="16" height="16">
+   <properties>
+    <property name="npcIndex" type="int" value="9"/>
+   </properties>
+  </object>
+  <object id="227" type="Rock" gid="290" x="-256" y="224" width="16" height="16"/>
+  <object id="228" type="Rock" gid="290" x="-240" y="224" width="16" height="16"/>
+  <object id="229" type="Rock" gid="290" x="-224" y="224" width="16" height="16"/>
+  <object id="230" type="Wall" x="-256" y="176" width="16" height="32"/>
+  <object id="231" type="Wall" x="-256" y="224" width="16" height="48"/>
+  <object id="232" type="Wall" x="-224" y="224" width="16" height="48"/>
+  <object id="233" type="Wall" x="-224" y="176" width="16" height="32"/>
+  <object id="235" type="Wall" x="-240" y="265.75" width="16" height="6.25"/>
+  <object id="236" type="Wall" x="-240" y="176" width="16" height="10.5"/>
+  <object id="237" type="Wall" x="-192" y="176" width="16" height="32"/>
+ </objectgroup>
+</map>

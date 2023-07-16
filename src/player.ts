@@ -25,6 +25,7 @@ import { PermaFire } from "./perma-fire";
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
     super(new SpritePainter(Sprite.Sprites[`${sprite}_${animation}`]));
+    this.zIndex = -2;
   }
 
   tick(scene: Scene): void | Promise<void> {
@@ -49,6 +50,7 @@ export class PlayerImage extends SpriteEntity {
 export class PlayerShadow extends SpriteEntity {
   constructor(private player: Player) {
     super(new SpritePainter(Sprite.Sprites[`shadow`]));
+    this.zIndex = -1;
   }
 
   tick(scene: Scene): void | Promise<void> {
@@ -59,7 +61,8 @@ export class PlayerShadow extends SpriteEntity {
 
 export class Cursor extends SpriteEntity {
   constructor(private player: Player) {
-    super(new SpritePainter(Sprite.Sprites['crosshair'], {spriteWidth: 8, spriteHeight: 8, spriteOffsetX: -4, spriteOffsetY: -4}));
+    super(new SpritePainter(Sprite.Sprites['crosshair'], { spriteWidth: 8, spriteHeight: 8, spriteOffsetX: -4, spriteOffsetY: -4 }));
+    this.zIndex = -900;
   }
 
   tick(scene: Scene): void | Promise<void> {
@@ -113,6 +116,7 @@ export class Player extends SpriteEntity {
     this.item2 = 1;
     this.spawnX = x;
     this.spawnY = y;
+    this.zIndex = -1;
   }
 
   getItem1() {
@@ -234,6 +238,9 @@ export class Player extends SpriteEntity {
       const collisionEntities = [...scene.entitiesByType(Wall), ...scene.entitiesByType(Npc), ...scene.entitiesByType(Interactable)]
         .filter(entity => {
           if (entity instanceof Portal) {
+            return false;
+          }
+          if (entity instanceof Bomb) {
             return false;
           }
           if (entity instanceof Stairs) {
@@ -399,12 +406,15 @@ export class Player extends SpriteEntity {
               this.hairImage.setAnimation('doing_strip8');
               this.toolImage.setAnimation('doing_strip8');
             }
-          } else { // throw
+          } else if (moving) { // throw
             this.carry = false;
             this.carryEntity.throw(this.lookDirection);
             this.carryEntity = undefined;
+          } else { // drop
+            this.carry = false;
+            this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 3);
+            this.carryEntity = undefined;
           }
-          
         }
 
         if (!this.carry && useItem == 7) { // mirror
@@ -412,29 +422,29 @@ export class Player extends SpriteEntity {
           const wasInOrigin = this.worldCoordsX ==0 && this.worldCoordsY == 0;
           this.worldCoordsX = 0;
           this.worldCoordsY = 0;
-          this.x = 32;
-          this.y = 48;
+          this.x = 64;
+          this.y = 64;
           this.spawnX = this.x;
           this.spawnY = this.y;
           const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
           if (!wasInOrigin && nextScene) {
-            engine.switchToScene(nextScene.scene);
-            nextScene.reset();
-            engine.addEntity(nextScene.scene, this);
-            engine.removeEntity(nextScene.scene, this.shadow);
-            engine.removeEntity(nextScene.scene, this.baseImage);
-            engine.removeEntity(nextScene.scene, this.hairImage);
-            engine.removeEntity(nextScene.scene, this.toolImage);
-            engine.removeEntity(nextScene.scene, this.crosshair);
-            engine.removeEntity(nextScene.scene, this.statusBar);
-            engine.addEntity(nextScene.scene, this.shadow);
-            engine.addEntity(nextScene.scene, this.baseImage);
-            engine.addEntity(nextScene.scene, this.hairImage);
-            engine.addEntity(nextScene.scene, this.toolImage);
-            engine.addEntity(nextScene.scene, this.crosshair);
-            engine.addEntity(nextScene.scene, this.statusBar);
+            engine.switchToScene(nextScene.sceneKey);
+            nextScene.resetter.reset();
+            engine.addEntity(nextScene.sceneKey, this);
+            engine.removeEntity(nextScene.sceneKey, this.shadow);
+            engine.removeEntity(nextScene.sceneKey, this.baseImage);
+            engine.removeEntity(nextScene.sceneKey, this.hairImage);
+            engine.removeEntity(nextScene.sceneKey, this.toolImage);
+            engine.removeEntity(nextScene.sceneKey, this.crosshair);
+            engine.removeEntity(nextScene.sceneKey, this.statusBar);
+            engine.addEntity(nextScene.sceneKey, this.shadow);
+            engine.addEntity(nextScene.sceneKey, this.baseImage);
+            engine.addEntity(nextScene.sceneKey, this.hairImage);
+            engine.addEntity(nextScene.sceneKey, this.toolImage);
+            engine.addEntity(nextScene.sceneKey, this.crosshair);
+            engine.addEntity(nextScene.sceneKey, this.statusBar);
 
-            this.playTrackForScene(nextScene.scene);
+            this.playTrackForScene(nextScene.sceneKey);
           }
         }
 
@@ -456,9 +466,22 @@ export class Player extends SpriteEntity {
           this.toolImage.setAnimation('doing_strip8');
         }
 
-        if (!this.carry && useItem == 9 && scene.entitiesByType(Bomb).length == 0) { // bomb
-          Sound.Sounds['dig'].play();
-          scene.addEntity(new Bomb(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4));
+        if (useItem == 9) { // bomb
+          if (!this.carry && scene.entitiesByType(Bomb).length == 0) {
+            Sound.Sounds['dig'].play();
+            const bomb = new Bomb(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4);
+            scene.addEntity(bomb);
+            this.carry = true;
+            this.carryEntity = bomb;
+            bomb.setCarriedBy(this);
+          } else if (this.carry && this.carryEntity instanceof Bomb) {
+            if (moving) {
+              this.carryEntity.throw(this.lookDirection);
+            } else {
+              this.carryEntity.drop(this.crosshair.getPos().x - 3, this.crosshair.getPos().y - 3);
+            }
+            this.carry = false;
+          }
         }
       }
       
@@ -581,23 +604,23 @@ export class Player extends SpriteEntity {
     if (transition) {
       const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
       if (nextScene) {
-        engine.switchToScene(nextScene.scene);
-        nextScene.reset();
-        engine.addEntity(nextScene.scene, this);
-        engine.removeEntity(nextScene.scene, this.shadow);
-        engine.removeEntity(nextScene.scene, this.baseImage);
-        engine.removeEntity(nextScene.scene, this.hairImage);
-        engine.removeEntity(nextScene.scene, this.toolImage);
-        engine.removeEntity(nextScene.scene, this.crosshair);
-        engine.removeEntity(nextScene.scene, this.statusBar);
-        engine.addEntity(nextScene.scene, this.shadow);
-        engine.addEntity(nextScene.scene, this.baseImage);
-        engine.addEntity(nextScene.scene, this.hairImage);
-        engine.addEntity(nextScene.scene, this.toolImage);
-        engine.addEntity(nextScene.scene, this.crosshair);
-        engine.addEntity(nextScene.scene, this.statusBar);
+        engine.switchToScene(nextScene.sceneKey);
+        nextScene.resetter.reset();
+        engine.addEntity(nextScene.sceneKey, this);
+        engine.removeEntity(nextScene.sceneKey, this.shadow);
+        engine.removeEntity(nextScene.sceneKey, this.baseImage);
+        engine.removeEntity(nextScene.sceneKey, this.hairImage);
+        engine.removeEntity(nextScene.sceneKey, this.toolImage);
+        engine.removeEntity(nextScene.sceneKey, this.crosshair);
+        engine.removeEntity(nextScene.sceneKey, this.statusBar);
+        engine.addEntity(nextScene.sceneKey, this.shadow);
+        engine.addEntity(nextScene.sceneKey, this.baseImage);
+        engine.addEntity(nextScene.sceneKey, this.hairImage);
+        engine.addEntity(nextScene.sceneKey, this.toolImage);
+        engine.addEntity(nextScene.sceneKey, this.crosshair);
+        engine.addEntity(nextScene.sceneKey, this.statusBar);
 
-        this.playTrackForScene(nextScene.scene);
+        this.playTrackForScene(nextScene.sceneKey);
       }
     }
 
@@ -655,7 +678,7 @@ export class Player extends SpriteEntity {
             const nextScene = travelInfo.destination;
             if (nextScene) {
               engine.switchToScene(nextScene);
-              scenes.getSceneByKey(nextScene).reset();
+              scenes.getSceneByKey(nextScene).resetter.reset();
               engine.addEntity(nextScene, this);
               engine.removeEntity(nextScene, this.shadow);
               engine.removeEntity(nextScene, this.baseImage);
@@ -728,7 +751,11 @@ export class Player extends SpriteEntity {
     } else {
       changeLoop('overworld');
     }
+  }
 
+  clearCarry() {
+    this.carry = false;
+    this.carryEntity = undefined;
   }
 
   removeItem(item: number) {

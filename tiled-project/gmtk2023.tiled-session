@@ -3,33 +3,44 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "overworld-2.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "house1.tmx": {
-            "scale": 6.7984374999999995,
+            "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 77.81199724201335,
-                "y": 87.15237876350264
+                "x": 65.27272727272728,
+                "y": 97.18181818181819
             }
         },
         "house2.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 78.65207573388918,
-                "y": 103.45666145561923
+                "x": 94.0767760986625,
+                "y": 102.62289386833419
+            }
+        },
+        "houses.tmx": {
+            "expandedObjectLayers": [
+                6
+            ],
+            "scale": 1.5,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": -74,
+                "y": 153.66666666666663
             }
         },
         "inventory.tmx": {
             "scale": 4.84,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 80.16528925619834,
+                "x": 79.75206611570246,
                 "y": 79.85537190082646
             }
         },
@@ -37,31 +48,31 @@
             "scale": 4,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 101.25,
-                "y": 93.125
+                "x": 101.125,
+                "y": 92.875
             }
         },
         "main10.tmx": {
             "scale": 7.19625,
-            "selectedLayer": 3,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 72.95466388744138,
-                "y": 89.83845752996352
+                "x": 72.39881882925134,
+                "y": 88.86572867813096
             }
         },
         "main11.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 80.31961090845925,
-                "y": 85.5306583289908
+                "x": 79.62480458572172,
+                "y": 84.41896821261074
             }
         },
         "main2.tmx": {
             "scale": 4.476875,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 95.60240122853554,
+                "x": 94.93229093955048,
                 "y": 112.91358369398299
             }
         },
@@ -69,16 +80,16 @@
             "scale": 6.7984374999999995,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 78.54746035394163,
-                "y": 88.47621236497359
+                "x": 78.25327510917032,
+                "y": 88.18202712020226
             }
         },
         "main4.tmx": {
-            "scale": 7.19625,
+            "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 96.43911759597012,
-                "y": 82.61247177349314
+                "x": 82.63636363636365,
+                "y": 81.36363636363636
             }
         },
         "main5.tmx": {
@@ -86,39 +97,39 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 59.05853743269064,
-                "y": 104.98523536564181
+                "y": 104.70731283654682
             }
         },
         "main6.tmx": {
             "scale": 7.19625,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 50.9987840889352,
-                "y": 78.1657113079729
+                "x": 50.7208615598402,
+                "y": 78.0267500434254
             }
         },
         "main7.tmx": {
             "scale": 5.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 92.90909090909092,
+                "x": 92.54545454545453,
                 "y": 84.09090909090911
             }
         },
         "main8.tmx": {
             "scale": 7.19625,
-            "selectedLayer": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 81.57026228938682,
-                "y": 110.82160847663712
+                "x": 81.0144172311968,
+                "y": 110.12680215389959
             }
         },
         "main9.tmx": {
             "scale": 7.19625,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 84.62741010943199,
-                "y": 83.8631231544207
+                "x": 83.93260378669444,
+                "y": 82.89039430258815
             }
         },
         "menu.tmx": {
@@ -129,58 +140,85 @@
                 "y": 96.63636363636364
             }
         },
+        "overworld-2.tmx": {
+            "expandedObjectLayers": [
+                6
+            ],
+            "scale": 2,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": -52,
+                "y": 144.75
+            }
+        },
         "overworld.tsx": {
-            "scaleInDock": 3,
+            "scaleInDock": 2,
             "scaleInEditor": 8
         },
         "title.tmx": {
             "scale": 5.5,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 77.54545454545455,
-                "y": 100.81818181818181
+                "x": 77.36363636363636,
+                "y": 100.63636363636364
+            }
+        },
+        "underground.tmx": {
+            "expandedObjectLayers": [
+                6
+            ],
+            "scale": 3,
+            "selectedLayer": 8,
+            "viewCenter": {
+                "x": -190.99999999999997,
+                "y": 181.49999999999997
             }
         },
         "underground1.tmx": {
-            "scale": 6.7984374999999995,
+            "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 86.78464720753851,
-                "y": 93.77154677085727
+                "x": 72.18181818181819,
+                "y": 102.45454545454545
             }
         },
         "underground2.tmx": {
             "scale": 5.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 86.90909090909092,
+                "x": 86.9090909090909,
                 "y": 95.00000000000001
             }
         }
     },
     "last.externalTilesetPath": "C:/Source/GMTK-GameJam-2023/tiled-project",
     "last.imagePath": "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset",
-    "map.height": 10,
+    "last.objectTemplatePath": "C:/Source/GMTK-GameJam-2023/tiled-project",
+    "map.fixedSize": false,
+    "map.height": 9,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 10,
     "openFiles": [
+        "overworld-2.tmx",
+        "main2.tmx"
     ],
     "project": "gmtk2023.tiled-project",
+    "property.type": "object",
     "recentFiles": [
-        "title.tmx",
-        "menu.tmx",
-        "main4.tmx",
-        "main5.tmx",
-        "main6.tmx",
-        "main7.tmx",
+        "houses.tmx",
+        "underground.tmx",
         "main8.tmx",
+        "main7.tmx",
+        "main6.tmx",
+        "main5.tmx",
+        "underground2.tmx",
+        "underground1.tmx",
+        "house2.tmx",
+        "house1.tmx",
         "main9.tmx",
-        "main11.tmx",
-        "main10.tmx",
-        "main1.tmx",
-        "house2.tmx"
+        "main10.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

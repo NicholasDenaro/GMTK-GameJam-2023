@@ -5,6 +5,7 @@ import { Player } from "./player";
 export class NpcImage extends SpriteEntity {
   constructor(private npc: Npc, private sprite: string, private animation: string) {
     super(new SpritePainter(Sprite.Sprites[`${sprite}_${animation}`]));
+    this.zIndex = -1;
   }
 
   tick(scene: Scene): void | Promise<void> {

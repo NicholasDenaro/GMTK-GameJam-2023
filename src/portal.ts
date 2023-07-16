@@ -5,7 +5,7 @@ export class Portal extends Interactable {
   private activated = false;
   constructor(x: number, y: number, private destX: number, private destY: number) {
     super(new SpritePainter(Sprite.Sprites['tiles'], {spriteWidth: 8, spriteHeight: 8, spriteOffsetX: -4, spriteOffsetY: -4}), x, y);
-    this.imageIndex = 0;
+    this.imageIndex = 2351;
   }
   
   getDestPos() {

@@ -22,6 +22,5 @@ export class Title extends SpriteEntity {
     ctx.font = '12px game';
     ctx.strokeText('Theme: Roles Reversed', 32, screenHeight * 1 / 2 - 8 + bump);
     ctx.fillText('Theme: Roles Reversed', 32, screenHeight * 1 / 2 - 8 + bump);
-
   }
 }

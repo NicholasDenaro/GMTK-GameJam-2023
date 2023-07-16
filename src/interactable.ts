@@ -2,12 +2,13 @@ import { Scene, Sound, SpriteEntity } from "game-engine";
 import { FPS } from "./game";
 import { Pot } from "./pot";
 import { Grass } from "./grass";
+import { Player } from "./player";
 
 export class Interactable extends SpriteEntity {
   private thrownDirection: number;
   private thrown: boolean = false;
   private carried: boolean = false;
-  private carriedBy: SpriteEntity;
+  protected carriedBy: Player;
   private throwTimer: number = FPS * 0.3;
   tick(scene: Scene): void | Promise<void> {
     if (this.thrown) {
@@ -44,15 +45,25 @@ export class Interactable extends SpriteEntity {
     this.thrownDirection = direction;
   }
 
-  setCarriedBy(entity: SpriteEntity) {
+  drop(x: number, y: number) {
+    this.carried = false;
+    this.carriedBy = undefined;
+    this.x = x;
+    this.y = y;
+    this.zIndex = 0;
+  }
+
+  setCarriedBy(entity: Player) {
     this.carried = true;
     this.carriedBy = entity;
+    this.zIndex = -14;
   }
 
   reset() {
     this.carried = false;
     this.thrown = false;
     this.throwTimer = FPS * 0.3;
+    this.zIndex = 0;
   }
 
   playBreakSound() {
