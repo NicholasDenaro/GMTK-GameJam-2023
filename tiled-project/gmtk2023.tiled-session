@@ -29,11 +29,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 3,
+            "scale": 11,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": 241,
-                "y": 71.83333333333331
+                "x": -455.6363636363636,
+                "y": 59.95454545454545
             }
         },
         "inventory.tmx": {

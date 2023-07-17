@@ -8,7 +8,7 @@ import { GameEntity } from "./game-entity";
 
 export class SkeletonImage extends GameEntity {
   constructor(x: number, y: number) {
-    super(new SpritePainter(Sprite.Sprites['skeleton_idle_strip6']), x, y - 4);
+    super(new SpritePainter(Sprite.Sprites['skeleton_idle_strip6']), x, y);
   }
 
   private imageTimer = 0;
@@ -48,8 +48,8 @@ export class Skeleton extends Interactable {
 
 export class Grave extends Interactable {
   private dug = false;
-  constructor(x: number, y: number, private dialog: string[]) {
-    super(new SpritePainter(ctx => {}, {spriteWidth: 16, spriteHeight: 16}), x, y);
+  constructor(x: number, y: number, width: number, height: number, private dialog: string[]) {
+    super(new SpritePainter(ctx => {}, {spriteWidth: width, spriteHeight: height}), x, y);
   }
 
   dig(scene: Scene) {

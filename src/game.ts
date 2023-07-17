@@ -85,7 +85,7 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
   new Sprite('shorthair_idle_strip9', spriteAssetsPremade('./shorthair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
-  new Sprite('skeleton_idle_strip6', spriteAssetsPremade('./skeleton_idle_strip6.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('skeleton_idle_strip6', spriteAssetsPremade('./skeleton_idle_strip6.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 26 });
   //walk
   new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -701,7 +701,7 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
           });
           break;
         case 'Grave':
-          sceneData.scene.addEntity(sceneData.resetter.add(new Grave(x, y, graveTexts[Number.parseInt(object.querySelector('property[name=graveIndex]').getAttribute('value'))])));
+          sceneData.scene.addEntity(sceneData.resetter.add(new Grave(x, y, width, height, graveTexts[Number.parseInt(object.querySelector('property[name=graveIndex]').getAttribute('value'))])));
           break;
         case 'Sign':
           sceneData.scene.addEntity(sceneData.resetter.add(new Sign(sceneData.scene, x, y, signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))])));
