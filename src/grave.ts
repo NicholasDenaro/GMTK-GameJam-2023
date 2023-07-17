@@ -2,10 +2,13 @@ import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
+import { NpcDialog } from "./npc";
+import { Cursor } from "./player";
+import { GameEntity } from "./game-entity";
 
-export class SkeletonImage extends SpriteEntity {
+export class SkeletonImage extends GameEntity {
   constructor(x: number, y: number) {
-    super(new SpritePainter(Sprite.Sprites['skeleton_idle_strip6']), x, y);
+    super(new SpritePainter(Sprite.Sprites['skeleton_idle_strip6']), x, y - 4);
   }
 
   private imageTimer = 0;
@@ -23,9 +26,18 @@ export class SkeletonImage extends SpriteEntity {
 }
 
 export class Skeleton extends Interactable {
+  private dialogImage: NpcDialog;
   constructor(scene: Scene, x: number, y: number, private dialog: string[]) {
     super(new SpritePainter(() => {}, {spriteWidth: 10, spriteHeight: 10}), x, y);
     scene.addEntity(new SkeletonImage(x, y));
+    scene.addEntity(this.dialogImage = new NpcDialog(this));
+  }
+
+  tick(scene: Scene): void | Promise<void> {
+    this.dialogImage.hide();
+    if (scene.entitiesByType(Cursor)[0]?.collision(this)) {
+      this.dialogImage.show();
+    }
   }
 
   showDialog(scene: Scene) {

@@ -22,6 +22,7 @@ import { Portal } from "./portal";
 import { Grave, Skeleton } from "./grave";
 import { PermaFire } from "./perma-fire";
 import { GameEntity } from "./game-entity";
+import { TiledBackground } from "./tiled-background";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -318,14 +319,13 @@ export class Player extends GameEntity {
         }
 
         if (!this.carry && useItem == 0) { // shovel
-          const shovelable = actionInterractables.filter(ais => ais instanceof Rock || ais instanceof Grass)[0]
+          const shovelable = actionInterractables.filter(ais => ais instanceof Rock || ais instanceof Grass || ais instanceof Grave)[0]
           this.actionFunc = () => {
             if (shovelable instanceof Rock || shovelable instanceof Grass) {
               scene.removeEntity(shovelable);
             }
             if (shovelable instanceof Grave) {
               shovelable.dig(scene);
-              this.resetHeight(scene);
             }
 
             Sound.Sounds['dig'].play();
@@ -456,9 +456,11 @@ export class Player extends GameEntity {
             engine.addEntity(nextScene.sceneKey, this.toolImage);
             engine.addEntity(nextScene.sceneKey, this.crosshair);
             engine.addEntity(nextScene.sceneKey, this.statusBar);
+            nextScene.scene.entitiesByType(TiledBackground).forEach(bg => bg.resetPosition(this.worldCoordsX, this.worldCoordsY));
 
             playTrackForScene(nextScene.sceneKey);
           }
+          transitionFade(scene, nextScene.scene);
         }
 
         if (!this.carry && useItem == 8) { // harp
@@ -763,15 +765,5 @@ export class Player extends GameEntity {
     this.inventory.removeItem(item);
     this.spawnX = Math.round(this.x / 16) * 16;
     this.spawnY = Math.round(this.y / 16) * 16;
-  }
-
-  resetHeight(scene: Scene) {
-    const sceneKey = engine.sceneKey(scene);
-    engine.removeEntity(sceneKey, this.shadow);
-    engine.removeEntity(sceneKey, this.baseImage);
-    engine.removeEntity(sceneKey, this.hairImage);
-    engine.removeEntity(sceneKey, this.toolImage);
-    engine.removeEntity(sceneKey, this.crosshair);
-    engine.removeEntity(sceneKey, this.statusBar);
   }
 }
