@@ -211,6 +211,17 @@ const graveTexts = [
   ['Back from the dead!']
 ]
 
+export let compassManAlternateDialog = {
+  dialog: [
+    'Thank you for not\ndestroying my collection\nof pots.',
+    'Could you give me your\ncompass so I can go\nsearching for even more?',
+    { options: ['Keep compass', 'Give compass'] }
+  ],
+  postDialog: [
+    'Oh boy! Time to look\nfor more pots.'
+  ],
+}
+
 const npcs = [
   { // 0 default
     dialog: [

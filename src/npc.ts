@@ -2,6 +2,8 @@ import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { TextboxEntity } from "./textbox";
 import { Cursor, Player } from "./player";
 import { GameEntity } from "./game-entity";
+import { Pot } from "./pot";
+import { compassManAlternateDialog } from "./game";
 
 export class NpcImage extends SpriteEntity {
   constructor(private npc: Npc, private sprite: string, private animation: string) {
@@ -87,10 +89,13 @@ export class Npc extends GameEntity {
   }
 
   showDialog(scene: Scene) {
+    const dialog = this.requestedItem == 5 && scene.entitiesByType(Pot).length === 24 ? compassManAlternateDialog.dialog : this.dialog;
+    const postDialog = this.requestedItem == 5 && scene.entitiesByType(Pot).length === 24 ? compassManAlternateDialog.postDialog : this.postDialog;
+
     if (this.obtainedItem) {
-      scene.addEntity(new TextboxEntity(this.postDialog, this));
+      scene.addEntity(new TextboxEntity(postDialog, this));
     } else {
-      scene.addEntity(new TextboxEntity(this.dialog, this));
+      scene.addEntity(new TextboxEntity(dialog, this));
     }
     Sound.Sounds['talk'].play();
   }
