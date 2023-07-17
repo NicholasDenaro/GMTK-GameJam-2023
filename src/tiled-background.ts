@@ -1,8 +1,9 @@
-import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
+import { Scene, Sprite, SpritePainter } from "game-engine";
 import { screenHeight, screenWidth } from "./game";
+import { GameEntity } from "./game-entity";
 
-export class TiledBackground extends SpriteEntity {
-  constructor(private tiles: number[], zIndex: number, private tileWidth = 16, private tileHeight = 16) {
+export class TiledBackground extends GameEntity {
+  constructor(private worldX: number, private worldY: number, private tiles: number[], zIndex: number, private tileWidth = 16, private tileHeight = 16) {
     super(new SpritePainter(ctx => this.draw(ctx), {spriteWidth: screenWidth, spriteHeight: screenHeight}), 0, 16)
     this.zIndex = zIndex;
   }
@@ -41,5 +42,9 @@ export class TiledBackground extends SpriteEntity {
       ctx.drawImage(sprite.getImage(), sx, sy, this.tileWidth, this.tileHeight, 0, 0, 1, 1);
       ctx.restore();
     }
+  }
+
+  resetPosition(curX: number, curY: number) {
+    this.moveTo((this.worldX - curX) * screenWidth, 16 + (this.worldY - curY) * (screenHeight - 16));
   }
 }

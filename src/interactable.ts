@@ -1,11 +1,9 @@
-import { Scene, Sound, SpriteEntity } from "game-engine";
+import { Scene, Sound } from "game-engine";
 import { FPS } from "./game";
-import { Pot } from "./pot";
-import { Grass } from "./grass";
 import { Player } from "./player";
-import { HeavyRock } from "./heavy-rocky";
+import { GameEntity } from "./game-entity";
 
-export class Interactable extends SpriteEntity {
+export class Interactable extends GameEntity {
   private thrownDirection: number;
   private thrown: boolean = false;
   private carried: boolean = false;

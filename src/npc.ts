@@ -1,6 +1,7 @@
 import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { TextboxEntity } from "./textbox";
 import { Player } from "./player";
+import { GameEntity } from "./game-entity";
 
 export class NpcImage extends SpriteEntity {
   constructor(private npc: Npc, private sprite: string, private animation: string) {
@@ -25,7 +26,7 @@ export class NpcImage extends SpriteEntity {
   }
 }
 
-export class Npc extends SpriteEntity {
+export class Npc extends GameEntity {
   private baseImage: NpcImage;
   private hairImage: NpcImage;
   private toolImage: NpcImage;

@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch, changeLoop, stopLoop, restartLoop } from "./game";
+import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch, changeLoop, stopLoop, restartLoop, screenTransition, transitionSlide, playTrackForScene, transitionFade } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -21,6 +21,7 @@ import { HeavyRock } from "./heavy-rocky";
 import { Portal } from "./portal";
 import { Grave, Skeleton } from "./grave";
 import { PermaFire } from "./perma-fire";
+import { GameEntity } from "./game-entity";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -74,7 +75,7 @@ export class Cursor extends SpriteEntity {
   }
 }
 
-export class Player extends SpriteEntity {
+export class Player extends GameEntity {
   private pause: boolean;
   public lastScene = '';
   private worldCoordsX = 0;
@@ -143,16 +144,26 @@ export class Player extends SpriteEntity {
     return this.jumping;
   }
 
+  respawn() {
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    this.transitionTimer = 0;
+  }
+
   private transitionTimer = 0;
   private imageTimer = 0;
   private shownEndingText = false;
   private ticks = 0;
   tick(scene: Scene): Promise<void> | void {
+    if (screenTransition.active) {
+      return;
+    }
+
     this.ticks++;
     if (scene.isControl('restart', ControllerState.Press) && engine.sceneKey(scene) != 'pause') {
       scene.addEntity(new TextboxEntity(['Go back to main menu?', {options: ['No', 'Yes']}], undefined, () => {
         engine.switchToScene('main_menu');
-        this.playTrackForScene('0,0');
+        playTrackForScene('0,0');
       }));
     }
     if (this.pause) {
@@ -201,7 +212,7 @@ export class Player extends SpriteEntity {
         this.shownEndingText = true;
       } else {
         engine.switchToScene('credits');
-        this.playTrackForScene('0,0');
+        playTrackForScene('0,0');
       }
     }
 
@@ -446,7 +457,7 @@ export class Player extends SpriteEntity {
             engine.addEntity(nextScene.sceneKey, this.crosshair);
             engine.addEntity(nextScene.sceneKey, this.statusBar);
 
-            this.playTrackForScene(nextScene.sceneKey);
+            playTrackForScene(nextScene.sceneKey);
           }
         }
 
@@ -550,80 +561,75 @@ export class Player extends SpriteEntity {
 
     // scene transition
     let transition = false;
-    if (this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
+    if (!transition && this.x + this.painter.rectangle().width - Player.xOffset > screenWidth) {
       this.transitionTimer++;
       this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
       if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX + 1, this.worldCoordsY) && !this.carry) {
-        this.worldCoordsX++;
         transition = true;
-        this.x = 0;
-        this.transitionTimer = 0;
-        this.spawnX = this.x;
+        this.worldCoordsX++;
+        this.spawnX = 0;
         this.spawnY = this.y;
+        this.transitionTimer = 0;
+        transitionSlide(scene, scenes.getScene(this.worldCoordsX, this.worldCoordsY).scene, Math.PI, this.worldCoordsX - 1, this.worldCoordsY);
       }
     }
 
-    if (this.x - Player.xOffset < 0) {
+    if (!transition && this.x - Player.xOffset < 0) {
       this.transitionTimer++;
       this.x = Player.xOffset;
       if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX - 1, this.worldCoordsY) && !this.carry) {
-        this.worldCoordsX--;
         transition = true;
-        this.x = screenWidth - this.painter.rectangle().width + Player.xOffset;
-        this.transitionTimer = 0;
-        this.spawnX = this.x;
+        this.worldCoordsX--;
+        this.spawnX = screenWidth - this.painter.rectangle().width + Player.xOffset;
         this.spawnY = this.y;
+        this.transitionTimer = 0;
+        transitionSlide(scene, scenes.getScene(this.worldCoordsX, this.worldCoordsY).scene, 0, this.worldCoordsX + 1, this.worldCoordsY);
       }
     }
 
-    if (this.y + this.painter.rectangle().height - Player.yOffset > screenHeight) {
+    if (!transition && this.y + this.painter.rectangle().height - Player.yOffset > screenHeight) {
       this.transitionTimer++;
       this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
       if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY + 1) && !this.carry) {
         this.worldCoordsY++;
         transition = true;
-        this.y = 16;
-        this.transitionTimer = 0;
         this.spawnX = this.x;
-        this.spawnY = this.y;
+        this.spawnY = 16;
+        this.transitionTimer = 0;
+        transitionSlide(scene, scenes.getScene(this.worldCoordsX, this.worldCoordsY).scene, 3 * Math.PI / 2, this.worldCoordsX, this.worldCoordsY - 1);
       }
     }
 
-    if (this.y < 16) {
+    if (!transition && this.y < 16) {
       this.transitionTimer++;
       this.y = 16;
       if (this.transitionTimer >= 10 && scenes.getScene(this.worldCoordsX, this.worldCoordsY - 1) && !this.carry) {
         this.worldCoordsY--;
         transition = true;
-        this.y = screenHeight - this.painter.rectangle().height + Player.yOffset;
-        this.transitionTimer = 0;
         this.spawnX = this.x;
-        this.spawnY = this.y;
+        this.spawnY = screenHeight - this.painter.rectangle().height + Player.yOffset;
+        this.transitionTimer = 0;
+        transitionSlide(scene, scenes.getScene(this.worldCoordsX, this.worldCoordsY).scene, Math.PI / 2, this.worldCoordsX, this.worldCoordsY + 1);
       }
     }
 
-    // Overworld transition
     if (transition) {
       const nextScene = scenes.getScene(this.worldCoordsX, this.worldCoordsY);
-      if (nextScene) {
-        engine.switchToScene(nextScene.sceneKey);
-        nextScene.resetter.reset();
-        engine.addEntity(nextScene.sceneKey, this);
-        engine.removeEntity(nextScene.sceneKey, this.shadow);
-        engine.removeEntity(nextScene.sceneKey, this.baseImage);
-        engine.removeEntity(nextScene.sceneKey, this.hairImage);
-        engine.removeEntity(nextScene.sceneKey, this.toolImage);
-        engine.removeEntity(nextScene.sceneKey, this.crosshair);
-        engine.removeEntity(nextScene.sceneKey, this.statusBar);
-        engine.addEntity(nextScene.sceneKey, this.shadow);
-        engine.addEntity(nextScene.sceneKey, this.baseImage);
-        engine.addEntity(nextScene.sceneKey, this.hairImage);
-        engine.addEntity(nextScene.sceneKey, this.toolImage);
-        engine.addEntity(nextScene.sceneKey, this.crosshair);
-        engine.addEntity(nextScene.sceneKey, this.statusBar);
-
-        this.playTrackForScene(nextScene.sceneKey);
-      }
+      nextScene.resetter.reset();
+      engine.addEntity(nextScene.sceneKey, this);
+      engine.removeEntity(nextScene.sceneKey, this.shadow);
+      engine.removeEntity(nextScene.sceneKey, this.baseImage);
+      engine.removeEntity(nextScene.sceneKey, this.hairImage);
+      engine.removeEntity(nextScene.sceneKey, this.toolImage);
+      engine.removeEntity(nextScene.sceneKey, this.crosshair);
+      engine.removeEntity(nextScene.sceneKey, this.statusBar);
+      engine.addEntity(nextScene.sceneKey, this.shadow);
+      engine.addEntity(nextScene.sceneKey, this.baseImage);
+      engine.addEntity(nextScene.sceneKey, this.hairImage);
+      engine.addEntity(nextScene.sceneKey, this.toolImage);
+      engine.addEntity(nextScene.sceneKey, this.crosshair);
+      engine.addEntity(nextScene.sceneKey, this.statusBar);
+      return;
     }
 
     if (canMove && engine.sceneKey(scene) != 'pause' && scene.isControl('pause', ControllerState.Press)) {
@@ -671,6 +677,7 @@ export class Player extends SpriteEntity {
           if (door.collision(this)) {
             const travelInfo = door.travelInfo();
 
+            transitionFade(scene, engine.getScene(travelInfo.destination));
             this.worldCoordsX = travelInfo.worldX;
             this.worldCoordsY = travelInfo.worldY;
             this.x = travelInfo.x;
@@ -695,7 +702,7 @@ export class Player extends SpriteEntity {
               engine.addEntity(nextScene, this.crosshair);
               engine.addEntity(nextScene, this.statusBar);
 
-              this.playTrackForScene(nextScene);
+              playTrackForScene(nextScene);
             }
           }
         });
@@ -741,19 +748,6 @@ export class Player extends SpriteEntity {
     this.imageIndex %= this.baseImage.spriteFrames();
   }
 
-  playTrackForScene(nextScene: string) {
-    if (nextScene.indexOf('u') != -1) {
-      changeLoop('underground');
-    } else if (nextScene.indexOf('h') != -1) {
-      changeLoop('house');
-    } else if (this.worldCoordsX < -1 || this.worldCoordsY < -1) {
-      changeLoop('town');
-    } else if (this.worldCoordsY == -1) {
-      changeLoop('grave');
-    } else {
-      changeLoop('overworld');
-    }
-  }
 
   clearCarry() {
     this.carry = false;

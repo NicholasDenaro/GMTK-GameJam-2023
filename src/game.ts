@@ -1,4 +1,4 @@
-import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState, Entity } from 'game-engine';
+import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState, Entity, SpriteEntity } from 'game-engine';
 import { Player } from './player';
 import { PauseMenu } from './pause-menu';
 import { Wall } from './wall';
@@ -25,6 +25,8 @@ import { Title } from './title';
 import { Grave } from './grave';
 import { PermaFire } from './perma-fire';
 import { TiledBackground } from './tiled-background';
+import { GameEntity } from './game-entity';
+import { TransitionFadeEntity } from './transition-fade';
 
 const world = require('../tiled-project/overworld-2.tmx');
 const houses = require('../tiled-project/houses.tmx');
@@ -56,127 +58,142 @@ export const statefulMode = {
   enabled: false,
 }
 
-const spriteAssets = require.context('../assets/', false, /\.png$/);
-const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
-new Sprite('buddy', spriteAssets('./buddy.png'), { spriteWidth: 16, spriteHeight: 16 });
-//idle
-new Sprite('base_idle_strip9', spriteAssetsPremade('./base_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_idle_strip9', spriteAssetsPremade('./bowlhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('longhair_idle_strip9', spriteAssetsPremade('./longhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('spikeyhair_idle_strip9', spriteAssetsPremade('./spikeyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('mophair_idle_strip9', spriteAssetsPremade('./mophair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('shorthair_idle_strip9', spriteAssetsPremade('./shorthair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+export const fadeEntity = new TransitionFadeEntity();
 
-new Sprite('skeleton_idle_strip6', spriteAssetsPremade('./skeleton_idle_strip6.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//walk
-new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//jump
-new Sprite('base_jump_strip9', spriteAssetsPremade('./base_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_jump_strip9', spriteAssetsPremade('./bowlhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_jump_strip9', spriteAssetsPremade('./tools_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//dig
-new Sprite('base_dig_strip13', spriteAssetsPremade('./base_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_dig_strip13', spriteAssetsPremade('./bowlhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_dig_strip13', spriteAssetsPremade('./tools_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//attack
-new Sprite('base_attack_strip10', spriteAssetsPremade('./base_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_attack_strip10', spriteAssetsPremade('./bowlhair_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_attack_strip10', spriteAssetsPremade('./tools_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//roll - used for fall
-new Sprite('base_roll_strip10', spriteAssetsPremade('./base_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_roll_strip10', spriteAssetsPremade('./bowlhair_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_roll_strip10', spriteAssetsPremade('./tools_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//waiting - used for fishing?
-new Sprite('base_waiting_strip9', spriteAssetsPremade('./base_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_waiting_strip9', spriteAssetsPremade('./bowlhair_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_waiting_strip9', spriteAssetsPremade('./tools_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//doing - used for pickup/place
-new Sprite('base_doing_strip8', spriteAssetsPremade('./base_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_doing_strip8', spriteAssetsPremade('./bowlhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_doing_strip8', spriteAssetsPremade('./tools_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//hurt
-new Sprite('base_hurt_strip8', spriteAssetsPremade('./base_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_hurt_strip8', spriteAssetsPremade('./bowlhair_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_hurt_strip8', spriteAssetsPremade('./tools_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-//carry
-new Sprite('base_carry_strip8', spriteAssetsPremade('./base_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('bowlhair_carry_strip8', spriteAssetsPremade('./bowlhair_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
-new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+export const screenTransition: {activate: boolean, active: boolean, action: 'slide' | 'fade', timer: number, totalTime: number, scene?: Scene, nextScene?: Scene, direction: number} = {
+  activate: false,
+  active: false,
+  action: undefined,
+  timer: 0,
+  totalTime: 0,
+  scene: <Scene>undefined,
+  nextScene: <Scene>undefined,
+  direction: 0,
+};
 
-//backgrounds
-new Sprite('logo', spriteAssetsPremade('./gmtk-logo-downscale.png'), { spriteWidth: 292, spriteHeight: 160 });
-new Sprite('title', spriteAssetsPremade('./title.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('menu', spriteAssetsPremade('./menu.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main4', spriteAssetsPremade('./main4.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main5', spriteAssetsPremade('./main5.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main6', spriteAssetsPremade('./main6.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main7', spriteAssetsPremade('./main7.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main8', spriteAssetsPremade('./main8.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main9', spriteAssetsPremade('./main9.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main10', spriteAssetsPremade('./main10.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('main11', spriteAssetsPremade('./main11.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('underground2', spriteAssetsPremade('./underground2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('house2', spriteAssetsPremade('./house2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+(function setupAssets() {
+  const spriteAssets = require.context('../assets/', false, /\.png$/);
+  const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
+  new Sprite('buddy', spriteAssets('./buddy.png'), { spriteWidth: 16, spriteHeight: 16 });
+  //idle
+  new Sprite('base_idle_strip9', spriteAssetsPremade('./base_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_idle_strip9', spriteAssetsPremade('./bowlhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('longhair_idle_strip9', spriteAssetsPremade('./longhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('curlyhair_idle_strip9', spriteAssetsPremade('./curlyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('spikeyhair_idle_strip9', spriteAssetsPremade('./spikeyhair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('mophair_idle_strip9', spriteAssetsPremade('./mophair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('shorthair_idle_strip9', spriteAssetsPremade('./shorthair_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_idle_strip9', spriteAssetsPremade('./tools_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
-// items
-new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
-new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
-new Sprite('coin', spriteAssetsPremade('./item8BIT_coin.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('shovel', spriteAssetsPremade('./item8BIT_shovel.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('sword', spriteAssetsPremade('./item8BIT_sword.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('bombs', spriteAssetsPremade('./item8BIT_bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('bow', spriteAssetsPremade('./item8BIT_bow.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('feather', spriteAssetsPremade('./item8BIT_feather.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('glove', spriteAssetsPremade('./item8BIT_glove.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('compass', spriteAssetsPremade('./item8BIT_compass.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('lamp', spriteAssetsPremade('./item8BIT_lamp.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('mirror', spriteAssetsPremade('./item8BIT_mirror.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('harp', spriteAssetsPremade('./item8BIT_harp.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('heart', spriteAssetsPremade('./item8BIT_heart.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('skeleton_idle_strip6', spriteAssetsPremade('./skeleton_idle_strip6.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //walk
+  new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //jump
+  new Sprite('base_jump_strip9', spriteAssetsPremade('./base_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_jump_strip9', spriteAssetsPremade('./bowlhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_jump_strip9', spriteAssetsPremade('./tools_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //dig
+  new Sprite('base_dig_strip13', spriteAssetsPremade('./base_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_dig_strip13', spriteAssetsPremade('./bowlhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_dig_strip13', spriteAssetsPremade('./tools_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //attack
+  new Sprite('base_attack_strip10', spriteAssetsPremade('./base_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_attack_strip10', spriteAssetsPremade('./bowlhair_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_attack_strip10', spriteAssetsPremade('./tools_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //roll - used for fall
+  new Sprite('base_roll_strip10', spriteAssetsPremade('./base_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_roll_strip10', spriteAssetsPremade('./bowlhair_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_roll_strip10', spriteAssetsPremade('./tools_roll_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //waiting - used for fishing?
+  new Sprite('base_waiting_strip9', spriteAssetsPremade('./base_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_waiting_strip9', spriteAssetsPremade('./bowlhair_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_waiting_strip9', spriteAssetsPremade('./tools_waiting_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //doing - used for pickup/place
+  new Sprite('base_doing_strip8', spriteAssetsPremade('./base_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_doing_strip8', spriteAssetsPremade('./bowlhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_doing_strip8', spriteAssetsPremade('./tools_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //hurt
+  new Sprite('base_hurt_strip8', spriteAssetsPremade('./base_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_hurt_strip8', spriteAssetsPremade('./bowlhair_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_hurt_strip8', spriteAssetsPremade('./tools_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  //carry
+  new Sprite('base_carry_strip8', spriteAssetsPremade('./base_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('bowlhair_carry_strip8', spriteAssetsPremade('./bowlhair_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('tools_carry_strip8', spriteAssetsPremade('./tools_carry_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
 
-// effects
-new Sprite('fire1', spriteAssetsPremade('./spr_deco_fire_01_strip4.png'), { spriteWidth: 5, spriteHeight: 10 });
-new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spriteWidth: 8, spriteHeight: 12 });
+  //backgrounds
+  new Sprite('logo', spriteAssetsPremade('./gmtk-logo-downscale.png'), { spriteWidth: 292, spriteHeight: 160 });
+  new Sprite('title', spriteAssetsPremade('./title.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('menu', spriteAssetsPremade('./menu.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main1', spriteAssetsPremade('./main1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main2', spriteAssetsPremade('./main2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main3', spriteAssetsPremade('./main3.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main4', spriteAssetsPremade('./main4.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main5', spriteAssetsPremade('./main5.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main6', spriteAssetsPremade('./main6.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main7', spriteAssetsPremade('./main7.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main8', spriteAssetsPremade('./main8.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main9', spriteAssetsPremade('./main9.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main10', spriteAssetsPremade('./main10.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('main11', spriteAssetsPremade('./main11.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('underground1', spriteAssetsPremade('./underground1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('underground2', spriteAssetsPremade('./underground2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('house1', spriteAssetsPremade('./house1.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('house2', spriteAssetsPremade('./house2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
-new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
-new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
-new Sprite('arrowV', spriteAssets('./arrowV.png'), { spriteWidth: 8, spriteHeight: 16 });
-new Sprite('arrowH', spriteAssets('./arrowH.png'), { spriteWidth: 16, spriteHeight: 8 });
-new Sprite('shadow', spriteAssets('./shadow.png'), { spriteWidth: 16, spriteHeight: 8, spriteOffsetY: -12 });
+  // items
+  new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
+  new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
+  new Sprite('coin', spriteAssetsPremade('./item8BIT_coin.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('shovel', spriteAssetsPremade('./item8BIT_shovel.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('sword', spriteAssetsPremade('./item8BIT_sword.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('bombs', spriteAssetsPremade('./item8BIT_bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('bow', spriteAssetsPremade('./item8BIT_bow.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('feather', spriteAssetsPremade('./item8BIT_feather.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('glove', spriteAssetsPremade('./item8BIT_glove.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('compass', spriteAssetsPremade('./item8BIT_compass.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('lamp', spriteAssetsPremade('./item8BIT_lamp.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('mirror', spriteAssetsPremade('./item8BIT_mirror.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('harp', spriteAssetsPremade('./item8BIT_harp.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('heart', spriteAssetsPremade('./item8BIT_heart.png'), { spriteWidth: 16, spriteHeight: 16 });
 
-new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
+  // effects
+  new Sprite('fire1', spriteAssetsPremade('./spr_deco_fire_01_strip4.png'), { spriteWidth: 5, spriteHeight: 10 });
+  new Sprite('fire2', spriteAssetsPremade('./spr_deco_fire_02_strip4.png'), { spriteWidth: 8, spriteHeight: 12 });
 
-const wavAssets = require.context('../assets/', false, /\.wav$/);
-const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
-new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
-new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.wav'), true);
-new Sound('caveloop', wavAssetsPremade('./CaveLoop.wav'), true);
-new Sound('townloop', wavAssetsPremade('./Town1DayLoop.wav'), true);
-new Sound('houseloop', wavAssetsPremade('./MysteriousTempleLayer3Loop.wav'), true);
-new Sound('sadloop', wavAssetsPremade('./SadPianoLoop.wav'), true);
-new Sound('talk', wavAssetsPremade('./MenuCursor01.wav'));
-new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
-new Sound('slash', wavAssetsPremade('./Attack03.wav'));
-new Sound('dig', wavAssetsPremade('./Attack02.wav'));
-new Sound('jump', wavAssetsPremade('./Jump03.wav'));
-new Sound('fall', wavAssetsPremade('./Fall01.wav'));
-new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
-new Sound('harp', wavAssetsPremade('./GuitarStinger4.wav'));
-new Sound('bow', wavAssets('./bow3.wav'));
-new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.wav'));
-new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.wav'));
-new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.wav'));
-new Sound('explosion', wavAssetsPremade('./explosion_36.wav'));
+  new Sprite('bomb', spriteAssets('./bomb.png'), { spriteWidth: 16, spriteHeight: 16 });
+  new Sprite('explosion', spriteAssets('./explosion.png'), { spriteWidth: 32, spriteHeight: 32 });
+  new Sprite('arrowV', spriteAssets('./arrowV.png'), { spriteWidth: 8, spriteHeight: 16 });
+  new Sprite('arrowH', spriteAssets('./arrowH.png'), { spriteWidth: 16, spriteHeight: 8 });
+  new Sprite('shadow', spriteAssets('./shadow.png'), { spriteWidth: 16, spriteHeight: 8, spriteOffsetY: -12 });
+
+  new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
+
+  const wavAssets = require.context('../assets/', false, /\.wav$/);
+  const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
+  new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
+  new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.wav'), true);
+  new Sound('caveloop', wavAssetsPremade('./CaveLoop.wav'), true);
+  new Sound('townloop', wavAssetsPremade('./Town1DayLoop.wav'), true);
+  new Sound('houseloop', wavAssetsPremade('./MysteriousTempleLayer3Loop.wav'), true);
+  new Sound('sadloop', wavAssetsPremade('./SadPianoLoop.wav'), true);
+  new Sound('talk', wavAssetsPremade('./MenuCursor01.wav'));
+  new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
+  new Sound('slash', wavAssetsPremade('./Attack03.wav'));
+  new Sound('dig', wavAssetsPremade('./Attack02.wav'));
+  new Sound('jump', wavAssetsPremade('./Jump03.wav'));
+  new Sound('fall', wavAssetsPremade('./Fall01.wav'));
+  new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
+  new Sound('harp', wavAssetsPremade('./GuitarStinger4.wav'));
+  new Sound('bow', wavAssets('./bow3.wav'));
+  new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.wav'));
+  new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.wav'));
+  new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.wav'));
+  new Sound('explosion', wavAssetsPremade('./explosion_36.wav'));
+})();
 
 const signTexts = [
   [
@@ -382,7 +399,68 @@ async function init() {
 
   Sound.Sounds['start'].play();
 
+  engine.addAction('transition', () => {
+
+    if (screenTransition.activate) {
+      screenTransition.active = true;
+      screenTransition.activate = false;
+    } else if (screenTransition.active && screenTransition.action === 'slide') {
+      const scene = screenTransition.scene;
+      const direction = screenTransition.direction;
+      const totalTime = screenTransition.totalTime;
+      if (screenTransition.timer > 0) {
+        scene.entitiesByType(GameEntity).forEach(entity => entity.move(Math.cos(direction) * 16, Math.sin(direction) * 16));
+        screenTransition.timer--;
+      }
+      if (screenTransition.timer == 0) {
+        screenTransition.active = false;
+        const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
+        //scene.entitiesByType(GameEntity).forEach(entity => entity.move(-Math.cos(direction) * 16 * totalTime, -Math.sin(direction) * 16 * totalTime));
+        scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
+
+        screenTransition.timer--;
+        engine.switchToScene(engine.sceneKey(screenTransition.nextScene));
+        screenTransition.nextScene.entitiesByType(Player)[0].respawn();
+        playTrackForScene(engine.sceneKey(screenTransition.nextScene));
+      }
+    } else if (screenTransition.active && screenTransition.action === 'fade') {
+      if (screenTransition.timer > 0) {
+        screenTransition.timer--;
+      }
+      if (screenTransition.timer == 0) {
+        screenTransition.active = false;
+      }
+    }
+
+    if (screenTransition.timer == -1) {
+      screenTransition.timer--;
+      screenTransition.active = false;
+      const scene = screenTransition.scene;
+      const direction = screenTransition.direction;
+      const totalTime = screenTransition.totalTime;
+      const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
+      scene.entitiesByType(GameEntity).filter(entity => entity instanceof Player == false).forEach(entity => entity.move(-Math.cos(direction) * 16 * totalTime, -Math.sin(direction) * 16 * totalTime));
+      scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
+
+    }
+  });
+
   await engine.start();
+}
+
+export function playTrackForScene(nextScene: string) {
+  const worldCoords = engine.getScene(nextScene).entitiesByType(Player)[0].getWorldCoords();
+  if (nextScene.indexOf('u') != -1) {
+    changeLoop('underground');
+  } else if (nextScene.indexOf('h') != -1) {
+    changeLoop('house');
+  } else if (worldCoords.x < -1 || worldCoords.y < -1) {
+    changeLoop('town');
+  } else if (worldCoords.y == -1) {
+    changeLoop('grave');
+  } else {
+    changeLoop('overworld');
+  }
 }
 
 export function stopLoop() {
@@ -418,6 +496,33 @@ export function changeLoop(place: 'overworld' | 'town' | 'underground' | 'house'
     loopTrack.track = Sound.Sounds[track].play();
     loopTrack.current = track;
   }
+}
+
+export function transitionSlide(scene: Scene, nextScene: Scene, direction: number, lastWorldX: number, lastWorldY: number) {
+  screenTransition.activate = true;
+  screenTransition.scene = scene;
+  screenTransition.nextScene = nextScene;
+  screenTransition.direction = direction;
+  screenTransition.totalTime = direction == Math.PI || direction == 0 ? 10 : 9;
+  screenTransition.timer = screenTransition.totalTime;
+  screenTransition.action = 'slide';
+  nextScene.entitiesByType(TiledBackground).forEach(bg => {
+    scene.addEntity(bg);
+    bg.resetPosition(lastWorldX, lastWorldY);
+  });
+}
+
+export function transitionFade(scene: Scene, nextScene: Scene) {
+  screenTransition.activate = true;
+  screenTransition.scene = scene;
+  screenTransition.nextScene = nextScene;
+  screenTransition.direction = 0;
+  screenTransition.totalTime = 10;
+  screenTransition.timer = screenTransition.totalTime;
+  screenTransition.action = 'fade';
+  fadeEntity.reset();
+  nextScene.addEntity(fadeEntity);
+  Sound.Sounds['slash'].play();
 }
 
 const keyMap = [
@@ -461,13 +566,6 @@ const keyMap = [
 
 export const keyController = new KeyboardController(keyMap);
 
-const mouseMap = [
-  {
-    binding: new ControllerBinding<{ x: number, y: number, dx: number, dy: number }>('interact'),
-    buttons: [0],
-  }
-];
-
 const gamepadMap = [
   {
     binding: new ControllerBinding<{ value: number }>('button1'),
@@ -497,7 +595,6 @@ const gamepadMap = [
 
 export function buildMap(view: View, keyController: KeyboardController) {
   buildMapNew(view, keyController);
-  // buildMapOld(view, keyController);
 }
 
 export function buildMapNew(view: View, keyController: KeyboardController) {
@@ -526,7 +623,7 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
         const worldY = Number.parseInt(chunk.getAttribute('y')) / 9;
         if (scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`)) {
           const scene = scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`).scene;
-          scene.addEntity(new TiledBackground(chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+          scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
           return;
         }
 
@@ -537,7 +634,8 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
 
         const resetter = new EntityResetter(scene);
 
-        scene.addEntity(new TiledBackground(chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+        scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+        scene.addEntity(fadeEntity);
 
         engine.addScene(`${docData.key}${worldX},${worldY}`, scene);
         scenes.setScene(scene, `${docData.key}${worldX},${worldY}`, worldX, worldY, resetter);
@@ -644,36 +742,6 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
   
 }
 
-export function buildMapOld(view: View, keyController: KeyboardController) {
-  scenes.clear();
-  const scenePause = new Scene(view);
-  scenePause.addController(keyController);
-  // scene.addController(new MouseController(mouseMap));
-  // scene.addController(new GamepadController(gamepadMap));
-
-  build00(view, keyController);
-  builde10(view, keyController);
-  buildHousee10(view, keyController);
-  buildw10(view, keyController);
-  buildw20(view, keyController);
-  buildw30(view, keyController);
-  buildHousew30(view, keyController);
-  buildw3s1(view, keyController);
-  buildw2s1(view, keyController);
-  buildw1s1(view, keyController);
-  buildUndergroundw2s1(view, keyController);
-  builde1n1(view, keyController);
-  builde1n2(view, keyController);
-  builde1s1(view, keyController);
-  buildUndergroundw10(view, keyController);
-
-  engine.addScene('pause', scenePause);
-
-  scenePause.addEntity(new BackgroundEntity('inventory'));
-  scenePause.addEntity(new PauseMenu());
-
-  
-}
 
 export class EntityResetter {
   private entities: Entity[] = [];
@@ -714,631 +782,6 @@ export class EntityResetter {
       act();
     })
   }
-}
-
-function build00(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main1'));
-  // top
-  scene.addEntity(new Wall(0, 16, screenWidth, 16));
-  // left
-  scene.addEntity(new Wall(0, 16, 32, 3 * 16));
-  const resetter = new EntityResetter(scene);
-  scene.addEntity(resetter.add(new Grass(16, 4 * 16)));
-  scene.addEntity(resetter.add(new Grass(16, 5 * 16)));
-  scene.addEntity(resetter.add(new Grass(16, 6 * 16)));
-  scene.addEntity(new Wall(0, 7 * 16, 32, 3 * 16));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
-  scene.addEntity(new Sign(32, 32, [
-    'Congratulations on defeating\nthe evil Frogman. The\nKingdom is safe.',
-    'But more people are in\nneed of help. Luckily you\nhave gathered many',
-    'items across your journey.',
-    'Find the correct order\nto give away each item\nso you can help everyone.',
-    'PS Gaze into the mirror\nto return here instantly.'
-  ]));
-  scene.addEntity(new Player(scene, 32, 48));
-
-  engine.addScene('0,0', scene);
-  scenes.setScene(scene, '0,0', 0, 0, resetter);
-}
-
-function buildw10(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main3'));
-  // top
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  // right
-  scene.addEntity(new Wall(screenWidth - 16, 16, 32, 3 * 16));
-  scene.addEntity(new Wall(screenWidth - 16, 7 * 16, 32, 3 * 16));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
-
-
-  scene.addEntity(new Wall(2 * 16, 4 * 16, 5 * 16, 1 * 16));
-  scene.addEntity(new Wall(2 * 16, 4 * 16, 1 * 16, 2 * 16));
-
-  scene.addEntity(new Door(3 * 16, 5 * 16, 'u_-1,0', 1 * 16, 4 * 16, -1, 0));
-  scene.addEntity(resetter.add(new Pot(5 * 16, 5 * 16)));
-  scene.addEntity(new Wall(2 * 16, 6 * 16, 5 * 16, 1 * 16));
-
-  engine.addScene('-1,0', scene);
-  scenes.setScene(scene, '-1,0', -1, 0, resetter);
-}
-
-function buildUndergroundw10(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  scene.addEntity(new BackgroundEntity('underground1'));
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
-
-  scene.addEntity(new Wall(0, 16, 16, screenHeight));
-  scene.addEntity(new Wall(screenWidth - 16, 16, 16, screenHeight));
-
-  scene.addEntity(new Door( 1 * 16, 3 * 16, '-1,0', 4 * 16, 5 * 16, -1, 0));
-
-  scene.addEntity(new Wall(4 * 16, 6 * 16, 16, 16));
-
-  // row 1
-  // skip
-  scene.addEntity(new Hole(scene, 2 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 3 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 4 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 5 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 6 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 7 * 16, 3 * 16, 324));
-  scene.addEntity(new Hole(scene, 8 * 16, 3 * 16, 324));
-
-  // row 2
-  // skip
-  scene.addEntity(new Hole(scene, 2 * 16, 4 * 16, 324));
-  scene.addEntity(new Hole(scene, 3 * 16, 4 * 16, 324));
-  scene.addEntity(new Hole(scene, 4 * 16, 4 * 16, 324));
-  // skip
-  scene.addEntity(new Hole(scene, 6 * 16, 4 * 16, 324));
-  // skip
-  // skip
-
-  // row 3
-  scene.addEntity(new Hole(scene, 1 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 2 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 3 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 4 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 5 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 6 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 7 * 16, 5 * 16, 324));
-  scene.addEntity(new Hole(scene, 8 * 16, 5 * 16, 324));
-
-  // row 4
-  // skip
-  scene.addEntity(new Hole(scene, 2 * 16, 6 * 16, 324));
-  // skip
-  // skip
-  // skip
-  scene.addEntity(new Hole(scene, 6 * 16, 6 * 16, 324));
-  scene.addEntity(new Hole(scene, 7 * 16, 6 * 16, 324));
-  // skip
-
-  // row 5
-  scene.addEntity(new Hole(scene, 1 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 2 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 3 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 4 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 5 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 6 * 16, 7 * 16, 324));
-  scene.addEntity(new Hole(scene, 7 * 16, 7 * 16, 324));
-  // skip
-
-  // row 6
-  scene.addEntity(new Hole(scene, 1 * 16, 8 * 16, 324));
-  scene.addEntity(new Hole(scene, 2 * 16, 8 * 16, 324));
-  // skip
-  scene.addEntity(new Hole(scene, 4 * 16, 8 * 16, 324));
-  // skip
-  scene.addEntity(new Hole(scene, 6 * 16, 8 * 16, 324));
-  scene.addEntity(new Hole(scene, 7 * 16, 8 * 16, 324));
-  // skip
-
-  scene.addEntity(new Npc(scene, 8 * 16, 8 * 16,
-    ['I don\'t know how I\nmanaged to get stuck here.', 'Hey! That feather looks\nlike could help!', {options: ['Keep feather', 'Give feather']}],
-    ['Thank you!\nNow I can leave.', '...', '......', 'I hope you can too!'], 4, 'spikeyhair'));
-
-  engine.addScene('u_-1,0', scene);
-  scenes.setScene(scene, 'u_-1,0', -12, 1, new EntityResetter(scene));
-}
-
-function builde10(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addEntity(new BackgroundEntity('main2'));
-  //top
-  scene.addEntity(new Wall(0, 16, 2 * 16, 16));
-  scene.addEntity(resetter.add(new Rock(32, 32)));
-  scene.addEntity(new Wall(3 * 16, 16, screenWidth, 16));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, 16, 16));
-
-  // house
-  scene.addEntity(new Wall(4 * 16 - 8, 64, 1.5 * 16, 3 * 16));
-  scene.addEntity(new Wall(4 * 16 - 8, 64, 5 * 16, 2 * 16));
-  scene.addEntity(new Wall(6.5 * 16 - 8, 64, 2.5 * 16, 3 * 16));
-
-  scene.addEntity(new Door(5 * 16, 6 * 16, 'h_1,0', 3 * 16, 8 * 16, 1, 0));
-  // crate1
-  scene.addEntity(new Wall(screenWidth - 32, 3 * 16, 5 * 16, 3 * 16));
-  // crate2
-  scene.addEntity(new Wall(screenWidth - 32, 7 * 16, 16, 16));
-
-  scene.addEntity(new Npc(scene, 7 * 16, 7 * 16,
-    ['I need a shovel to dig my\ngarden. Could you give\nme yours?', { options: ['keep shovel', 'give shovel'] }],
-    ['Thank you, now it\'s\ntime to get planting.'], 0));
-
-  engine.addScene('1,0', scene);
-  scenes.setScene(scene, '1,0', 1, 0, resetter);
-}
-
-function buildHousee10(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addEntity(new BackgroundEntity('house1'));
-  //top
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //left
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, 3 * 16, 16));
-  scene.addEntity(new Door(3 * 16, 9 * 16, '1,0', 5 * 16, 7 * 16, 1, 0));
-  scene.addEntity(new Wall(4 * 16, screenHeight - 16, 6 * 16, 16));
-
-  scene.addEntity(resetter.add(new Pot(2 * 16, 3 * 16)));
-  scene.addEntity(resetter.add(new Pot(3 * 16, 3 * 16)));
-  scene.addEntity(resetter.add(new Pot(4 * 16, 3 * 16)));
-  scene.addEntity(resetter.add(new Pot(5 * 16, 3 * 16)));
-  scene.addEntity(resetter.add(new Pot(6 * 16, 3 * 16)));
-
-  scene.addEntity(resetter.add(new Pot(2 * 16, 4 * 16)));
-  scene.addEntity(resetter.add(new Pot(3 * 16, 4 * 16)));
-  scene.addEntity(resetter.add(new Pot(4 * 16, 4 * 16)));
-  scene.addEntity(resetter.add(new Pot(5 * 16, 4 * 16)));
-  scene.addEntity(resetter.add(new Pot(6 * 16, 4 * 16)));
-
-  scene.addEntity(resetter.add(new Pot(2 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(3 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(4 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(5 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(6 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(7 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Pot(8 * 16, 5 * 16)));
-
-  scene.addEntity(resetter.add(new Pot(2 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(3 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(4 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(5 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(6 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(7 * 16, 6 * 16)));
-  scene.addEntity(resetter.add(new Pot(8 * 16, 6 * 16)));
-
-  scene.addEntity(new Npc(scene, 7 * 16, 3 * 16,
-    ['You destroyed my\npot collection.', 'Give me your compass, so\nI can go searching for more.', {options: ['Keep compass', 'Give compass']}], ['Alright, now scram!'], 5, 'mophair'));
-
-  engine.addScene('h_1,0', scene);
-  scenes.setScene(scene, 'h_1,0', 11, 0, new EntityResetter(scene)) // Don't reset this room. It's for the joke.
-}
-
-function builde1n1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addEntity(new BackgroundEntity('main4'));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, 2 * 16, 16));
-  scene.addEntity(new Wall(3 * 16, screenHeight - 16, screenWidth, 16));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //left
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
-  //top
-  scene.addEntity(new Wall(0, 16, screenWidth - 32, 16));
-
-  //fence
-  scene.addEntity(new Wall(16, 32, 7 * 16, 16));
-  scene.addEntity(new Wall(16, 32, 16, 5 * 16));
-  scene.addEntity(new Wall(2 * 16, 6 * 16, 32, 16));
-  scene.addEntity(new Wall(5 * 16, 6 * 16, screenWidth - 32, 16));
-
-  //graves
-  scene.addEntity(new Wall(3 * 16, 3 * 16, 16, 16));
-  scene.addEntity(new Grave(3 * 16, 4 * 16, ['Good morning!']));
-  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 16));
-  scene.addEntity(new Grave(5 * 16, 4 * 16, ['It was dark down there.']));
-  scene.addEntity(new Wall(7 * 16, 3 * 16, 16, 16));
-  scene.addEntity(new Grave(7 * 16, 4 * 16, ['Back from the dead!']));
-
-  scene.addEntity(resetter.add(new Tree(8 * 16, 2 * 16)));
-
-  // well
-  scene.addEntity(new Wall(7 * 16, 7 * 16, 32, 32));
-
-  engine.addScene('1,-1', scene);
-  scenes.setScene(scene, '1,-1', 1, -1, resetter);
-}
-
-function builde1n2(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  scene.addEntity(new BackgroundEntity('main5'));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, 8 * 16, 32));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //left
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
-  //top
-  scene.addEntity(new Wall(0, 5 * 16, screenWidth, 16));
-
-  scene.addEntity(new Npc(scene, 1 * 16, 6 * 16, [
-    'The drawbridge is up,\nsomeone must be playing\na prank on me.',
-    'If you give me your bow,\nI might be able to\nshoot the switch.',
-    {options: ['Keep bow', 'Give bow']}
-  ],
-  [
-    'Thanks, you really saved me there.'
-  ], 3, 'curlyhair'))
-
-  // crate
-  scene.addEntity(new Wall(1 * 16, 7 * 16, 16, 16));
-
-  engine.addScene('1,-2', scene);
-  scenes.setScene(scene, '1,-2', 1, -2, new EntityResetter(scene));
-}
-
-function builde1s1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addEntity(new BackgroundEntity('main6'));
-  //left
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
-
-  // bushes
-  scene.addEntity(new Wall(1 * 16, 4 * 16, 3 * 16, 1 * 16));
-
-  scene.addEntity(resetter.add(new Portal(1 * 16, 3 * 16, 1 * 16, 5 * 16)));
-
-  scene.addEntity(resetter.add(new Portal(3 * 16, 5 * 16, 3 * 16, 3 * 16)));
-
-  //mountain
-  scene.addEntity(new Wall(4 * 16, 2 * 16, 6 * 16, 6 * 16));
-
-  scene.addEntity(new Npc(scene, 3 * 16, 7 * 16,
-    ['A rock slide is blocking\nthe way to my flower.', 'Could I have your bombs?', { options: ['keep bombs', 'give bombs'] }],
-    ['Let me gather my nerves.'], 9));
-
-  resetter.addEntityAction((entity) => entity instanceof Portal ? entity.deactivate() : '');
-
-  engine.addScene('1,1', scene);
-  scenes.setScene(scene, '1,1', 1, 1, resetter);
-}
-
-function buildw20(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main7'));
-  // top
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  // right/bottom
-  scene.addEntity(new Wall(screenWidth - 32, screenHeight - 32, 32, 32));
-
-  // house
-  scene.addEntity(new Wall(4 * 16, 3 * 16, 3 * 16 - 8, 3 * 16));
-
-  // fence
-  scene.addEntity(new Wall(2 * 16 + 8, 3 * 16, 3 * 16, 1 * 16));
-  scene.addEntity(new Wall(2 * 16 + 8, 4 * 16, 1 * 16, 1 * 16));
-  scene.addEntity(new Wall(2 * 16 + 8, 5 * 16, 3 * 16, 1 * 16));
-
-  //campfire
-  scene.addEntity(new Wall(3 * 16, 6 * 16, 2 * 16, 2 * 16));
-  scene.addEntity(new PermaFire(3 * 16 + 8, 6 * 16 + 8));
-
-  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 3 * 16)));
-  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 4 * 16)));
-  scene.addEntity(resetter.add(new Barrel(1 * 16 + 8, 5 * 16)));
-
-  scene.addEntity(new Npc(scene, 5 * 16, 6 * 16,
-    [
-      'I put the barrels and\nfence there while he was\nnapping.',
-      'Serves him right for\nsleeping on the job.'
-    ], [], -1, 'spikeyhair'));
-
-  scene.addEntity(new Npc(scene, 3 * 16, 4 * 16,
-    [
-      'I don\'t know how I got\nstuck. Could you spare\nyour mirror?',
-      { options: ['Keep mirror', 'Give mirror'] }
-    ],
-    [
-      'Thank you!'
-    ], 7, 'shorthair'));
-
-  engine.addScene('-2,0', scene);
-  scenes.setScene(scene, '-2,0', -2, 0, resetter);
-}
-
-function buildw30(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main8'));
-  // top
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  // left
-  scene.addEntity(new Wall(0, 0, 32, screenHeight));
-
-  // house
-  scene.addEntity(new Wall(2 * 16, 3 * 16, 6 * 16, 3 * 16));
-  scene.addEntity(new Wall(2 * 16, 6 * 16, 2 * 16, 1 * 16));
-  scene.addEntity(new Wall(5 * 16, 6 * 16, 3 * 16, 1 * 16));
-  scene.addEntity(new Door(4 * 16, 6 * 16, 'h_-3,0', 4 * 16, 8 * 16, -3, 0));
-
-  engine.addScene('-3,0', scene);
-  scenes.setScene(scene, '-3,0', -3, 0, new EntityResetter(scene));
-}
-
-function buildHousew30(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  scene.addEntity(new BackgroundEntity('house2'));
-  //top
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  //right
-  scene.addEntity(new Wall(screenWidth - 16, 0, 16, screenHeight));
-  //left
-  scene.addEntity(new Wall(0, 0, 16, screenHeight));
-  //bottom
-  scene.addEntity(new Wall(0, screenHeight - 16, 4 * 16, 16));
-  scene.addEntity(new Door(4 * 16, 9 * 16, '-3,0', 4 * 16, 7 * 16, -3, 0));
-  scene.addEntity(new Wall(5 * 16, screenHeight - 16, 6 * 16, 16));
-
-  // lane
-  scene.addEntity(new Wall(1 * 16, 3 * 16, 1 * 16, 5 * 16));
-  scene.addEntity(new HalfWall(2 * 16, 6 * 16, 1 * 16, 1 * 16));
-  scene.addEntity(new Wall(3 * 16, 3 * 16, 1 * 16, 5 * 16));
-  scene.addEntity(new Switch(2 * 16, 3 * 16, () => {
-    stairs.activate();
-  }))
-
-  // table
-  scene.addEntity(new Wall(7 * 16, 7 * 16, 1 * 16, 1 * 16));
-
-  let stairs = new Stairs(6 * 16, 4 * 16, 0, 806, 0);
-  // stage
-  scene.addEntity(new Wall(4 * 16, 4 * 16, 2 * 16, 1 * 16));
-  scene.addEntity(stairs);
-  scene.addEntity(new Wall(7 * 16, 4 * 16, 2 * 16, 1 * 16));
-
-  scene.addEntity(new Npc(scene, 6 * 16, 3 * 16,
-    ['That harp looks like it\nwould match nicely on stage.', { options: ['Keep harp', 'Give harp'] }], ['Come back later for\nthe show.'], 8, 'longhair'));
-
-  const resetter = new EntityResetter(scene);
-
-  resetter.addAction(() => {
-    if (!statefulMode.enabled) {
-      stairs.deactivate();
-    }
-  })
-
-  engine.addScene('h_-3,0', scene);
-  scenes.setScene(scene, 'h_-3,0', -13, 0, resetter);
-}
-
-function buildw3s1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main9'));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
-  // left
-  scene.addEntity(new Wall(0, 0, 32, screenHeight));
-
-  // statue
-  scene.addEntity(new Wall(1 * 16, 6 * 16, 32, 32));
-
-  // Well
-  scene.addEntity(new Wall(5 * 16, 3 * 16, 2 * 16, 3 * 16));
-
-  // Anvil and Furnace
-  scene.addEntity(new Wall(2 * 16, 3 * 16, 2 * 16, 3 * 16));
-
-  // boxes
-  scene.addEntity(new Wall(4 * 16, 4 * 16 + 8, 1 * 16, 1.5 * 16));
-  scene.addEntity(new Wall(5 * 16, 6 * 16, 2 * 16, 1 * 16));
-  scene.addEntity(new Wall(8 * 16, 7 * 16, 1 * 16, 1 * 16));
-
-  scene.addEntity(resetter.add(new Barrel(5 * 16, 7 * 16)));
-  scene.addEntity(resetter.add(new Rock(6 * 16, 7 * 16)));
-
-  scene.addEntity(new Npc(scene, 8, 7 * 16, [
-    ],
-    [
-    ], -1, 'spikeyhair'));
-
-  scene.addEntity(new Npc(scene, 2.5 * 16, 7 * 16, [
-    'Phew, this sure is heavy.',
-    {options: ['Keep glove', 'Give glove']}
-  ],
-  [
-    'That should help a lot!'
-  ], 6, 'spikeyhair'));
-
-  engine.addScene('-3,1', scene);
-  scenes.setScene(scene, '-3,1', -3, 1, resetter);
-}
-
-function buildw2s1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main10'));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 16));
-  // right
-  scene.addEntity(new Wall(screenWidth - 32, 16, 32, 4 * 16));
-  scene.addEntity(new Wall(screenWidth - 32, 6 * 16, 32, 4 * 16));
-
-  // Plants
-  scene.addEntity(new Wall(2 * 16, 4 * 16 - 4, 5 * 16, 3 * 16));
-
-  scene.addEntity(resetter.add(new HeavyRock(8 * 16, 5 * 16)));
-
-  scene.addEntity(new Door(4 * 16, 7 * 16, 'u_-2,1', 2 * 16, 3 * 16, -2, 1));
-
-  resetter.addEntityAction((entity: Entity) => {
-    if (entity instanceof HeavyRock) {
-      entity.reset();
-    }
-  })
-
-  engine.addScene('-2,1', scene);
-  scenes.setScene(scene, '-2,1', -2, 1, resetter);
-}
-
-function buildUndergroundw2s1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-  scene.addController(keyController);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addEntity(new BackgroundEntity('underground2'));
-  scene.addEntity(new Wall(0, 32, screenWidth, 16));
-  scene.addEntity(new Wall(0, screenHeight - 16, screenWidth, 16));
-
-  scene.addEntity(new Wall(0, 16, 16, screenHeight));
-  scene.addEntity(new Wall(screenWidth - 16, 16, 16, screenHeight));
-
-  scene.addEntity(new Door(1 * 16, 3 * 16, '-2,1', 3 * 16, 7 * 16, -2, 1));
-
-  scene.addEntity(resetter.add(new Rock(4 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Rock(5 * 16, 5 * 16)));
-  scene.addEntity(resetter.add(new Rock(6 * 16, 5 * 16)));
-
-  // rails
-  scene.addEntity(new Wall(5 * 16, 3 * 16, 16, 2 * 16));
-  scene.addEntity(new Wall(4 * 16, 3 * 16, 16, 2 * 16));
-  scene.addEntity(new Wall(6 * 16, 3 * 16, 16, 2 * 16));
-
-  scene.addEntity(new Wall(5 * 16, 6 * 16, 16, 3 * 16));
-  scene.addEntity(new Wall(4 * 16, 6 * 16, 16, 3 * 16));
-  scene.addEntity(new Wall(6 * 16, 6 * 16, 16, 3 * 16));
-
-  scene.addEntity(new Npc(scene, 7 * 16, 4 * 16, 
-    [
-      'It\'s so dark in here.',
-      'Hey, is that a lamp?',
-      'Mind if I take it?',
-      {options: ['Keep lamp', 'Give lamp']}
-    ],
-    [
-      'Thanks, now I can light\nup the room.'
-    ],
-    2, 'shorthair'))
-
-  engine.addScene('u_-2,1', scene);
-  scenes.setScene(scene, 'u_-2,1', -12, 1, resetter);
-}
-
-function buildw1s1(view: View, keyController: KeyboardController) {
-  const scene = new Scene(view);
-
-  const resetter = new EntityResetter(scene);
-
-  scene.addController(keyController);
-  scene.addEntity(new BackgroundEntity('main11'));
-  // top
-  scene.addEntity(new Wall(0, 16, screenWidth, 4 * 16));
-  // right
-  scene.addEntity(new Wall(screenWidth - 16, 16, 16, screenHeight));
-  // left
-  scene.addEntity(new Wall(0, 6 * 16, 32, 4 * 16));
-  // bottom
-  scene.addEntity(new Wall(0, screenHeight - 32, screenWidth, 2 * 16));
-
-  // fence
-  scene.addEntity(new Wall(2 * 16, 4 * 16, 3 * 16, 1 * 16));
-  scene.addEntity(new Wall(4 * 16, 4 * 16, 1 * 16, 3 * 16));
-  scene.addEntity(new Wall(4 * 16, 6 * 16, 2* 16, 1 * 16));
-
-  // house
-  scene.addEntity(new Wall(7 * 16, 3 * 16, 3 * 16, 4 * 16));
-
-  scene.addEntity(new Hole(scene, 2 * 16, 6 * 16, 324));
-  scene.addEntity(new Hole(scene, 3 * 16, 6 * 16, 324));
-
-  scene.addEntity(new Hole(scene, 4 * 16, 7 * 16, 324));
-
-  scene.addEntity(resetter.add(new Grass(6 * 16, 7 * 16)));
-
-
-  scene.addEntity(new Grass(2 * 16, 3 * 16));
-  scene.addEntity(new Grass(3 * 16, 3 * 16));
-  scene.addEntity(new Grass(4 * 16, 3 * 16));
-  scene.addEntity(new Grass(5 * 16, 3 * 16));
-  scene.addEntity(new Grass(6 * 16, 3 * 16));
-  scene.addEntity(new Grass(7 * 16, 3 * 16));
-
-  scene.addEntity(new Grass(5 * 16, 4 * 16));
-  scene.addEntity(new Grass(6 * 16, 4 * 16));
-
-  scene.addEntity(new Grass(5 * 16, 5 * 16));
-  scene.addEntity(new Grass(6 * 16, 5 * 16));
-
-  scene.addEntity(new Npc(scene, 6 * 16, 6 * 16,
-    [
-      'That sword looks good\nfor cutting.',
-      'My yard could use a trim.',
-      {options: ['Keep sword', 'Give sword']}
-    ],
-    [
-      'I\'m going to have the\nbest yard in the kingom!'
-    ], 1));
-
-  engine.addScene('-1,1', scene);
-  scenes.setScene(scene, '-1,1', -1, 1, resetter);
 }
 
 init();
