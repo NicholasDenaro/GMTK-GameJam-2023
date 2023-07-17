@@ -31,7 +31,9 @@ export class Bomb extends Interactable {
     if (this.timer <= 0) {
       scene.removeEntity(this);
       scene.addEntity(new Explosion(this.x - 8, this.y - 8));
-      Sound.Sounds['explosion'].play();
+      if (this.timer == 0) {
+        Sound.Sounds['explosion'].play();
+      }
       if (this.carriedBy) {
         this.carriedBy.clearCarry();
       }

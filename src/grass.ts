@@ -1,5 +1,6 @@
 import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
+import { Hole } from "./hole";
 
 export class Grass extends Interactable {
   constructor(private initialX: number, private initialY: number) {
@@ -13,8 +14,10 @@ export class Grass extends Interactable {
     super.reset();
   }
 
-  playBreakSound() {
-    Sound.Sounds['cut_grass'].play();
+  playBreakSound(scene: Scene) {
+    if (!scene.entitiesByType(Hole).some(hole => hole.collision(this))) {
+      Sound.Sounds['cut_grass'].play();
+    }
     return true;
   }
 }

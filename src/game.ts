@@ -430,9 +430,7 @@ async function init() {
       if (screenTransition.timer == 0) {
         screenTransition.active = false;
       }
-    }
-
-    if (screenTransition.timer == -1) {
+    } else if (screenTransition.timer == -1) {
       screenTransition.timer--;
       screenTransition.active = false;
       const scene = screenTransition.scene;
@@ -683,13 +681,19 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
           sceneData.scene.addEntity(sceneData.resetter.add(new PermaFire(x, y)));
           break;
         case 'Portal':
-          sceneData.scene.addEntity(sceneData.resetter.add(new Portal(x, y, Number.parseInt(object.querySelector('property[name=destX]').getAttribute('value') || '0'), Number.parseInt(object.querySelector('property[name=destY]').getAttribute('value') || '0'))));
+          const portal = new Portal(x, y, Number.parseInt(object.querySelector('property[name=destX]').getAttribute('value') || '0'), Number.parseInt(object.querySelector('property[name=destY]').getAttribute('value') || '0'));
+          sceneData.scene.addEntity(sceneData.resetter.add(portal));
+          sceneData.resetter.addAction(() => {
+            if (!statefulMode.enabled) {
+              portal.deactivate();
+            }
+          });
           break;
         case 'Grave':
           sceneData.scene.addEntity(sceneData.resetter.add(new Grave(x, y, graveTexts[Number.parseInt(object.querySelector('property[name=graveIndex]').getAttribute('value'))])));
           break;
         case 'Sign':
-          sceneData.scene.addEntity(sceneData.resetter.add(new Sign(x, y, signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))])));
+          sceneData.scene.addEntity(sceneData.resetter.add(new Sign(sceneData.scene, x, y, signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))])));
           break;
         case 'Door':
           const destSceneKey = object.querySelector('property[name=sceneKey]')?.getAttribute('value') || '0,0';
@@ -706,7 +710,7 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
             if (!statefulMode.enabled) {
               stairs.deactivate();
             }
-          })
+          });
           break;
         case 'Switch':
           const activationId = Number.parseInt(object.querySelector('property[name=activationId]')?.getAttribute('value') || '0');

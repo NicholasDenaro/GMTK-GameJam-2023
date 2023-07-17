@@ -1,6 +1,6 @@
 import { Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
 import { TextboxEntity } from "./textbox";
-import { Player } from "./player";
+import { Cursor, Player } from "./player";
 import { GameEntity } from "./game-entity";
 
 export class NpcImage extends SpriteEntity {
@@ -26,16 +26,43 @@ export class NpcImage extends SpriteEntity {
   }
 }
 
+export class NpcDialog extends SpriteEntity {
+
+  constructor(private npc: SpriteEntity) {
+    super(new SpritePainter(Sprite.Sprites[`tiles`]));
+    this.zIndex = -100;
+  }
+
+  quest() {
+    this.imageIndex = 2925;
+  }
+
+  show() {
+    this.imageIndex = 3053;
+  }
+
+  hide() {
+    this.imageIndex = 0;
+  }
+
+  tick(scene: Scene): void | Promise<void> {
+    this.x = this.npc.getPos().x + (this.imageIndex === 3053 ? 2 : 0); // only move the dialog bubble, not the quest/other
+    this.y = this.npc.getPos().y - 12;
+  }
+}
+
 export class Npc extends GameEntity {
   private baseImage: NpcImage;
   private hairImage: NpcImage;
   private toolImage: NpcImage;
+  private dialogImage: NpcDialog;
   private obtainedItem: boolean = false;
   constructor(scene: Scene, x: number, y: number, private dialog: (string|{options:string[]})[], private postDialog: string[], private requestedItem: number, hair?: string, flip?: boolean) {
     super(new SpritePainter(() => { }, {spriteWidth: 16, spriteHeight: 16}), x, y);
     scene.addEntity(this.baseImage = new NpcImage(this, 'base', 'idle_strip9'));
     scene.addEntity(this.hairImage = new NpcImage(this, hair || 'longhair', 'idle_strip9'));
     scene.addEntity(this.toolImage = new NpcImage(this, 'tools', 'idle_strip9'));
+    scene.addEntity(this.dialogImage = new NpcDialog(this));
     this.flipHorizontal = flip || true;
   }
 
@@ -49,6 +76,14 @@ export class Npc extends GameEntity {
     }
 
     this.imageIndex %= this.baseImage.spriteFrames();
+
+    this.dialogImage.hide();
+    if (this.requestedItem != -1 && !this.obtainedItem) {
+      this.dialogImage.quest();
+    }
+    if (scene.entitiesByType(Cursor)[0].collision(this)) {
+      this.dialogImage.show();
+    }
   }
 
   showDialog(scene: Scene) {

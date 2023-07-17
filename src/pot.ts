@@ -1,5 +1,6 @@
-import { Sound, Sprite, SpritePainter } from "game-engine";
+import { Scene, Sound, Sprite, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
+import { Hole } from "./hole";
 
 export class Pot extends Interactable {
 
@@ -14,8 +15,10 @@ export class Pot extends Interactable {
     super.reset();
   }
 
-  playBreakSound() {
-    Sound.Sounds['smash_pot'].play();
+  playBreakSound(scene: Scene) {
+    if (!scene.entitiesByType(Hole).some(hole => hole.collision(this))) {
+      Sound.Sounds['smash_pot'].play();
+    }
     return true;
   }
 }

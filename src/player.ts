@@ -93,7 +93,7 @@ export class Player extends GameEntity {
   static xOffset = -4;
   static yOffset = -7;
 
-  public lookDirection: number = 0;
+  public lookDirection: number = 3 * Math.PI / 2;
   private item1: number = -1;
   private item2: number = -1;
   private jumping = false;
@@ -481,7 +481,6 @@ export class Player extends GameEntity {
 
         if (useItem == 9) { // bomb
           if (!this.carry && scene.entitiesByType(Bomb).length == 0) {
-            Sound.Sounds['dig'].play();
             const bomb = new Bomb(this.crosshair.getPos().x - 4, this.crosshair.getPos().y - 4);
             scene.addEntity(bomb);
             this.carry = true;

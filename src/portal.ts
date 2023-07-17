@@ -19,7 +19,7 @@ export class Portal extends Interactable {
 
   deactivate() {
     this.activated = false;
-    this.imageIndex = 0;
+    this.imageIndex = 2351;
   }
 
   isActivated() {

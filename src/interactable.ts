@@ -2,6 +2,7 @@ import { Scene, Sound } from "game-engine";
 import { FPS } from "./game";
 import { Player } from "./player";
 import { GameEntity } from "./game-entity";
+import { Hole } from "./hole";
 
 export class Interactable extends GameEntity {
   private thrownDirection: number;
@@ -16,8 +17,20 @@ export class Interactable extends GameEntity {
         const self = this;
         if (this.breakWhenThrown()) {
           scene.removeEntity(this);
-          if (!this.playBreakSound()) {
-            Sound.Sounds['dig'].play();
+          if (!this.playBreakSound(scene)) {
+            if (!scene.entitiesByType(Hole).some(hole => hole.collision(this))) {
+              Sound.Sounds['dig'].play();
+            } else {
+              Sound.Sounds['fall'].play();
+            }
+          }
+        } else {
+          if (!this.playBreakSound(scene)) {
+            if (!scene.entitiesByType(Hole).some(hole => hole.collision(this))) {
+              Sound.Sounds['dig'].play();
+            } else {
+              Sound.Sounds['fall'].play();
+            }
           }
         }
         
@@ -38,6 +51,11 @@ export class Interactable extends GameEntity {
     if (this.carried) {
       this.x = this.carriedBy.getPos().x;
       this.y = this.carriedBy.getPos().y - 16;
+    }
+
+    if (!this.carried && !this.thrown && scene.entitiesByType(Hole).some(hole => hole.collision(this))) {
+      scene.removeEntity(this);
+      Sound.Sounds['fall'].play();
     }
   }
 
@@ -73,7 +91,7 @@ export class Interactable extends GameEntity {
     this.zIndex = 0;
   }
 
-  playBreakSound() {
+  playBreakSound(scene: Scene) {
     return false;
   }
 }

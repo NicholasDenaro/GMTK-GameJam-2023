@@ -1,10 +1,8 @@
-import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { FPS } from "./game";
+import { Scene, Sprite, SpritePainter } from "game-engine";
 import { Interactable } from "./interactable";
-import { Grass } from "./grass";
-import { Tree } from "./tree";
+import { GameEntity } from "./game-entity";
 
-export class FireImage extends SpriteEntity {
+export class FireImage extends GameEntity {
 
   constructor(x: number, y: number) {
     super(new SpritePainter(Sprite.Sprites['fire2']), x, y);
