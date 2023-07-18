@@ -40,7 +40,8 @@ export class NpcDialog extends SpriteEntity {
   }
 
   show() {
-    this.imageIndex = 3053;
+    // this.imageIndex = 3053;
+    this.imageIndex = 3054;
   }
 
   hide() {
@@ -48,7 +49,7 @@ export class NpcDialog extends SpriteEntity {
   }
 
   tick(scene: Scene): void | Promise<void> {
-    this.x = this.npc.getPos().x + (this.imageIndex === 3053 ? 2 : 0); // only move the dialog bubble, not the quest/other
+    this.x = this.npc.getPos().x + (this.imageIndex === 3054 ? 2 : 0); // only move the dialog bubble, not the quest/other
     this.y = this.npc.getPos().y - 12;
   }
 }

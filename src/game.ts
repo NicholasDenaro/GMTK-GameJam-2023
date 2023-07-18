@@ -27,6 +27,7 @@ import { PermaFire } from './perma-fire';
 import { TiledBackground } from './tiled-background';
 import { GameEntity } from './game-entity';
 import { TransitionFadeEntity } from './transition-fade';
+import { OptionsEntity } from './options';
 
 const world = require('../tiled-project/overworld-2.tmx');
 const houses = require('../tiled-project/houses.tmx');
@@ -59,6 +60,13 @@ export const statefulMode = {
 }
 
 export const fadeEntity = new TransitionFadeEntity();
+
+export function drawTile(ctx: CanvasRenderingContext2D, x: number, y: number, index: number) {
+  const width = Sprite.Sprites['tiles'].getImage().width;
+  const i = index % (width / 16);
+  const j = Math.floor(index / (width / 16));
+  ctx.drawImage(Sprite.Sprites['tiles'].getImage(), i * 16, j * 16, 16, 16, x, y, 16, 16);
+};
 
 export const screenTransition: {activate: boolean, active: boolean, action: 'slide' | 'fade', timer: number, totalTime: number, scene?: Scene, nextScene?: Scene, direction: number} = {
   activate: false,
@@ -144,6 +152,9 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
   new Sprite('house2', spriteAssetsPremade('./house2.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
 
   // items
+  new Sprite('volume', spriteAssetsPremade('./volume.png'), { spriteWidth: 32, spriteHeight: 16 });
+  new Sprite('button', spriteAssetsPremade('./button.png'), { spriteWidth: 80, spriteHeight: 64 });
+  new Sprite('options', spriteAssetsPremade('./options.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
   new Sprite('inventory', spriteAssetsPremade('./inventory.png'), { spriteWidth: screenWidth, spriteHeight: screenHeight });
   new Sprite('tiles', spriteAssetsPremade('./spr_tileset_sunnysideworld_16px.png'), { spriteWidth: 16, spriteHeight: 16 });
   new Sprite('crosshair', spriteAssets('./crosshair.png'), { spriteWidth: 8, spriteHeight: 8 });
@@ -172,27 +183,27 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
 
   new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
 
-  const wavAssets = require.context('../assets/', false, /\.wav$/);
-  const wavAssetsPremade = require.context('../assets/premade', false, /\.wav$/);
-  new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.wav'));
-  new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.wav'), true);
-  new Sound('caveloop', wavAssetsPremade('./CaveLoop.wav'), true);
-  new Sound('townloop', wavAssetsPremade('./Town1DayLoop.wav'), true);
-  new Sound('houseloop', wavAssetsPremade('./MysteriousTempleLayer3Loop.wav'), true);
-  new Sound('sadloop', wavAssetsPremade('./SadPianoLoop.wav'), true);
-  new Sound('talk', wavAssetsPremade('./MenuCursor01.wav'));
-  new Sound('pause', wavAssetsPremade('./MenuValid01.wav'));
-  new Sound('slash', wavAssetsPremade('./Attack03.wav'));
-  new Sound('dig', wavAssetsPremade('./Attack02.wav'));
-  new Sound('jump', wavAssetsPremade('./Jump03.wav'));
-  new Sound('fall', wavAssetsPremade('./Fall01.wav'));
-  new Sound('hurt', wavAssetsPremade('./Hurt01.wav'));
-  new Sound('harp', wavAssetsPremade('./GuitarStinger4.wav'));
+  const wavAssets = require.context('../assets/', false, /\.(wav|ogg|mp3)$/);
+  const wavAssetsPremade = require.context('../assets/premade/outputs', false, /\.(wav|ogg|mp3)$/);
+  new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.ogg'));
+  new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.ogg'), true);
+  new Sound('caveloop', wavAssetsPremade('./CaveLoop.ogg'), true);
+  new Sound('townloop', wavAssetsPremade('./Town1DayLoop.ogg'), true);
+  new Sound('houseloop', wavAssetsPremade('./MysteriousTempleLayer3Loop.ogg'), true);
+  new Sound('sadloop', wavAssetsPremade('./SadPianoLoop.ogg'), true);
+  new Sound('talk', wavAssetsPremade('./MenuCursor01.ogg'));
+  new Sound('pause', wavAssetsPremade('./MenuValid01.ogg'));
+  new Sound('slash', wavAssetsPremade('./Attack03.ogg'));
+  new Sound('dig', wavAssetsPremade('./Attack02.ogg'));
+  new Sound('jump', wavAssetsPremade('./Jump03.ogg'));
+  new Sound('fall', wavAssetsPremade('./Fall01.ogg'));
+  new Sound('hurt', wavAssetsPremade('./Hurt01.ogg'));
+  new Sound('harp', wavAssetsPremade('./GuitarStinger4.ogg'));
   new Sound('bow', wavAssets('./bow3.wav'));
-  new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.wav'));
-  new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.wav'));
-  new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.wav'));
-  new Sound('explosion', wavAssetsPremade('./explosion_36.wav'));
+  new Sound('smash_pot', wavAssetsPremade('./Fantasy_Game_Action_Smash_Pot_B.ogg'));
+  new Sound('cut_grass', wavAssetsPremade('./Fantasy_Game_Attack_Cloth_Armor_Hit_B.ogg'));
+  new Sound('fire', wavAssetsPremade('./Fantasy_Game_Magic_Fire_Instant_Cast_Spell_A.ogg'));
+  new Sound('explosion', wavAssetsPremade('./explosion_36.ogg'));
 })();
 
 const signTexts = [
@@ -202,7 +213,7 @@ const signTexts = [
     'items across your journey.',
     'Find the correct order\nto give away each item\nso you can help everyone.',
     'PS Gaze into the mirror\nto return here instantly.'
-  ]
+  ],
 ];
 
 const graveTexts = [
@@ -365,6 +376,12 @@ const npcs = [
   },
 ]
 
+export const volume = {
+  master: 0.2,
+  music: 0.5,
+  sounds: 0.5,
+}
+
 export const scenes = new SceneMap();
 
 export const stopwatch = {
@@ -375,7 +392,8 @@ export const stopwatch = {
 
 export const loopTrack = {
   track: {
-    stop: () => {}
+    stop: () => {},
+    volume: (val: number) => {}
   },
   current: ''
 }
@@ -383,6 +401,7 @@ export const loopTrack = {
 async function init() {
 
   await Sprite.waitForLoad();
+  await Sound.waitForLoad();
 
   const view = new Canvas2DView(screenWidth, screenHeight, { scale: scale, bgColor: '#BBBBBB' });
 
@@ -398,6 +417,13 @@ async function init() {
 
   engine.addScene('main_menu', mainMenu);
 
+  const settingsMenu = new Scene(view);
+  settingsMenu.addController(keyController)
+  settingsMenu.addEntity(new BackgroundEntity('options'));
+  settingsMenu.addEntity(new OptionsEntity());
+
+  engine.addScene('settings_menu', settingsMenu);
+
   const credits = new Scene(view);
   credits.addController(keyController);
   credits.addEntity(new Credits());
@@ -407,8 +433,6 @@ async function init() {
   engine.switchToScene('main_menu');
 
   Sound.setVolume(0.1);
-
-  Sound.Sounds['start'].play();
 
   engine.addAction('transition', () => {
 
@@ -453,6 +477,10 @@ async function init() {
 
     }
   });
+
+  console.log('loaded game');
+
+  Sound.Sounds['start'].play();
 
   await engine.start();
 }
@@ -502,7 +530,9 @@ export function changeLoop(place: 'overworld' | 'town' | 'underground' | 'house'
 
   if (loopTrack.current != track) {
     loopTrack.track.stop();
+    Sound.setVolume(volume.master * volume.music);
     loopTrack.track = Sound.Sounds[track].play();
+    Sound.setVolume(volume.master * volume.sounds);
     loopTrack.current = track;
   }
 }
@@ -704,7 +734,12 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
           sceneData.scene.addEntity(sceneData.resetter.add(new Grave(x, y, width, height, graveTexts[Number.parseInt(object.querySelector('property[name=graveIndex]').getAttribute('value'))])));
           break;
         case 'Sign':
-          sceneData.scene.addEntity(sceneData.resetter.add(new Sign(sceneData.scene, x, y, signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))])));
+          sceneData.scene.addEntity(sceneData.resetter.add(new Sign(sceneData.scene, x, y, 
+            [
+              statefulMode.enabled ? 'Welcome to easy mode.\nDestroying Grass/Pots/etc.\nis permanent. Have fun!' : undefined,
+              ...signTexts[Number.parseInt(object.querySelector('property[name=textIndex]').getAttribute('value'))]
+            ].filter(val => val)
+            )));
           break;
         case 'Door':
           const destSceneKey = object.querySelector('property[name=sceneKey]')?.getAttribute('value') || '0,0';

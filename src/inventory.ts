@@ -125,5 +125,14 @@ export class Inventory extends SpriteEntity {
         }
       }
     }
+
+    ctx.font = '24px game';
+    ctx.strokeStyle = '#000000';
+    const width = ctx.lineWidth;
+    ctx.lineWidth = 5;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeText(itemMap[this.grid[this.cursorX][this.cursorY]] || '', 24, screenHeight - 14);
+    ctx.fillText(itemMap[this.grid[this.cursorX][this.cursorY]] || '', 24, screenHeight - 14);
+    ctx.lineWidth = width;
   }
 }

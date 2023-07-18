@@ -1,5 +1,5 @@
 import { ControllerState, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { buildMap, engine, statefulMode, keyController, screenHeight, screenWidth, stopwatch, FPS, changeLoop } from "./game";
+import { buildMap, engine, statefulMode, keyController, screenHeight, screenWidth, stopwatch, FPS, changeLoop, drawTile } from "./game";
 
 export class MainMenu extends SpriteEntity {
   constructor() {
@@ -7,6 +7,8 @@ export class MainMenu extends SpriteEntity {
   }
   private timer = FPS * 2;
   private showMenu = false;
+  private cursor = 0;
+  private options = 3;
   tick(scene: Scene): void | Promise<void> {
     if (this.timer > 0) {
       this.timer--;
@@ -17,15 +19,35 @@ export class MainMenu extends SpriteEntity {
       changeLoop('overworld');
     }
     if (this.showMenu) {
-      if (scene.isControl('pause', ControllerState.Press)) {
-        statefulMode.enabled = scene.isControl('action1', ControllerState.Down);
-        buildMap(scene.getView(), keyController);
-        engine.switchToScene('0,0');
-        stopwatch.start = Date.now();
-        console.log(`ez mode: ${statefulMode.enabled}`);
+
+      if (scene.isControl('up', ControllerState.Press)) {
+        this.cursor--;
+        this.cursor = (this.cursor + this.options) % this.options;
+        Sound.Sounds['talk'].play();
       }
-      if (scene.isControl('sprint', ControllerState.Press)) {
-        engine.switchToScene('credits');
+
+      if (scene.isControl('down', ControllerState.Press)) {
+        this.cursor++;
+        this.cursor = (this.cursor + this.options) % this.options;
+        Sound.Sounds['talk'].play();
+      }
+
+      if (scene.isControl('action1', ControllerState.Press) || scene.isControl('pause', ControllerState.Press)) {
+        Sound.Sounds['pause'].play();
+        switch (this.cursor) {
+          case 0:
+            buildMap(scene.getView(), keyController);
+            engine.switchToScene('0,0');
+            stopwatch.start = Date.now();
+            console.log(`ez mode: ${statefulMode.enabled}`);
+            break;
+          case 1:
+            engine.switchToScene('settings_menu');
+            break;
+          case 2:
+            engine.switchToScene('credits');
+            break;
+        }
       }
     }
   }
@@ -43,43 +65,75 @@ export class MainMenu extends SpriteEntity {
     ctx.strokeText('Theme: Roles Reversed', 32, screenHeight * 1 / 2 - 8);
     ctx.fillText('Theme: Roles Reversed', 32, screenHeight * 1 / 2 - 8);
 
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '10px game';
+    ctx.strokeText('Post-Jam', 17, 14);
+    ctx.fillText('Post-Jam', 17, 14);
+
     if (this.showMenu) {
+      const buffer = 0;
+      const spacing = -3;
+      ctx.font = '32px game';
 
-      ctx.font = '16px game';
-      ctx.strokeText('Press Enter to start', 20, screenHeight * 2 / 3 - 8);
-      ctx.fillText('Press Enter to start', 20, screenHeight * 2 / 3 - 8);
+      let i = 0;
+      this.drawButton(ctx, 32, 64 + i * (32 + spacing) + buffer, 5, 3);
+      ctx.strokeText('Start', 50, 64 + i * (32 + spacing) + 33 + buffer);
+      ctx.fillText('Start', 50, 64 + i * (32 + spacing) + 33 + buffer);
 
-      ctx.strokeText('Press Shift for credits', 12, screenHeight * 3 / 4 - 8);
-      ctx.fillText('Press Shift for credits', 12, screenHeight * 3 / 4 - 8);
+      i++;
 
-      ctx.strokeText('x+Enter=stateful mode', 12, screenHeight * 3 / 4 + 8);
-      ctx.fillText('x+Enter=stateful mode', 12, screenHeight * 3 / 4 + 8);
+      this.drawButton(ctx, 16, 64 + i * (32 + spacing) + buffer, 7, 3);
+      ctx.strokeText('Options', 39, 64 + i * (32 + spacing) + 33 + buffer);
+      ctx.fillText('Options', 39, 64 + i * (32 + spacing) + 33 + buffer);
 
-      ctx.fillStyle = '#000000CC';
-      ctx.fillRect(4, screenHeight * 5 / 6 + 8 - 12, screenWidth - 8, 28);
+      i++;
 
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '12px game';
-      ctx.strokeText('Controls: Arrow Keys, X, Z', 5, screenHeight * 5 / 6 + 4);
-      ctx.fillText('Controls: Arrow Keys, X, Z', 5, screenHeight * 5 / 6 + 4);
+      this.drawButton(ctx, 16, 64 + i * (32 + spacing) + buffer, 7, 3);
+      ctx.strokeText('Credits', 39, 64 + i * (32 + spacing) + 33 + buffer);
+      ctx.fillText('Credits', 39, 64 + i * (32 + spacing) + 33 + buffer);
 
-      ctx.strokeText('Enter key: inventory', 5, screenHeight * 5 / 6 + 12);
-      ctx.fillText('Enter key: inventory', 5, screenHeight * 5 / 6 + 12);
+      let cursorX = this.cursor == 0 ? 16 + 8 : 8;
+      let cursorY = 64 + buffer + 16 + this.cursor * (32 + spacing);
 
-      ctx.strokeText('Escape key: reset', 5, screenHeight * 5 / 6 + 20);
-      ctx.fillText('Escape key: reset', 5, screenHeight * 5 / 6 + 20);
+      drawTile(ctx, cursorX, cursorY, 2983);
+      drawTile(ctx, screenWidth - 16 - cursorX, cursorY, 3047);
+
     } else {
       const bump = 4;
+
       ctx.fillStyle = '#000000CC';
-      ctx.fillRect(48 - 1, screenHeight / 2 - 10 + bump, 68, 8);
+      ctx.fillRect(32 - 1, screenHeight / 2 - 10 + bump, 105, 8);
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '10px game';
-      ctx.strokeText('Developed for the', 48, screenHeight / 2 - 3 + bump);
-      ctx.fillText('Developed for the', 48, screenHeight / 2 - 3 + bump);
+      ctx.strokeText('Originally developed for the', 32, screenHeight / 2 - 3 + bump);
+      ctx.fillText('Originally developed for the', 32, screenHeight / 2 - 3 + bump);
 
       ctx.fillStyle = '#00000055';
-      ctx.fillRect(16, 78 + bump, screenWidth - 32, 80);
+      //ctx.fillRect(16, 78 + bump, screenWidth - 32, 80);
+      this.drawButton(ctx, 0, 64, 9, 7);
       ctx.drawImage(Sprite.Sprites['logo'].getImage(), 0, 72 + bump);
+    }
+  }
+
+  drawButton(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number) {
+    for (let j = 0; j < height; j++) {
+      let i = 0;
+      let row = j;
+      if (row > 1) {
+        if (row == height - 1) {
+          row = 3;
+        } else {
+          row = 2;
+        }
+      }
+      ctx.drawImage(Sprite.Sprites['button'].getImage(), 0, row * 16, 32, 16, x + i * 16, y + j * 16, 32, 16);
+      i += 2;
+      for (; i < width - 1; i++) {
+        ctx.drawImage(Sprite.Sprites['button'].getImage(), 32, row * 16, 16, 16, x + i * 16, y + j * 16, 16, 16);
+      }
+      ctx.drawImage(Sprite.Sprites['button'].getImage(), 48, row * 16, 32, 16, x + i * 16, y + j * 16, 32, 16);
+      i += 2;
     }
   }
 }

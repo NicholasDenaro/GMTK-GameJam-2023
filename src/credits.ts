@@ -47,22 +47,19 @@ export class Credits extends SpriteEntity {
   private scroll = -screenHeight / 2 - 32;
   tick(scene: Scene): void | Promise<void> {
     this.scroll += 0.25;
-    if (scene.isControl('action1', ControllerState.Held) || scene.isControl('action2', ControllerState.Held)) {
-      this.scroll += 0.25;
-    }
     if (scene.isControl('sprint', ControllerState.Held)) {
       this.scroll += 2;
     }
-    if (scene.isControl('restart', ControllerState.Press)) {
+    if (scene.isControl('restart', ControllerState.Press)
+      || scene.isControl('pause', ControllerState.Press)
+      || scene.isControl('action1', ControllerState.Press)
+      || scene.isControl('action2', ControllerState.Press)) {
       engine.switchToScene('main_menu');
       changeLoop('overworld');
+      this.scroll = -screenHeight / 2;
     }
     if (this.scroll >= screenHeight * 2.5 + 64 + 16) {
       this.scroll = screenHeight * 2.5 + 64 + 16;
-      if (scene.isControl('pause', ControllerState.Press)) {
-        engine.switchToScene('main_menu');
-        this.scroll = -screenHeight / 2;
-      }
     }
   }
   

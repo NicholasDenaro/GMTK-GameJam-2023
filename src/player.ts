@@ -77,6 +77,7 @@ export class Cursor extends SpriteEntity {
 }
 
 export class Player extends GameEntity {
+  public showTalkIcon = false;
   private pause: boolean;
   public lastScene = '';
   private worldCoordsX = 0;
@@ -172,6 +173,7 @@ export class Player extends GameEntity {
     }
 
     if (engine.sceneKey(scene) == 'pause') {
+      this.showTalkIcon = false;
       return;
     }
 
@@ -207,8 +209,8 @@ export class Player extends GameEntity {
         const thours = Math.floor(this.ticks / FPS / 60 / 60);
         scene.addEntity(new TextboxEntity([
           `Congratulations on giving\naway all your items!`,
-          `Your time was:${statefulMode.enabled ? '\nstateful' : ''}\n${hours > 0 ? hours : '00'}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${milis < 100 ? '0' : ''}${milis < 10 ? '0' : ''}${milis}`,
-          `Your time in ticks was:\n${statefulMode.enabled ? 'stateful ' : ''}${this.ticks}\n${thours > 0 ? thours : '00'}:${tminutes < 10 ? '0' : ''}${tminutes}:${tseconds < 10 ? '0' : ''}${tseconds}.${tmilis < 100 ? '0' : ''}${tmilis < 10 ? '0' : ''}${tmilis}`
+          `Your time was:${statefulMode.enabled ? '\neasy' : ''}\n${hours > 0 ? hours : '00'}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${milis < 100 ? '0' : ''}${milis < 10 ? '0' : ''}${milis}`,
+          `Your time in ticks was:\n${statefulMode.enabled ? 'easy ' : ''}${this.ticks}\n${thours > 0 ? thours : '00'}:${tminutes < 10 ? '0' : ''}${tminutes}:${tseconds < 10 ? '0' : ''}${tseconds}.${tmilis < 100 ? '0' : ''}${tmilis < 10 ? '0' : ''}${tmilis}`
         ]));
         this.shownEndingText = true;
       } else {
@@ -301,7 +303,13 @@ export class Player extends GameEntity {
 
       // Do actions
       let dialog = false;
-      const actionNpc = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign), ...scene.entitiesByType(Skeleton)].filter(npc => npc.collision(this.crosshair))[0];
+      const actionNpcs = [...scene.entitiesByType(Npc), ...scene.entitiesByType(Sign), ...scene.entitiesByType(Skeleton)].filter(npc => npc.collision(this.crosshair));
+      const actionNpc = actionNpcs[0];
+      if (actionNpcs.length > 0) {
+        this.showTalkIcon = true;
+      } else {
+        this.showTalkIcon = false;
+      }
       if (scene.isControl('action1', ControllerState.Press) && actionNpc && !this.jumping && !this.falling) {
         actionNpc.showDialog(scene);
         dialog = true;

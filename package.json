@@ -8,8 +8,9 @@
     "start": "npm run pack && start http://localhost:8080",
     "reload-engine": "npm uninstall game-engine && npm install game-engine-0.1.2.tgz",
     "full-reload": "npm run reload-engine && npm run pack && npm run start",
-    "bundle": "npm run pack && del dist.zip && 7z a dist.zip ./dist/*",
-    "http-server": "http-server -c-1 -p 8080 ./dist/"
+    "bundle": "npm run pack && del post-jam.zip && 7z a post-jam.zip ./dist/*",
+    "http-server": "http-server -c-1 -p 8080 ./dist/",
+    "oggify": "node oggify.js"
   },
   "author": "Nicholas Denaro",
   "license": "",

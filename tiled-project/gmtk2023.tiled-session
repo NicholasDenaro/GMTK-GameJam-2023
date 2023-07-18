@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "overworld-2.tmx",
+    "activeFile": "houses.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -29,19 +29,19 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 11,
-            "selectedLayer": 8,
+            "scale": 1.5,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": -455.6363636363636,
-                "y": 59.95454545454545
+                "x": -86.66666666666669,
+                "y": 154.99999999999997
             }
         },
         "inventory.tmx": {
             "scale": 4.84,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 79.75206611570246,
-                "y": 79.85537190082646
+                "x": 59.91735537190081,
+                "y": 84.19421487603307
             }
         },
         "main1.tmx": {
@@ -144,11 +144,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 4,
+            "scale": 1.5,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -88.75,
-                "y": 18.875
+                "x": -108,
+                "y": 40.333333333333314
             }
         },
         "overworld.tsx": {
@@ -170,8 +170,8 @@
             "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -202.99999999999997,
-                "y": 171.16666666666669
+                "x": -203.33333333333334,
+                "y": 170.83333333333331
             }
         },
         "underground1.tmx": {
@@ -202,13 +202,16 @@
     "map.width": 10,
     "openFiles": [
         "overworld-2.tmx",
-        "main2.tmx"
+        "underground.tmx",
+        "houses.tmx"
     ],
     "project": "gmtk2023.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "houses.tmx",
+        "inventory.tmx",
+        "overworld-2.tmx",
         "underground.tmx",
+        "houses.tmx",
         "main8.tmx",
         "main7.tmx",
         "main6.tmx",
@@ -216,9 +219,7 @@
         "underground2.tmx",
         "underground1.tmx",
         "house2.tmx",
-        "house1.tmx",
-        "main9.tmx",
-        "main10.tmx"
+        "house1.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",

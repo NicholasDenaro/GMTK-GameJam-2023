@@ -1,7 +1,7 @@
 import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { screenWidth } from "./game";
+import { drawTile, screenWidth } from "./game";
 import { itemMap } from "./inventory";
-import { Player } from "./player";
+import { Cursor, Player } from "./player";
 
 export class StatusBar extends SpriteEntity {
   constructor(private player: Player) {
@@ -30,7 +30,10 @@ export class StatusBar extends SpriteEntity {
     ctx.fillText('X', 40, 8);
     ctx.fillRect(41 + 4, 1, 1, 14);
     ctx.fillRect(57 + 4, 1, 1, 14);
-    if (this.player.getItem1() != -1) {
+
+    if (this.player.showTalkIcon) {
+      drawTile(ctx, 47, 0, 3054);
+    } else if (this.player.getItem1() != -1) {
       ctx.drawImage(Sprite.Sprites[itemMap[this.player.getItem1()]].getImage(), 45, 0);
     }
 
