@@ -29,11 +29,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 1.5,
+            "scale": 5.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": -86.66666666666669,
-                "y": 154.99999999999997
+                "x": -415.4545454545455,
+                "y": 95.00000000000001
             }
         },
         "inventory.tmx": {
@@ -144,11 +144,11 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 1.5,
+            "scale": 4,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -108,
-                "y": 40.333333333333314
+                "x": 168.5,
+                "y": 193.125
             }
         },
         "overworld.tsx": {
@@ -170,8 +170,8 @@
             "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -203.33333333333334,
-                "y": 170.83333333333331
+                "x": -151.66666666666666,
+                "y": 151.83333333333331
             }
         },
         "underground1.tmx": {
@@ -208,10 +208,10 @@
     "project": "gmtk2023.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "inventory.tmx",
         "overworld-2.tmx",
         "underground.tmx",
         "houses.tmx",
+        "inventory.tmx",
         "main8.tmx",
         "main7.tmx",
         "main6.tmx",

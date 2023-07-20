@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="9" tilewidth="16" tileheight="16" infinite="1" nextlayerid="11" nextobjectid="216">
+<map version="1.10" tiledversion="1.10.1" orientation="orthogonal" renderorder="right-down" width="10" height="9" tilewidth="16" tileheight="16" infinite="1" nextlayerid="11" nextobjectid="218">
  <editorsettings>
   <chunksize width="10" height="9"/>
  </editorsettings>
@@ -7,13 +7,13 @@
  <layer id="1" name="Base" width="10" height="9">
   <data encoding="csv">
    <chunk x="10" y="-18" width="10" height="9">
-67,67,67,67,67,67,67,67,67,67,
+67,67,67,67,534,67,67,67,67,67,
 67,67,67,130,67,67,200,133,67,67,
 69,69,69,69,69,69,69,69,69,69,
 69,69,69,69,69,69,69,69,69,69,
 69,69,69,69,69,69,69,69,69,69,
 67,67,67,69,67,69,67,131,67,67,
-67,67,67,133,67,67,200,461,461,143,
+67,67,67,133,461,461,461,461,461,143,
 67,67,130,67,131,133,67,534,67,67,
 67,67,67,67,67,67,67,461,67,67
 </chunk>
@@ -132,14 +132,14 @@
  <layer id="2" name="Floor" width="10" height="9">
   <data encoding="csv">
    <chunk x="10" y="-18" width="10" height="9">
-0,0,0,0,0,0,0,0,0,0,
+0,0,0,466,0,527,0,0,0,0,
 0,0,0,0,361,0,0,0,0,0,
 149,149,149,149,361,149,149,149,149,149,
 0,0,0,0,0,0,0,0,0,0,
 277,277,277,0,0,0,277,277,277,277,
-0,0,0,0,425,0,0,0,0,0,
+0,0,0,0,425,281,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,529,529,
+0,0,0,530,529,529,529,0,529,529,
 0,0,0,0,0,0,0,0,0,0
 </chunk>
    <chunk x="10" y="-9" width="10" height="9">
@@ -240,8 +240,8 @@
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
-0,0,0,276,0,281,468,464,464,464,
-0,0,0,0,0,0,466,0,0,0,
+0,0,0,276,0,464,464,464,464,464,
+0,0,0,466,0,0,0,0,0,0,
 0,0,0,0,0,0,466,0,527,0,
 0,0,0,0,0,0,466,0,527,0
 </chunk>
@@ -394,10 +394,10 @@
 </chunk>
   </data>
  </layer>
- <layer id="3" name="Walls" width="10" height="9" opacity="0.9">
+ <layer id="3" name="Walls" width="10" height="9">
   <data encoding="csv">
    <chunk x="10" y="-18" width="10" height="9">
-308,308,308,308,308,308,308,308,308,308,
+308,308,308,308,0,308,308,308,308,308,
 308,933,0,0,0,0,0,0,0,308,
 0,0,0,360,0,362,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,
@@ -860,12 +860,12 @@
   <object id="174" type="Wall" x="160" y="-272" width="16" height="16"/>
   <object id="175" type="Wall" x="217.667" y="-208" width="6.33333" height="16"/>
   <object id="176" type="Wall" x="240" y="-208" width="6.66667" height="16"/>
-  <object id="177" type="Wall" x="160" y="-224" width="160" height="16"/>
+  <object id="177" type="Wall" x="192" y="-224" width="128" height="16"/>
   <object id="178" type="Wall" x="176" y="-192" width="16" height="48"/>
   <object id="179" type="Wall" x="192" y="-144" width="80" height="32"/>
   <object id="180" type="Wall" x="288" y="-208" width="32" height="64"/>
   <object id="181" type="Wall" x="160" y="-208" width="16" height="64"/>
-  <object id="182" type="Wall" x="160" y="-256" width="160" height="16"/>
+  <object id="182" type="Wall" x="192" y="-256" width="128" height="16"/>
   <object id="186" type="Wall" x="256" y="-16" width="32" height="16"/>
   <object id="187" type="Wall" x="192" y="-160" width="80" height="16"/>
   <object id="188" type="Grass" gid="702" x="208" y="-176" width="16" height="16"/>
@@ -901,5 +901,7 @@
   <object id="213" type="HeavyRock" gid="1592" x="-192" y="224" width="16" height="16"/>
   <object id="214" type="Wall" x="-48" y="240" width="16" height="16"/>
   <object id="215" type="Wall" x="288" y="-272" width="16" height="16"/>
+  <object id="216" type="HalfWall" x="160" y="-256" width="32" height="48"/>
+  <object id="217" type="Wall" x="176" y="-272" width="16" height="16"/>
  </objectgroup>
 </map>

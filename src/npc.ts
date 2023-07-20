@@ -4,6 +4,7 @@ import { Cursor, Player } from "./player";
 import { GameEntity } from "./game-entity";
 import { Pot } from "./pot";
 import { compassManAlternateDialog } from "./game";
+import { cutscene } from "./cutscene";
 
 export class NpcImage extends SpriteEntity {
   constructor(private npc: Npc, private sprite: string, private animation: string) {
@@ -16,6 +17,7 @@ export class NpcImage extends SpriteEntity {
     this.y = this.npc.getPos().y;
     this.imageIndex = this.npc.imageIndex;
     this.flipHorizontal = this.npc.flipHorizontal;
+    this.zIndex = this.npc.zIndex - 1;
   }
 
   setAnimation(animation: string) {
@@ -48,8 +50,38 @@ export class NpcDialog extends SpriteEntity {
     this.imageIndex = 0;
   }
 
+  setEmotion(emotion: string) {
+    switch (emotion) {
+      case 'happy':
+        this.imageIndex = 2859;
+        break;
+      case 'anger':
+        this.imageIndex = 2860;
+        break;
+      case 'sweat':
+        this.imageIndex = 2924;
+        break;
+      case 'surprise':
+        this.imageIndex = 2925;
+        break;
+      case 'question':
+        this.imageIndex = 2989;
+        break;
+      case 'love':
+        this.imageIndex = 3052;
+        break;
+    }
+  }
+
   tick(scene: Scene): void | Promise<void> {
-    this.x = this.npc.getPos().x + (this.imageIndex === 3054 ? 2 : 0); // only move the dialog bubble, not the quest/other
+    this.zIndex = this.npc.zIndex - 100;
+    this.x = this.npc.getPos().x;
+    if (this.imageIndex == 3054) {// only move the dialog bubble, not the quest/other
+      this.x += 2;
+    }
+    if (this.imageIndex == 2860) {// only move the dialog bubble, not the quest/other
+      this.x += 4 * (this.npc.flipHorizontal ? 1 : -1);
+    }
     this.y = this.npc.getPos().y - 12;
   }
 }
@@ -80,13 +112,27 @@ export class Npc extends GameEntity {
 
     this.imageIndex %= this.baseImage.spriteFrames();
 
+    if (cutscene.active) {
+      return;
+    }
+
     this.dialogImage.hide();
     if (this.requestedItem != -1 && !this.obtainedItem) {
       this.dialogImage.quest();
     }
-    if (scene.entitiesByType(Cursor)[0].collision(this)) {
+    if (scene.entitiesByType(Cursor)[0]?.collision(this)) {
       this.dialogImage.show();
     }
+  }
+
+  setAnimation(animation: string) {
+    this.baseImage.setAnimation(animation);
+    this.hairImage.setAnimation(animation);
+    this.toolImage.setAnimation(animation);
+  }
+
+  setEmotion(emotion: string) {
+    this.dialogImage.setEmotion(emotion);
   }
 
   showDialog(scene: Scene) {
@@ -104,5 +150,17 @@ export class Npc extends GameEntity {
   giveItem(player: Player) {
     this.obtainedItem = true;
     player.removeItem(this.requestedItem);
+  }
+
+  isItem(item: number) {
+    return item == this.requestedItem;
+  }
+
+  remove(scene: Scene) {
+    scene.removeEntity(this);
+    scene.removeEntity(this.baseImage);
+    scene.removeEntity(this.hairImage);
+    scene.removeEntity(this.toolImage);
+    scene.removeEntity(this.dialogImage);
   }
 }

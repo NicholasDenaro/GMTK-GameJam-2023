@@ -1,5 +1,5 @@
 import { ControllerState, Painter2D, Scene, Sound, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch, changeLoop, stopLoop, restartLoop, screenTransition, transitionSlide, playTrackForScene, transitionFade } from "./game";
+import { FPS, engine, statefulMode, loopTrack, scenes, screenHeight, screenWidth, stopwatch, changeLoop, stopLoop, restartLoop, screenTransition, transitionSlide, playTrackForScene, transitionFade, win, buildMap } from "./game";
 import { Wall } from "./wall";
 import { TextboxEntity } from "./textbox";
 import { Npc } from "./npc";
@@ -23,6 +23,7 @@ import { Grave, Skeleton } from "./grave";
 import { PermaFire } from "./perma-fire";
 import { GameEntity } from "./game-entity";
 import { TiledBackground } from "./tiled-background";
+import { cutscene } from "./cutscene";
 
 export class PlayerImage extends SpriteEntity {
   constructor(private player: Player, private sprite: string, private animation: string) {
@@ -157,7 +158,7 @@ export class Player extends GameEntity {
   private shownEndingText = false;
   private ticks = 0;
   tick(scene: Scene): Promise<void> | void {
-    if (screenTransition.active) {
+    if (screenTransition.active || cutscene.active) {
       return;
     }
 
@@ -197,6 +198,7 @@ export class Player extends GameEntity {
 
     if (canMove && this.getItem1() == -1 && this.getItem2() == -1 && this.inventory.isEmpty()) {
       if (!this.shownEndingText) {
+        win.active = true;
         stopwatch.end = Date.now();
         const milis = (stopwatch.end - stopwatch.start) % 1000;
         const seconds = Math.floor((stopwatch.end - stopwatch.start) / 1000) % 60;
@@ -214,6 +216,8 @@ export class Player extends GameEntity {
         ]));
         this.shownEndingText = true;
       } else {
+        this.x = -100;
+        this.y = -100;
         engine.switchToScene('credits');
         playTrackForScene('0,0');
       }
@@ -773,5 +777,13 @@ export class Player extends GameEntity {
     this.inventory.removeItem(item);
     this.spawnX = Math.round(this.x / 16) * 16;
     this.spawnY = Math.round(this.y / 16) * 16;
+  }
+
+  remove(scene: Scene) {
+    scene.removeEntity(this);
+    scene.removeEntity(this.baseImage);
+    scene.removeEntity(this.hairImage);
+    scene.removeEntity(this.toolImage);
+    scene.removeEntity(this.crosshair);
   }
 }

@@ -1,4 +1,4 @@
-import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState, Entity, SpriteEntity } from 'game-engine';
+import { Canvas2DView, ControllerBinding, Engine, FixedTickEngine, KeyboardController, Scene, MouseController, Sprite, Sound, GamepadController, View, ControllerState, Entity, SpriteEntity, SpritePainter } from 'game-engine';
 import { Player } from './player';
 import { PauseMenu } from './pause-menu';
 import { Wall } from './wall';
@@ -28,6 +28,12 @@ import { TiledBackground } from './tiled-background';
 import { GameEntity } from './game-entity';
 import { TransitionFadeEntity } from './transition-fade';
 import { OptionsEntity } from './options';
+import { Cutscene } from './cutscene';
+import { Fire } from './fire';
+import { StatusBar } from './status-bar';
+import { Arrow } from './arrow';
+import { Bomb } from './bomb';
+import { TextboxEntity } from './textbox';
 
 const world = require('../tiled-project/overworld-2.tmx');
 const houses = require('../tiled-project/houses.tmx');
@@ -57,6 +63,10 @@ export const engine: Engine = new FixedTickEngine(FPS);
 
 export const statefulMode = {
   enabled: false,
+}
+
+export const win = {
+  active: false,
 }
 
 export const fadeEntity = new TransitionFadeEntity();
@@ -97,14 +107,29 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
   //walk
   new Sprite('base_walk_strip8', spriteAssetsPremade('./base_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('bowlhair_walk_strip8', spriteAssetsPremade('./bowlhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('curlyhair_walk_strip8', spriteAssetsPremade('./curlyhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('longhair_walk_strip8', spriteAssetsPremade('./longhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('mophair_walk_strip8', spriteAssetsPremade('./mophair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('shorthair_walk_strip8', spriteAssetsPremade('./shorthair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('spikeyhair_walk_strip8', spriteAssetsPremade('./spikeyhair_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('tools_walk_strip8', spriteAssetsPremade('./tools_walk_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   //jump
   new Sprite('base_jump_strip9', spriteAssetsPremade('./base_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('bowlhair_jump_strip9', spriteAssetsPremade('./bowlhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('curlyhair_jump_strip9', spriteAssetsPremade('./curlyhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('longhair_jump_strip9', spriteAssetsPremade('./longhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('mophair_jump_strip9', spriteAssetsPremade('./mophair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('shorthair_jump_strip9', spriteAssetsPremade('./shorthair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('spikeyhair_jump_strip9', spriteAssetsPremade('./spikeyhair_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('tools_jump_strip9', spriteAssetsPremade('./tools_jump_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   //dig
   new Sprite('base_dig_strip13', spriteAssetsPremade('./base_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('bowlhair_dig_strip13', spriteAssetsPremade('./bowlhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('curlyhair_dig_strip13', spriteAssetsPremade('./curlyhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('longhair_dig_strip13', spriteAssetsPremade('./longhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('mophair_dig_strip13', spriteAssetsPremade('./mophair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('shorthair_dig_strip13', spriteAssetsPremade('./shorthair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('spikeyhair_dig_strip13', spriteAssetsPremade('./spikeyhair_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('tools_dig_strip13', spriteAssetsPremade('./tools_dig_strip13.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   //attack
   new Sprite('base_attack_strip10', spriteAssetsPremade('./base_attack_strip10.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -121,6 +146,11 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
   //doing - used for pickup/place
   new Sprite('base_doing_strip8', spriteAssetsPremade('./base_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('bowlhair_doing_strip8', spriteAssetsPremade('./bowlhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('curlyhair_doing_strip8', spriteAssetsPremade('./curlyhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('longhair_doing_strip8', spriteAssetsPremade('./longhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('mophair_doing_strip8', spriteAssetsPremade('./mophair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('shorthair_doing_strip8', spriteAssetsPremade('./shorthair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
+  new Sprite('spikeyhair_doing_strip8', spriteAssetsPremade('./spikeyhair_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   new Sprite('tools_doing_strip8', spriteAssetsPremade('./tools_doing_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
   //hurt
   new Sprite('base_hurt_strip8', spriteAssetsPremade('./base_hurt_strip8.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -398,6 +428,8 @@ export const loopTrack = {
   current: ''
 }
 
+export const cutscenes: {[key: string]: Cutscene} = {};
+
 async function init() {
 
   await Sprite.waitForLoad();
@@ -427,8 +459,368 @@ async function init() {
   const credits = new Scene(view);
   credits.addController(keyController);
   credits.addEntity(new Credits());
+  credits.addEntity(new StatusBar(null));
 
   engine.addScene('credits', credits);
+
+  buildMap(view, keyController);
+
+  const time13 = 10 * 13;
+  cutscenes['scene1'] = new Cutscene(time13 + 16 + time13 + 16 + time13, (step: number) => {
+    const scene = engine.getScene('1,0');
+    const npc = engine.getScene('1,0').entitiesByType(Npc)[0];
+    if (step == 0) {
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(1, 0);
+      });
+      scene.entitiesByType(Rock).forEach(rock => scene.removeEntity(rock));
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      npc.moveTo(64, 28);
+      npc.flipHorizontal = false;
+    }
+
+    if (step < time13) {
+      if (step == 0) {
+        npc.imageIndex = 0;
+      }
+      npc.setAnimation('dig_strip13');
+    } else if (step < time13 + 16) {
+      npc.setAnimation('walk_strip8');
+      npc.move(1, 0);
+    } else if (step < time13 + 16 + time13) {
+      if (step == time13 + 16) {
+        npc.imageIndex = 0;
+      }
+      npc.setAnimation('dig_strip13');
+    } else if (step < time13 + 16 + time13 + 16) {
+      npc.setAnimation('walk_strip8');
+      npc.move(1, 0);
+    } else if (step < time13 + 16 + time13 + 16 + time13) {
+      if (step == time13 + 16 + time13 + 16) {
+        npc.imageIndex = 0;
+      }
+      npc.setAnimation('dig_strip13');
+    }
+  }, '1,0', 'credits', true);
+
+  cutscenes['scene2'] = new Cutscene(30 + 30 + 16 * 3 + 60, (step: number) => {
+    const npcs = engine.getScene('-2,0').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('-2,0');
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(-2, 0);
+      });
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      npcs.filter(npc => npc.isItem(7))[0].moveTo(4 * 16, 4 * 16);
+    } else if (step < 30) {
+    } else if (step == 30) {
+      npcs.filter(npc => npc.isItem(7))[0].move(6 * 16, 32);
+      npcs.filter(npc => npc.isItem(-1))[0].setEmotion('question');
+    } else if (step < 30 + 30) {
+    } else if (step < 30 + 30 + 16 * 3) {
+      npcs.filter(npc => npc.isItem(7))[0].setAnimation('walk_strip8');
+      npcs.filter(npc => npc.isItem(7))[0].move(-1, 0);
+    } else if (step < 30 + 30 + 16 * 3 + 30) {
+      npcs.filter(npc => npc.isItem(7))[0].setEmotion('anger');
+      npcs.filter(npc => npc.isItem(-1))[0].flipHorizontal = false;
+      npcs.filter(npc => npc.isItem(-1))[0].setEmotion('surprise');
+    } else if (step < 30 + 30 + 16 * 3 + 30 + 30) {
+      npcs.filter(npc => npc.isItem(-1))[0].setEmotion('sweat');
+    } 
+  }, '-2,0', 'credits', true);
+
+  cutscenes['scene3'] = new Cutscene(16 + 30 + 10 * 8 + 60, (step: number) => {
+    const scene = engine.getScene('u-2,1');
+    const npcs = scene.entitiesByType(Npc);
+    if (step == 0) {
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(Rock).forEach(rock => scene.removeEntity(rock));
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      npcs[0].setAnimation('walk_strip8');
+      npcs[0].moveTo(7 * 16, 4 * 16);
+    } else if (step < 16) {
+      npcs[0].move(0, -1);
+    } else if (step < 16 + 30) {
+      npcs[0].flipHorizontal = false;
+    } else if (step < 16 + 30 + 10 * 8) {
+      npcs[0].setAnimation('doing_strip8');
+    } else if (step < 16 + 30 + 10 * 8 + 60) {
+      if (step == 16 + 30 + 10 * 8) {
+        const scene = engine.getScene('u-2,1');
+        scene.entitiesByType(TiledBackground).filter(bg => bg.zIndex == -99).forEach(bg => scene.removeEntity(bg));
+        scene.addEntity(new Fire(8 * 16 + 5, 2 * 16 + 12));
+        npcs[0].setEmotion('happy');
+        npcs[0].setAnimation('idle_strip9');
+      }
+    }
+  }, 'u-2,1', 'credits', true);
+
+  cutscenes['scene4'] = new Cutscene(48 + 32 + 32 + 32 + 16 + 32, (step: number) => {
+    const npcs = engine.getScene('u-1,0').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('u-1,0')
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      npcs[0].setAnimation('jump_strip9');
+      npcs[0].moveTo(8 * 16, 8 * 16);
+      npcs[0].imageIndex = 3;
+    } else if (step < 48) {
+      npcs[0].move(-1, 0);
+    } else if (step < 48 + 32) {
+      if (step == 48) {
+        npcs[0].imageIndex = 3;
+      }
+      npcs[0].move(-1, 0);
+    } else if (step < 48 + 32 + 32) {
+      if (step == 48 + 32) {
+        npcs[0].imageIndex = 3;
+      }
+      npcs[0].move(-1, -1);
+    } else if (step < 48 + 32 + 32 + 32) {
+      if (step == 48 + 32 + 32) {
+        npcs[0].imageIndex = 3;
+      }
+      npcs[0].move(0, -1);
+    } else if (step < 48 + 32 + 32 + 32 + 16) {
+      npcs[0].setAnimation('walk_strip8');
+      npcs[0].move(0, -1);
+    } else if (step < 48 + 32 + 32 + 32 + 16 + 32) {
+      npcs.forEach(npc => npc.remove(engine.getScene('u-1,0')));
+    }
+  }, 'u-1,0', 'credits', true);
+
+  cutscenes['scene5'] = new Cutscene(48 + 32 + 16 + 32 + 112, (step: number) => {
+    const npcs = engine.getScene('1,-2').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('1,-2');
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(1, -2);
+      });
+      scene.entitiesByType(Grass).forEach(grass => scene.removeEntity(grass));
+      scene.addEntity(new StatusBar(null));
+      scene.addEntity(new Arrow(scene, 16 * 1, 5 * 16, 3 * Math.PI / 2));
+      npcs[0].moveTo(1 * 16, 6 * 16);
+    } else if (step < 48) { // wait
+      if (step == 16) {
+        const scene = engine.getScene('1,-2');
+        const bridge1 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 4 * 16, 4 * 16);
+        bridge1.imageIndex = 424;
+        scene.addEntity(bridge1);
+      } if (step == 32) {
+        const scene = engine.getScene('1,-2');
+        const bridge2 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 4 * 16, 5 * 16);
+        bridge2.imageIndex = 424;
+        scene.addEntity(bridge2);
+      }
+    } else if (step < 48 + 16) {
+      npcs[0].flipHorizontal = false;
+      npcs[0].move(1, 0);
+    } else if (step < 48 + 16 + 16) {
+      npcs[0].move(0, 1);
+    } else if (step < 48 + 16 + 16 + 32) {
+      npcs[0].move(1, 0);
+    } else if (step < 48 + 32 + 16 + 32 + 112) {
+      npcs[0].move(0, -1);
+    }
+  }, '1,-2', 'credits', true);
+
+  let sound = 0;
+  cutscenes['scene6'] = new Cutscene(210 + 64 + 16 + 60, (step: number) => {
+    const npcs = engine.getScene('1,1').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('1,1');
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(1, 1);
+      });
+      scene.addEntity(new StatusBar(null));
+      npcs[0].flipHorizontal = false;
+      npcs[0].moveTo(4 * 16, 6 * 16);
+    }
+    if (step == 8) {
+      const scene = engine.getScene('1,1');
+      let bomb;
+      sound = Sound.getVolume();
+      Sound.setVolume(0);
+      scene.addEntity(bomb = new Bomb(5 * 16, 6 * 16));
+      bomb.zIndex = -1000;
+    }
+    if (step == 16) {
+      const scene = engine.getScene('1,1');
+      let bomb;
+      scene.addEntity(bomb = new Bomb(6 * 16, 7 * 16));
+      bomb.zIndex = -1000;
+    }
+    if (step == 24) {
+      const scene = engine.getScene('1,1');
+      let bomb;
+      scene.addEntity(bomb = new Bomb(7 * 16, 6 * 16));
+      bomb.zIndex = -1000;
+    }
+    if (step >= 24 && step < 24 + 32) {
+      npcs[0].flipHorizontal = true;
+      npcs[0].move(-1, 0);
+    }
+    if (step == 24 + 32) {
+      npcs[0].flipHorizontal = false;
+    }
+
+    if (step == 210) {
+      Sound.setVolume(sound);
+      npcs[0].zIndex = -200;
+      const scene = engine.getScene('1,1');
+      const cave = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 6 * 16, 5 * 16);
+      cave.imageIndex = 139;
+      cave.zIndex = -100;
+      scene.addEntity(cave);
+      const grassc = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 7 * 16, 5 * 16);
+      grassc.imageIndex = 66;
+      grassc.zIndex = -100;
+      scene.addEntity(grassc);
+      const cave2 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 7 * 16, 5 * 16);
+      cave2.imageIndex = 2051;
+      cave2.zIndex = -101;
+      scene.addEntity(cave2);
+      const grass = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 5 * 16, 6 * 16);
+      grass.imageIndex = 66;
+      grass.zIndex = -100;
+      scene.addEntity(grass);
+      const grass2 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 6 * 16, 6 * 16);
+      grass2.imageIndex = 66;
+      grass2.zIndex = -100;
+      scene.addEntity(grass2);
+      const grass3 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 7 * 16, 6 * 16);
+      grass3.imageIndex = 66;
+      grass3.zIndex = -100;
+      scene.addEntity(grass3);
+      const grass4 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 5 * 16, 7 * 16);
+      grass4.imageIndex = 66;
+      grass4.zIndex = -100;
+      scene.addEntity(grass4);
+      const grass5 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 6 * 16, 7 * 16);
+      grass5.imageIndex = 66;
+      grass5.zIndex = -100;
+      scene.addEntity(grass5);
+    }
+    if (step < 210) {
+
+    } else if (step < 210 + 64) {
+      npcs[0].move(1, 0);
+    } else if (step < 210 + 64 + 16) {
+      npcs[0].move(0, -1);
+    } else if (step < 210 + 64 + 16 + 60) {
+      if (step === 210 + 64 + 16) {
+        npcs[0].flipHorizontal = true;
+        npcs[0].move(0, -48);
+        npcs[0].setEmotion('love');
+      }
+    }
+  }, '1,1', 'credits', true);
+
+  cutscenes['scene7'] = new Cutscene(128, (step: number) => {
+    const npcs = engine.getScene('-1,1').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('-1,1');
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(-1, 1);
+      });
+      scene.entitiesByType(Grass).forEach(grass => scene.removeEntity(grass));
+      scene.addEntity(new StatusBar(null));
+      npcs[0].setEmotion('happy');
+      npcs[0].moveTo(5 * 16, 3 * 16);
+
+    }
+  }, '-1,1', 'credits', true);
+
+  cutscenes['scene8'] = new Cutscene(FPS * 3, (step: number) => {
+    const scene = engine.getScene('-3,1');
+    const npcs = scene.entitiesByType(Npc);
+    if (step == 0) {
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(-3, 1);
+      });
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      scene.entitiesByType(Barrel).forEach(barrel => scene.removeEntity(barrel));
+      scene.entitiesByType(HeavyRock).forEach(heavyRock => scene.removeEntity(heavyRock));
+      scene.removeEntity(scene.entitiesByType(TiledBackground).filter(bg => bg.zIndex < -90).at(-1));
+      scene.addEntity(new StatusBar(null));
+
+      const floor1 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 1 * 16, 7 * 16);
+      floor1.imageIndex = 961;
+      floor1.zIndex = -100;
+      scene.addEntity(floor1);
+      const floor2 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 2 * 16, 7 * 16);
+      floor2.imageIndex = 961;
+      floor2.zIndex = -100;
+      scene.addEntity(floor2);
+
+      npcs.filter(npc => npc.isItem(6))[0].moveTo(7 * 16, 5 * 16);
+      npcs.filter(npc => npc.isItem(6))[0].setEmotion('happy');
+
+      npcs.filter(npc => !npc.isItem(6))[0].moveTo(4 * 16, 5 * 16);
+      npcs.filter(npc => !npc.isItem(6))[0].flipHorizontal = false;
+      npcs.filter(npc => !npc.isItem(6))[0].setEmotion('sweat');
+    }
+  }, '-3,1', 'credits', true);
+
+  let npc1: Npc, npc2: Npc, npc3: Npc;
+
+  cutscenes['scene9'] = new Cutscene(16 + 16 + 16 + 16 + 32 + 120 + 1, (step: number) => {
+    const npcs = engine.getScene('h-3,0').entitiesByType(Npc);
+    if (step == 0) {
+      const scene = engine.getScene('h-3,0');
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      if (!npc1) {
+        npc1 = new Npc(scene, 4 * 16, 9 * 16, [], [], -1, 'spikeyhair', false);
+        npc1.flipHorizontal = false;
+        npc2 = new Npc(scene, 4 * 16, 9 * 16, [], [], -1, 'curlyhair', false);
+        npc2.flipHorizontal = false;
+        npc3 = new Npc(scene, 4 * 16, 9 * 16, [], [], -1, 'mophair', false);
+        npc3.flipHorizontal = false;
+      }
+      scene.addEntity(npc1);
+    } else if (step < 16) {
+      npc1.move(0, -1);
+    } else if (step < 16 + 16) {
+      npc1.move(0, -1);
+      if (step == 16) {
+        const scene = engine.getScene('h-3,0');
+        scene.addEntity(npc2);
+      }
+      npc2.move(0, -1);
+    } else if (step < 16 + 16 + 16) {
+      npc1.move(0, -1);
+      if (step == 16 + 16) {
+        const scene = engine.getScene('h-3,0');
+        scene.addEntity(npc3);
+      }
+      npc2.move(0, -1);
+      npc3.move(0, -1);
+    } else if (step < 16 + 16 + 16 + 16) {
+      npc1.move(0, -1);
+      npc2.move(1, 0);
+      npc3.move(1, 0);
+    } else if (step < 16 + 16 + 16 + 16 + 32) {
+      npc2.move(1, 0);
+    } else {
+      npc1 = undefined;
+      npc2.flipHorizontal = true;
+    }
+  }, 'h-3,0', 'credits', true);
 
   engine.switchToScene('main_menu');
 
@@ -439,42 +831,42 @@ async function init() {
     if (screenTransition.activate) {
       screenTransition.active = true;
       screenTransition.activate = false;
-    } else if (screenTransition.active && screenTransition.action === 'slide') {
-      const scene = screenTransition.scene;
-      const direction = screenTransition.direction;
-      const totalTime = screenTransition.totalTime;
-      if (screenTransition.timer > 0) {
-        scene.entitiesByType(GameEntity).forEach(entity => entity.move(Math.cos(direction) * 16, Math.sin(direction) * 16));
-        screenTransition.timer--;
-      }
-      if (screenTransition.timer == 0) {
-        screenTransition.active = false;
-        const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
-        //scene.entitiesByType(GameEntity).forEach(entity => entity.move(-Math.cos(direction) * 16 * totalTime, -Math.sin(direction) * 16 * totalTime));
-        scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
+    } else if (screenTransition.timer >= 0) {
+      if (screenTransition.active && screenTransition.action === 'slide') {
+        const scene = screenTransition.scene;
+        const direction = screenTransition.direction;
+        const totalTime = screenTransition.totalTime;
+        if (screenTransition.timer > 0) {
+          scene.entitiesByType(GameEntity).forEach(entity => entity.move(Math.round(Math.cos(direction) * 16), Math.round(Math.sin(direction) * 16)));
+          screenTransition.timer--;
+        }
+        if (screenTransition.timer == 0) {
+          const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
+          scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
 
-        screenTransition.timer--;
-        engine.switchToScene(engine.sceneKey(screenTransition.nextScene));
-        screenTransition.nextScene.entitiesByType(Player)[0].respawn();
-        playTrackForScene(engine.sceneKey(screenTransition.nextScene));
-      }
-    } else if (screenTransition.active && screenTransition.action === 'fade') {
-      if (screenTransition.timer > 0) {
-        screenTransition.timer--;
-      }
-      if (screenTransition.timer == 0) {
-        screenTransition.active = false;
-      }
-    } else if (screenTransition.timer == -1) {
+          screenTransition.timer--;
+          engine.switchToScene(engine.sceneKey(screenTransition.nextScene));
+          screenTransition.nextScene.entitiesByType(Player)[0].respawn();
+          playTrackForScene(engine.sceneKey(screenTransition.nextScene));
+        }
+      } else if (screenTransition.active && screenTransition.action === 'fade') {
+        if (screenTransition.timer >= 0) {
+          screenTransition.timer--;
+        }
+      } 
+    } 
+    else if (screenTransition.timer == -1) {
       screenTransition.timer--;
+      console.log('inactive');
       screenTransition.active = false;
-      const scene = screenTransition.scene;
-      const direction = screenTransition.direction;
-      const totalTime = screenTransition.totalTime;
-      const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
-      scene.entitiesByType(GameEntity).filter(entity => entity instanceof Player == false).forEach(entity => entity.move(-Math.cos(direction) * 16 * totalTime, -Math.sin(direction) * 16 * totalTime));
-      scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
-
+      if (screenTransition.action === 'slide') {
+        const scene = screenTransition.scene;
+        const direction = screenTransition.direction;
+        const totalTime = screenTransition.totalTime;
+        const nextCoords = scene.entitiesByType(Player)[0].getWorldCoords();
+        scene.entitiesByType(GameEntity).filter(entity => entity instanceof Player == false).forEach(entity => entity.move(-Math.round(Math.cos(direction) * 16 * totalTime), -Math.round(Math.sin(direction) * 16 * totalTime)));
+        scene.entitiesByType(TiledBackground).forEach(entity => entity.resetPosition(nextCoords.x, nextCoords.y));
+      }
     }
   });
 
@@ -551,7 +943,7 @@ export function transitionSlide(scene: Scene, nextScene: Scene, direction: numbe
   });
 }
 
-export function transitionFade(scene: Scene, nextScene: Scene) {
+export function transitionFade(scene: Scene, nextScene: Scene, sound = true) {
   screenTransition.activate = true;
   screenTransition.scene = scene;
   screenTransition.nextScene = nextScene;
@@ -559,9 +951,12 @@ export function transitionFade(scene: Scene, nextScene: Scene) {
   screenTransition.totalTime = 10;
   screenTransition.timer = screenTransition.totalTime;
   screenTransition.action = 'fade';
+  engine.switchToScene(engine.sceneKey(nextScene));
   fadeEntity.reset();
   nextScene.addEntity(fadeEntity);
-  Sound.Sounds['slash'].play();
+  if (sound) {
+    Sound.Sounds['slash'].play();
+  }
 }
 
 const keyMap = [
@@ -634,6 +1029,7 @@ const gamepadMap = [
 
 export function buildMap(view: View, keyController: KeyboardController) {
   buildMapNew(view, keyController);
+  win.active = false;
 }
 
 export function buildMapNew(view: View, keyController: KeyboardController) {
@@ -657,12 +1053,24 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
       const layerId = Number.parseInt(layer.getAttribute('id') || '0');
       const layerName = layer.getAttribute('name');
       const isOverhead = layerName === 'Overheads' || layerName === 'Overheads2' || layerName === 'UIs';
+      let zIndex = 0;
+      switch (layerName) {
+        case 'Overheads':
+          zIndex = -89;
+          break;
+        case 'Overheads2':
+          zIndex = -99;
+          break;
+        case 'UIs':
+          zIndex = -99;
+          break;
+      }
       layer.querySelectorAll('chunk').forEach(chunk => {
         const worldX = Number.parseInt(chunk.getAttribute('x')) / 10;
         const worldY = Number.parseInt(chunk.getAttribute('y')) / 9;
         if (scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`)) {
           const scene = scenes.getSceneByKey(`${docData.key}${worldX},${worldY}`).scene;
-          scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+          scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), zIndex));
           return;
         }
 
@@ -673,7 +1081,7 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
 
         const resetter = new EntityResetter(scene);
 
-        scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), isOverhead ? -99 : 0));
+        scene.addEntity(new TiledBackground(worldX, worldY, chunk.innerHTML.split(',').map(val => Number.parseInt(val)), zIndex));
         scene.addEntity(fadeEntity);
 
         engine.addScene(`${docData.key}${worldX},${worldY}`, scene);

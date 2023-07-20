@@ -1,5 +1,5 @@
 import { Scene, Sprite, SpriteEntity, SpritePainter } from "game-engine";
-import { drawTile, screenWidth } from "./game";
+import { drawTile, screenWidth, win } from "./game";
 import { itemMap } from "./inventory";
 import { Cursor, Player } from "./player";
 
@@ -13,6 +13,12 @@ export class StatusBar extends SpriteEntity {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
+    if (win.active || !this.player) {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, screenWidth, 16);
+      return;
+    }
+
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, screenWidth, 16);
     ctx.drawImage(Sprite.Sprites['coin'].getImage(), -4, -4);
