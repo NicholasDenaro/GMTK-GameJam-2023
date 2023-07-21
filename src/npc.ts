@@ -70,6 +70,9 @@ export class NpcDialog extends SpriteEntity {
       case 'love':
         this.imageIndex = 3052;
         break;
+      case 'none':
+        this.imageIndex = 0;
+        break;
     }
   }
 

@@ -1,16 +1,16 @@
 import { ControllerState, Scene, SpriteEntity, SpritePainter } from "game-engine";
-import { FPS, buildMap, changeLoop, cutscenes, engine, keyController, screenHeight, screenTransition, screenWidth, win } from "./game";
+import { FPS, buildMap, changeLoop, cutscenes, engine, keyController, scenes, screenHeight, screenTransition, screenWidth, win } from "./game";
+import { Skeleton } from "./grave";
 
 export class Credits extends SpriteEntity {
   private text: string[][] = [
     [
       '----ART----',
-      'Sunnyside World sprite pack - @DanielDiggle',
-      '(tiles, characters, inventory background)',
-      'Items - CanariPack 8BIT TopDown',
+      'tiles & characters - Sunnyside World - @DanielDiggle',
+      'Items - CanariPack 8BIT - TopDown',
       'Font - BetterPixels',
       'bombs & explosion - nDev',
-      'holes - remixed from Sunnyside World - nDev',
+      'holes, small tree - remixed from Sunnyside World - nDev',
     ],
     [
       '---MUSIC---',
@@ -87,6 +87,11 @@ export class Credits extends SpriteEntity {
       this.index++;
     }
     if (this.creditsTimer === FPS * 10) {
+      if (scenes.getScene(1, -1).scene.entitiesByType(Skeleton).length > 0) {
+        if (win.active) cutscenes['scene10'].start(scene);
+      }
+    }
+    if (this.creditsTimer === FPS * 10 + 1) {
       if (win.active) cutscenes['scene9'].start(scene);
       this.index++;
     }
@@ -118,14 +123,20 @@ export class Credits extends SpriteEntity {
   }
   
   draw(ctx: CanvasRenderingContext2D) {
-    // ctx.strokeStyle = '#000000';
-    // ctx.fillStyle = '#FFFFFF';
     ctx.fillStyle = '#000000';
-    ctx.font = '16px game';
+    ctx.fillRect(0, 0, screenWidth, screenHeight);
+    // ctx.strokeStyle = '#000000';
+    ctx.fillStyle = '#FFFFFF';
     let i = 0;
     for (let line of this.text[this.index]) {
+      let size = 16;
       //ctx.strokeText(line, 2, 12 + i * 16 + 16, screenWidth - 4);
-      ctx.fillText(line, 2, 12 + i * 16 + screenHeight / 2 - this.text[this.index].length * 16 / 2, screenWidth - 4);
+      while (ctx.measureText(line).width > screenWidth - 4) {
+        size--;
+        ctx.font = `${size}px game`;
+      }
+      ctx.font = `${size}px game`;
+      ctx.fillText(line, 2, 12 + i * 16 + screenHeight / 2 + 8 - this.text[this.index].length * 16 / 2, screenWidth - 4);
       i++;
     }
   }

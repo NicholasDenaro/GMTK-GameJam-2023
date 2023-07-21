@@ -44,6 +44,10 @@ export class Skeleton extends Interactable {
     scene.addEntity(new TextboxEntity(this.dialog));
     Sound.Sounds['talk'].play();
   }
+
+  setEmotion(emotion: string) {
+    this.dialogImage.setEmotion(emotion);
+  }
 }
 
 export class Grave extends Interactable {

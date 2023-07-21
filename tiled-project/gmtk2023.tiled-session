@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "houses.tmx",
+    "activeFile": "overworld-2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -145,14 +145,14 @@
                 6
             ],
             "scale": 4,
-            "selectedLayer": 8,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 168.5,
-                "y": 193.125
+                "x": -407.5,
+                "y": 199.625
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 2,
+            "scaleInDock": 4,
             "scaleInEditor": 8
         },
         "title.tmx": {
@@ -208,9 +208,9 @@
     "project": "gmtk2023.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "overworld-2.tmx",
-        "underground.tmx",
         "houses.tmx",
+        "underground.tmx",
+        "overworld-2.tmx",
         "inventory.tmx",
         "main8.tmx",
         "main7.tmx",

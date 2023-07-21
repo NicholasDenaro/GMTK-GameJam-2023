@@ -196,7 +196,9 @@ export class Player extends GameEntity {
       this.toolImage.setAnimation('idle_strip9');
     }
 
-    if (canMove && this.getItem1() == -1 && this.getItem2() == -1 && this.inventory.isEmpty()) {
+    const forceWin = false;// || scene.isControl('sprint', ControllerState.Press);
+
+    if (forceWin || canMove && this.getItem1() == -1 && this.getItem2() == -1 && this.inventory.isEmpty()) {
       if (!this.shownEndingText) {
         win.active = true;
         stopwatch.end = Date.now();
@@ -785,5 +787,6 @@ export class Player extends GameEntity {
     scene.removeEntity(this.hairImage);
     scene.removeEntity(this.toolImage);
     scene.removeEntity(this.crosshair);
+    scene.removeEntity(this.shadow);
   }
 }

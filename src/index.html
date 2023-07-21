@@ -1,9 +1,39 @@
 <!DOCTYPE html>
-<html style="width: fit-content">
+<html style="overflow: none; margin:0; padding: 0; box-sizing: border-box; width: 100%">
     <head>
-        <meta content="width=480, initial-scale=1" name="viewport">
+        <!--<meta content="width=480, initial-scale=1" name="viewport">-->
         <meta charset="utf-8" />
         <script src="./bundle.js"></script>
     </head>
-    <body style="margin: 0;padding: 0"></body>
+    <body style="margin: 0; padding: 0; overflow: none;">
+    <div id="controls" style="display: none; position:absolute; width: 100%">
+      <div id="dpad" style="position: relative; position:absolute; padding: 2em;">
+        <div style="display:flex">
+          <div actions="['up','left']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="['up']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="['up','right']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;">
+          </div>
+        </div>
+        <div style="display:flex">
+          <div actions="['left']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="[]" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="['right']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+        </div>
+        <div style="display:flex">
+          <div actions="['down','left']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="['down']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+          <div actions="['down','right']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;"></div>
+        </div>
+      </div>
+      <div id="buttons" style="display:flex; position: absolute; padding: 2em; height: 150px">
+        <div actions="['z']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; position: relative; top: 50px; margin-right: 10px; user-select: none;">Z</div>
+        <div actions="['x']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;">X</div>
+      </div>
+      <div id="menus" style="display:flex; position:absolute; padding: 2em;">
+        <div actions="['select']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue;margin-right: 20px; user-select: none;">Select</div>
+        <div actions="['start']" style="width:15vw; height:15vw; border: 1px solid black; background: gainsboro; color: blue; user-select: none;">Start</div>
+      </div>
+      <!--<div id="shift" style="width:100px; height:100px; border: 1px solid black; background: gainsboro; color: blue">Shift</div>-->
+    </div>
+  </body>
 </html>

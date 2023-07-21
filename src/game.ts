@@ -22,7 +22,7 @@ import { Credits } from './credits';
 import { MainMenu } from './main-menu';
 import { Interactable } from './interactable';
 import { Title } from './title';
-import { Grave } from './grave';
+import { Grave, Skeleton } from './grave';
 import { PermaFire } from './perma-fire';
 import { TiledBackground } from './tiled-background';
 import { GameEntity } from './game-entity';
@@ -34,6 +34,7 @@ import { StatusBar } from './status-bar';
 import { Arrow } from './arrow';
 import { Bomb } from './bomb';
 import { TextboxEntity } from './textbox';
+import { ScreenController } from './screen-controller';
 
 const world = require('../tiled-project/overworld-2.tmx');
 const houses = require('../tiled-project/houses.tmx');
@@ -55,7 +56,6 @@ font.load().then(() => {
 
 export const screenWidth = 160;
 export const screenHeight = 160;
-const scale = 3;
 
 export const FPS = 60;
 
@@ -338,7 +338,7 @@ const npcs = [
       { options: ['Keep bow', 'Give bow'] }
     ],
     postDialog: [
-      'Thanks, you really saved me there.'
+      'Thanks, you really saved\nme there.'
     ],
     requestedItem: 3,
     hair: 'curlyhair',
@@ -435,7 +435,34 @@ async function init() {
   await Sprite.waitForLoad();
   await Sound.waitForLoad();
 
+  let dpi = window.window.devicePixelRatio;
+  let viewportScaling = window.visualViewport.width / window.window.innerWidth;
+
+  console.log(`Window dpi scaling: ${dpi}`);
+  console.log(`Window viewport width: ${window.visualViewport.width}`);
+  console.log(`Window viewport scaling: ${viewportScaling}`);
+  console.log(`Window width: ${window.window.innerWidth}`);
+  console.log(`Window scaled width: ${window.window.innerWidth * dpi}`);
+  let scale = Math.min(Math.floor(window.window.innerHeight * dpi * viewportScaling / 160), Math.floor(window.window.innerWidth * dpi * viewportScaling / 160));
+
+  console.log(`game scale: ${scale}`);
+
   const view = new Canvas2DView(screenWidth, screenHeight, { scale: scale, bgColor: '#BBBBBB' });
+
+  view.activate();
+
+  view.viewElement().querySelector('canvas').style.marginLeft = 'auto';
+  view.viewElement().querySelector('canvas').style.marginRight = 'auto';
+
+  document.getElementById('controls').style.display = 'block';
+  document.getElementById('dpad').style.top = `${view.viewElement().getClientRects()[0].bottom}px`;
+  document.getElementById('dpad').style.left = `0px`;
+  document.getElementById('buttons').style.top = `${view.viewElement().getClientRects()[0].bottom}px`;
+  document.getElementById('buttons').style.right = `0px`;
+
+  document.getElementById('menus').style.top = `${document.getElementById('dpad').getClientRects()[0].bottom}px`;
+  document.getElementById('menus').style.left = `${window.visualViewport.width / 2 - 100 - 10}px`;
+  document.getElementById('controls').style.display = 'none';
 
   const intro = new Scene(view);
   intro.addEntity(new BackgroundEntity('title'));
@@ -443,14 +470,18 @@ async function init() {
   engine.addScene('intro', intro);
 
   const mainMenu = new Scene(view);
-  mainMenu.addController(keyController)
+  mainMenu.addController(keyController);
+  mainMenu.addController(screenController);
+  mainMenu.addController(gamepadController);
   mainMenu.addEntity(new BackgroundEntity('menu'));
   mainMenu.addEntity(new MainMenu());
 
   engine.addScene('main_menu', mainMenu);
 
   const settingsMenu = new Scene(view);
-  settingsMenu.addController(keyController)
+  settingsMenu.addController(keyController);
+  settingsMenu.addController(screenController);
+  settingsMenu.addController(gamepadController);
   settingsMenu.addEntity(new BackgroundEntity('options'));
   settingsMenu.addEntity(new OptionsEntity());
 
@@ -458,6 +489,8 @@ async function init() {
 
   const credits = new Scene(view);
   credits.addController(keyController);
+  credits.addController(screenController);
+  credits.addController(gamepadController);
   credits.addEntity(new Credits());
   credits.addEntity(new StatusBar(null));
 
@@ -478,6 +511,7 @@ async function init() {
       scene.entitiesByType(Player).forEach(player => player.remove(scene));
       scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
       npc.moveTo(64, 28);
+      npc.setEmotion('none');
       npc.flipHorizontal = false;
     }
 
@@ -516,6 +550,7 @@ async function init() {
       scene.entitiesByType(Player).forEach(player => player.remove(scene));
       scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
       npcs.filter(npc => npc.isItem(7))[0].moveTo(4 * 16, 4 * 16);
+      npcs.forEach(npc => npc.setEmotion('none'));
     } else if (step < 30) {
     } else if (step == 30) {
       npcs.filter(npc => npc.isItem(7))[0].move(6 * 16, 32);
@@ -543,6 +578,7 @@ async function init() {
       scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
       npcs[0].setAnimation('walk_strip8');
       npcs[0].moveTo(7 * 16, 4 * 16);
+      npcs.forEach(npc => npc.setEmotion('none'));
     } else if (step < 16) {
       npcs[0].move(0, -1);
     } else if (step < 16 + 30) {
@@ -570,6 +606,7 @@ async function init() {
       npcs[0].setAnimation('jump_strip9');
       npcs[0].moveTo(8 * 16, 8 * 16);
       npcs[0].imageIndex = 3;
+      npcs.forEach(npc => npc.setEmotion('none'));
     } else if (step < 48) {
       npcs[0].move(-1, 0);
     } else if (step < 48 + 32) {
@@ -608,6 +645,7 @@ async function init() {
       scene.addEntity(new StatusBar(null));
       scene.addEntity(new Arrow(scene, 16 * 1, 5 * 16, 3 * Math.PI / 2));
       npcs[0].moveTo(1 * 16, 6 * 16);
+      npcs.forEach(npc => npc.setEmotion('none'));
     } else if (step < 48) { // wait
       if (step == 16) {
         const scene = engine.getScene('1,-2');
@@ -645,6 +683,7 @@ async function init() {
       scene.addEntity(new StatusBar(null));
       npcs[0].flipHorizontal = false;
       npcs[0].moveTo(4 * 16, 6 * 16);
+      npcs.forEach(npc => npc.setEmotion('none'));
     }
     if (step == 8) {
       const scene = engine.getScene('1,1');
@@ -737,9 +776,9 @@ async function init() {
       });
       scene.entitiesByType(Grass).forEach(grass => scene.removeEntity(grass));
       scene.addEntity(new StatusBar(null));
+      npcs.forEach(npc => npc.setEmotion('none'));
       npcs[0].setEmotion('happy');
       npcs[0].moveTo(5 * 16, 3 * 16);
-
     }
   }, '-1,1', 'credits', true);
 
@@ -756,6 +795,7 @@ async function init() {
       scene.entitiesByType(HeavyRock).forEach(heavyRock => scene.removeEntity(heavyRock));
       scene.removeEntity(scene.entitiesByType(TiledBackground).filter(bg => bg.zIndex < -90).at(-1));
       scene.addEntity(new StatusBar(null));
+      npcs.forEach(npc => npc.setEmotion('none'));
 
       const floor1 = new GameEntity(new SpritePainter(Sprite.Sprites['tiles'], { spriteWidth: 16, spriteHeight: 16 }), 1 * 16, 7 * 16);
       floor1.imageIndex = 961;
@@ -792,6 +832,7 @@ async function init() {
         npc3 = new Npc(scene, 4 * 16, 9 * 16, [], [], -1, 'mophair', false);
         npc3.flipHorizontal = false;
       }
+      npcs.forEach(npc => npc.setEmotion('none'));
       scene.addEntity(npc1);
     } else if (step < 16) {
       npc1.move(0, -1);
@@ -821,6 +862,19 @@ async function init() {
       npc2.flipHorizontal = true;
     }
   }, 'h-3,0', 'credits', true);
+
+  cutscenes['scene10'] = new Cutscene(120, (step: number) => {
+    if (step == 0) {
+      const scene = engine.getScene('1,-1');
+      scene.entitiesByType(TiledBackground).forEach(bg => {
+        bg.resetPosition(1, -1);
+      });
+      scene.addEntity(new StatusBar(null));
+      scene.entitiesByType(Player).forEach(player => player.remove(scene));
+      scene.entitiesByType(TextboxEntity).forEach(textbox => scene.removeEntity(textbox));
+      scene.entitiesByType(Skeleton).forEach(npc => npc.setEmotion('none'));
+    }
+  }, '1,-1', 'credits', true);
 
   engine.switchToScene('main_menu');
 
@@ -1002,30 +1056,107 @@ export const keyController = new KeyboardController(keyMap);
 
 const gamepadMap = [
   {
-    binding: new ControllerBinding<{ value: number }>('button1'),
-    buttons: [
-      { type: 'buttons', index: 0 },
-    ],
-  },
-  {
-    binding: new ControllerBinding<{ value: number }>('button2'),
+    binding: new ControllerBinding<{ value: number }>('action1'),
     buttons: [
       { type: 'buttons', index: 1 },
     ],
   },
   {
-    binding: new ControllerBinding<{ value: number }>('axis1'),
+    binding: new ControllerBinding<{ value: number }>('action2'),
     buttons: [
-      { type: 'axes', index: 0 },
+      { type: 'buttons', index: 0 },
     ],
   },
   {
-    binding: new ControllerBinding<{ value: number }>('axis2'),
+    binding: new ControllerBinding<{ value: number }>('up'),
     buttons: [
-      { type: 'axes', index: 1 },
+      { type: 'buttons', index: 12 },
     ],
-  }
+  },
+  {
+    binding: new ControllerBinding<{ value: number }>('down'),
+    buttons: [
+      { type: 'buttons', index: 13 },
+    ],
+  },
+  {
+    binding: new ControllerBinding<{ value: number }>('left'),
+    buttons: [
+      { type: 'buttons', index: 14 },
+    ],
+  },
+  {
+    binding: new ControllerBinding<{ value: number }>('right'),
+    buttons: [
+      { type: 'buttons', index: 15 },
+    ],
+  },
+  {
+    binding: new ControllerBinding<{ value: number }>('pause'),
+    buttons: [
+      { type: 'buttons', index: 9 },
+    ],
+  },
+  {
+    binding: new ControllerBinding<{ value: number }>('restart'),
+    buttons: [
+      { type: 'buttons', index: 8 },
+    ],
+  },
+  // {
+  //   binding: new ControllerBinding<{ value: number }>('axis1'),
+  //   buttons: [
+  //     { type: 'axes', index: 0 },
+  //   ],
+  // },
+  // {
+  //   binding: new ControllerBinding<{ value: number }>('axis2'),
+  //   buttons: [
+  //     { type: 'axes', index: 1 },
+  //   ],
+  // }
 ];
+export const gamepadController = new GamepadController(gamepadMap);
+
+const screenControllerMap = [
+  {
+    binding: new ControllerBinding<undefined>('left'),
+    keys: ['left'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('right'),
+    keys: ['right'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('up'),
+    keys: ['up'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('down'),
+    keys: ['down'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('sprint'),
+    keys: ['shift'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('action1'),
+    keys: ['x'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('action2'),
+    keys: ['z'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('pause'),
+    keys: ['start'],
+  },
+  {
+    binding: new ControllerBinding<undefined>('restart'),
+    keys: ['select'],
+  },
+];
+export const screenController = new ScreenController(screenControllerMap);
 
 export function buildMap(view: View, keyController: KeyboardController) {
   buildMapNew(view, keyController);
@@ -1036,6 +1167,8 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
   scenes.clear();
   const scenePause = new Scene(view);
   scenePause.addController(keyController);
+  scenePause.addController(screenController);
+  scenePause.addController(gamepadController);
   engine.addScene('pause', scenePause);
   scenePause.addEntity(new BackgroundEntity('inventory'));
   scenePause.addEntity(new PauseMenu());
@@ -1078,6 +1211,8 @@ export function buildMapNew(view: View, keyController: KeyboardController) {
 
         const scene = new Scene(view);
         scene.addController(keyController);
+        scene.addController(screenController);
+        scene.addController(gamepadController);
 
         const resetter = new EntityResetter(scene);
 
