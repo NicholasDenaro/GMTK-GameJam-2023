@@ -46,19 +46,22 @@ export class OptionsEntity extends SpriteEntity {
           statefulMode.enabled = !statefulMode.enabled;
           break;
         case 1:
-          volume.master = Math.max(volume.master - 0.1, 0);
+          volume.main = Math.max(volume.main - 0.1, 0);
+          document.cookie = `volume.main=${volume.main}`;
           break;
         case 2:
           volume.music = Math.max(volume.music - 0.1, 0);
+          document.cookie = `volume.music=${volume.music}`;
           break;
         case 3:
           volume.sounds = Math.max(volume.sounds - 0.1, 0);
+          document.cookie = `volume.sounds=${volume.sounds}`;
           break;
       }
 
-      Sound.setVolume(volume.master * volume.sounds);
+      Sound.setVolume(volume.main * volume.sounds);
       Sound.Sounds['pause'].play();
-      loopTrack.track.volume(volume.master * volume.music);
+      loopTrack.track.volume(volume.main * volume.music);
     }
 
     if (scene.isControl('right', ControllerState.Press)) {
@@ -67,19 +70,22 @@ export class OptionsEntity extends SpriteEntity {
           statefulMode.enabled = !statefulMode.enabled;
           break;
         case 1:
-          volume.master = Math.min(volume.master + 0.1, 1);
+          volume.main = Math.min(volume.main + 0.1, 1);
+          document.cookie = `volume.main=${volume.main}`;
           break;
         case 2:
           volume.music = Math.min(volume.music + 0.1, 1);
+          document.cookie = `volume.music=${volume.music}`;
           break;
         case 3:
           volume.sounds = Math.min(volume.sounds + 0.1, 1);
+          document.cookie = `volume.sounds=${volume.sounds}`;
           break;
       }
 
-      Sound.setVolume(volume.master * volume.sounds);
+      Sound.setVolume(volume.main * volume.sounds);
       Sound.Sounds['pause'].play();
-      loopTrack.track.volume(volume.master * volume.music);
+      loopTrack.track.volume(volume.main * volume.music);
     }
   }
   
@@ -101,7 +107,7 @@ export class OptionsEntity extends SpriteEntity {
     ctx.strokeText(`Volume:`, 17, 16 + buffer + i * 16);
     ctx.fillText(`Volume:`, 17, 16 + buffer + i * 16);
 
-    this.drawVolume(ctx, 56 + 16, 16 + buffer + i * 16 - 12, volume.master);
+    this.drawVolume(ctx, 56 + 16, 16 + buffer + i * 16 - 12, volume.main);
 
     if (this.cursor == 1) {
       drawTile(ctx, 56, buffer + 4 + this.cursor * 16, 3109);

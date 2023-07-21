@@ -1,5 +1,5 @@
 import { ControllerState, Scene, Sound, SpriteEntity, SpritePainter } from "game-engine";
-import { screenWidth } from "./game";
+import { drawTile, screenWidth } from "./game";
 import { Npc } from "./npc";
 import { Player } from "./player";
 
@@ -73,7 +73,7 @@ export class TextboxEntity extends SpriteEntity {
         ctx.fillText(option, 2, 12 + i * 16, screenWidth - 4);
         i++;
       }
-      ctx.fillText('◀', screenWidth - 16, 12 + this.cursor * 16);
+      drawTile(ctx, screenWidth - 16, this.cursor * 16, 3047);
     }
   }
 }

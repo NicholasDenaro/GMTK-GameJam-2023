@@ -89,9 +89,12 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
   direction: 0,
 };
 
+const spriteAssets = require.context('../assets/', false, /\.png$/);
+const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
+const wavAssets = require.context('../assets/', false, /\.(wav|ogg|mp3)$/);
+const wavAssetsPremade = require.context('../assets/premade/outputs', false, /\.(wav|ogg|mp3)$/);
+
 (function setupAssets() {
-  const spriteAssets = require.context('../assets/', false, /\.png$/);
-  const spriteAssetsPremade = require.context('../assets/premade', false, /\.png$/);
   new Sprite('buddy', spriteAssets('./buddy.png'), { spriteWidth: 16, spriteHeight: 16 });
   //idle
   new Sprite('base_idle_strip9', spriteAssetsPremade('./base_idle_strip9.png'), { spriteWidth: 96, spriteHeight: 64, spriteOffsetX: 40, spriteOffsetY: 24 });
@@ -213,8 +216,6 @@ export const screenTransition: {activate: boolean, active: boolean, action: 'sli
 
   new Sprite('tree', spriteAssetsPremade('./Sunnyside_World_skinny_tree.png'), { spriteWidth: 16, spriteHeight: 16 });
 
-  const wavAssets = require.context('../assets/', false, /\.(wav|ogg|mp3)$/);
-  const wavAssetsPremade = require.context('../assets/premade/outputs', false, /\.(wav|ogg|mp3)$/);
   new Sound('start', wavAssetsPremade('./GAME_MENU_SCORE_SFX001416.ogg'));
   new Sound('dayloop', wavAssetsPremade('./Daytime1Loop.ogg'), true);
   new Sound('caveloop', wavAssetsPremade('./CaveLoop.ogg'), true);
@@ -407,7 +408,7 @@ const npcs = [
 ]
 
 export const volume = {
-  master: 0.2,
+  main: 0.2,
   music: 0.5,
   sounds: 0.5,
 }
@@ -430,6 +431,13 @@ export const loopTrack = {
 
 export const cutscenes: {[key: string]: Cutscene} = {};
 
+export function getCookies() {
+  return document.cookie.split('; ').reduce((prev: { [key: string]: string }, cur) => {
+    prev[cur.split('=')[0]] = cur.split('=')[1];
+    return prev;
+  }, {});
+}
+
 async function init() {
 
   await Sprite.waitForLoad();
@@ -437,6 +445,17 @@ async function init() {
 
   let dpi = window.window.devicePixelRatio;
   let viewportScaling = window.visualViewport.width / window.window.innerWidth;
+
+  const cookies = getCookies();
+  if (cookies['volume.main']) {
+    volume.main = Number.parseFloat(cookies['volume.main']);
+  }
+  if (cookies['volume.music']) {
+    volume.music = Number.parseFloat(cookies['volume.music']);
+  }
+  if (cookies['volume.sounds']) {
+    volume.sounds = Number.parseFloat(cookies['volume.sounds']);
+  }
 
   console.log(`Window dpi scaling: ${dpi}`);
   console.log(`Window viewport width: ${window.visualViewport.width}`);
@@ -457,11 +476,25 @@ async function init() {
   document.getElementById('controls').style.display = 'block';
   document.getElementById('dpad').style.top = `${view.viewElement().getClientRects()[0].bottom}px`;
   document.getElementById('dpad').style.left = `0px`;
+  document.getElementById('dpad').style.backgroundImage = `url(${spriteAssetsPremade('./dpad.png')})`;
+  document.getElementById('dpad').style.backgroundSize = `cover`;
+  document.getElementById('dpad').style.imageRendering = 'pixelated';
+
   document.getElementById('buttons').style.top = `${view.viewElement().getClientRects()[0].bottom}px`;
   document.getElementById('buttons').style.right = `0px`;
+  document.getElementById('buttons').querySelectorAll('div').forEach(div => {
+    div.style.backgroundImage = `url(${spriteAssetsPremade('./pad-button.png')})`;
+    div.style.backgroundSize = `cover`;
+    div.style.imageRendering = 'pixelated';
+  });
 
   document.getElementById('menus').style.top = `${document.getElementById('dpad').getClientRects()[0].bottom}px`;
   document.getElementById('menus').style.left = `${window.visualViewport.width / 2 - 100 - 10}px`;
+  document.getElementById('menus').querySelectorAll('div[actions]').forEach((div:HTMLDivElement) => {
+    div.style.backgroundImage = `url(${spriteAssetsPremade('./pad-button.png')})`;
+    div.style.backgroundSize = `15vw 7.5vw`;
+    div.style.imageRendering = 'pixelated';
+  });
   document.getElementById('controls').style.display = 'none';
 
   const intro = new Scene(view);
@@ -976,9 +1009,9 @@ export function changeLoop(place: 'overworld' | 'town' | 'underground' | 'house'
 
   if (loopTrack.current != track) {
     loopTrack.track.stop();
-    Sound.setVolume(volume.master * volume.music);
+    Sound.setVolume(volume.main * volume.music);
     loopTrack.track = Sound.Sounds[track].play();
-    Sound.setVolume(volume.master * volume.sounds);
+    Sound.setVolume(volume.main * volume.sounds);
     loopTrack.current = track;
   }
 }
