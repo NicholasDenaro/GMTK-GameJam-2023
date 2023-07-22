@@ -147,12 +147,12 @@
             "scale": 4,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 8.125,
-                "y": -0.125
+                "x": -299,
+                "y": 258.875
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 4,
+            "scaleInDock": 5.5,
             "scaleInEditor": 8
         },
         "title.tmx": {

@@ -440,9 +440,6 @@ export function getCookies() {
 
 async function init() {
 
-  await Sprite.waitForLoad();
-  await Sound.waitForLoad();
-
   let dpi = window.window.devicePixelRatio;
   let viewportScaling = window.visualViewport.width / window.window.innerWidth;
 
@@ -496,6 +493,9 @@ async function init() {
     div.style.imageRendering = 'pixelated';
   });
   document.getElementById('controls').style.display = 'none';
+
+  await Sprite.waitForLoad();
+  await Sound.waitForLoad();
 
   const intro = new Scene(view);
   intro.addEntity(new BackgroundEntity('title'));
@@ -959,6 +959,8 @@ async function init() {
 
   console.log('loaded game');
 
+  document.getElementById('loading').style.display = 'none';
+
   Sound.Sounds['start'].play();
 
   await engine.start();
@@ -1410,4 +1412,10 @@ export class EntityResetter {
   }
 }
 
-init();
+let interval = setInterval(() => {
+  if (document.body) {
+    init();
+    clearInterval(interval);
+    interval = null;
+  }
+}, 100);
