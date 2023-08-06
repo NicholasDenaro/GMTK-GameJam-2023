@@ -3,12 +3,27 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "overworld-2.tmx",
+    "activeFile": "overworldv2.tmx",
     "expandedProjectPaths": [
+        "Rules",
         "."
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "Rules/dirt.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 76,
+                "y": 76.81818181818181
+            }
+        },
         "house1.tmx": {
             "scale": 5.5,
             "selectedLayer": 1,
@@ -32,8 +47,8 @@
             "scale": 5.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 0.09090909090909349,
-                "y": 127.9090909090909
+                "x": -0.18181818181818699,
+                "y": 127.54545454545455
             }
         },
         "inventory.tmx": {
@@ -144,16 +159,24 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 4,
+            "scale": 1.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": -299,
-                "y": 258.875
+                "x": -92.66666666666669,
+                "y": 51
             }
         },
         "overworld.tsx": {
-            "scaleInDock": 5.5,
-            "scaleInEditor": 8
+            "scaleInDock": 4,
+            "scaleInEditor": 5.5
+        },
+        "overworldv2.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -338,
+                "y": 123
+            }
         },
         "title.tmx": {
             "scale": 5.5,
@@ -170,8 +193,8 @@
             "scale": 3,
             "selectedLayer": 8,
             "viewCenter": {
-                "x": -255.83333333333331,
-                "y": 255.83333333333331
+                "x": -255.99999999999997,
+                "y": 255.49999999999997
             }
         },
         "underground1.tmx": {
@@ -194,20 +217,22 @@
     "last.externalTilesetPath": "C:/Source/GMTK-GameJam-2023/tiled-project",
     "last.imagePath": "C:/Users/ndena/Downloads/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tileset",
     "last.objectTemplatePath": "C:/Source/GMTK-GameJam-2023/tiled-project",
-    "map.fixedSize": false,
+    "map.fixedSize": true,
     "map.height": 9,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 10,
     "openFiles": [
-        "overworld-2.tmx",
-        "underground.tmx",
-        "houses.tmx"
+        "overworldv2.tmx",
+        "overworld.tsx"
     ],
     "project": "gmtk2023.tiled-project",
     "property.type": "object",
     "recentFiles": [
+        "overworld.tsx",
+        "overworldv2.tmx",
+        "Rules/dirt.tmx",
         "houses.tmx",
         "underground.tmx",
         "overworld-2.tmx",
@@ -216,10 +241,7 @@
         "main7.tmx",
         "main6.tmx",
         "main5.tmx",
-        "underground2.tmx",
-        "underground1.tmx",
-        "house2.tmx",
-        "house1.tmx"
+        "underground2.tmx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
     "tileset.lastUsedFormat": "tsx",
